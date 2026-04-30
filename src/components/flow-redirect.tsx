@@ -20,6 +20,12 @@ const allowedByStep: Record<string, string[]> = {
   unlocked: ["/profile", "/upload", "/following", "/liked", "/disliked", "/rate", "/welcome", "/auth", "/"],
 };
 
+function isPathAllowed(step: keyof typeof allowedByStep, pathname: string) {
+  return allowedByStep[step].some((allowedPath) =>
+    pathname === allowedPath || pathname.startsWith(`${allowedPath}/`),
+  );
+}
+
 export function FlowRedirect() {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const router = useRouter();
@@ -32,7 +38,7 @@ export function FlowRedirect() {
       } = await supabase.auth.getUser();
 
       if (!user) {
-        if (!allowedByStep.auth.includes(pathname)) {
+        if (!isPathAllowed("auth", pathname)) {
           router.replace(stepToPath.auth);
         }
         return;
@@ -58,7 +64,7 @@ export function FlowRedirect() {
         unlockVoteCount: appConfig.unlockVoteCount,
       });
 
-      if (!allowedByStep[step].includes(pathname)) {
+      if (!isPathAllowed(step, pathname)) {
         router.replace(stepToPath[step]);
       }
     }
