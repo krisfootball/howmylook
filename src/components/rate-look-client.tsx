@@ -49,9 +49,10 @@ export function RateLookClient({ initialRatingsCompleted }: RateLookClientProps)
 
         const { data, error } = await supabase
           .from("posts")
-          .select("id,user_id,image_url,caption,yes_count,no_count,is_active")
+          .select("id,user_id,image_url,caption,yes_count,no_count,is_active,created_at")
           .eq("is_active", true)
-          .limit(20);
+          .order("created_at", { ascending: false })
+          .limit(50);
 
         if (error) {
           throw error;
@@ -75,11 +76,15 @@ export function RateLookClient({ initialRatingsCompleted }: RateLookClientProps)
           }
         }
 
-        const filteredPosts = (data as DatabasePost[]).filter(
+        const filteredPosts = (data as (DatabasePost & { created_at?: string | null })[]).filter(
           (post) => !ratedPostIds.has(post.id) && (!user || post.user_id !== user.id),
         );
 
-        const mapped = filteredPosts.map((post, index) => ({
+        const priorityPosts = filteredPosts.filter((post) => post.yes_count + post.no_count < 5);
+        const fallbackPosts = filteredPosts.filter((post) => post.yes_count + post.no_count >= 5);
+        const orderedPosts = [...priorityPosts, ...fallbackPosts];
+
+        const mapped = orderedPosts.map((post, index) => ({
           id: post.id,
           authorId: post.user_id,
           authorName: `Look ${index + 1}`,
@@ -191,9 +196,9 @@ export function RateLookClient({ initialRatingsCompleted }: RateLookClientProps)
           <p className="mt-2">
             {queueLoaded
               ? remaining > 0
-                ? "You’ve gone through the available queue. Add more demo posts or have other users post looks, then come back here."
+                ? "You’ve gone through the available queue. New posts that still need their first 5 ratings will appear here first."
                 : "Nice — you finished the required ratings. You can keep exploring the unlocked parts of the app now."
-              : "Checking Supabase for posts you have not rated yet."}
+              : "Checking Supabase for the latest unrated posts, prioritizing looks that still need their first 5 ratings."}
           </p>
         </section>
 
