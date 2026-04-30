@@ -45,6 +45,28 @@ export const ratingQueue: OutfitPost[] = [
       "bg-[linear-gradient(180deg,_#f6e7cb_0%,_#f8c7b4_35%,_#f1998e_65%,_#cc6b8e_100%)]",
     tags: ["shopping", "casual", "weekend"],
   },
+  {
+    id: "4",
+    authorName: "Zoe",
+    authorHandle: "@zoechic",
+    caption: "Dinner with friends tonight. Does the leather jacket make this better or too heavy?",
+    yesCount: 84,
+    noCount: 19,
+    imageStyle:
+      "bg-[linear-gradient(180deg,_#d9d0ff_0%,_#f0c2dd_45%,_#f8e6bf_100%)]",
+    tags: ["night out", "jacket", "edgy"],
+  },
+  {
+    id: "5",
+    authorName: "Lina",
+    authorHandle: "@linalooks",
+    caption: "Trying a softer work look for Friday. Are the trousers and knit working together?",
+    yesCount: 67,
+    noCount: 14,
+    imageStyle:
+      "bg-[linear-gradient(180deg,_#d2f1eb_0%,_#c4d9ff_45%,_#f3d9ff_100%)]",
+    tags: ["workwear", "knit", "friday"],
+  },
 ];
 
 export const currentUser = {
