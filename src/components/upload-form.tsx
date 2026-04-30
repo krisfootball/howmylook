@@ -31,6 +31,10 @@ export function UploadForm() {
         throw new Error("Sign in first before creating a post.");
       }
 
+      if (files.length === 0) {
+        throw new Error("Add at least 1 photo before publishing.");
+      }
+
       const uploadedImageUrls: string[] = [];
       let fallbackImageUrl = `seed://user-post-${Date.now()}`;
 
@@ -90,9 +94,7 @@ export function UploadForm() {
       setMessage(
         uploadedImageUrls.length > 1
           ? `Post created with ${uploadedImageUrls.length} photos.`
-          : uploadedImageUrls.length === 1
-            ? "Post created with 1 photo."
-            : "Post created without photos.",
+          : "Post created with 1 photo.",
       );
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unable to create post.";
@@ -117,7 +119,7 @@ export function UploadForm() {
         </div>
         <h2 className="mt-4 text-lg font-semibold tracking-tight text-slate-900">Upload outfit photos</h2>
         <p className="mt-2 text-sm leading-6 text-slate-600">
-          Photos are optional for now. You can attach up to 5 images once the Supabase storage bucket is ready.
+          Add between 1 and 5 images for each post once the Supabase storage bucket is ready.
         </p>
         <label className="mt-4 block rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-900 shadow-sm">
           <input
