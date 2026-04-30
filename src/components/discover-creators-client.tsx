@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
@@ -168,11 +169,12 @@ export function DiscoverCreatorsClient({
             key={profile.id}
             className="flex items-start justify-between gap-3 rounded-[1.2rem] bg-slate-50 px-4 py-4"
           >
-            <div className="min-w-0 flex-1">
+            <Link href={`/people/${profile.id}`} className="min-w-0 flex-1">
               <p className="font-semibold text-slate-900">{profile.displayName}</p>
               <p className="text-sm text-slate-500">{profile.username}</p>
               <p className="mt-2 text-sm leading-6 text-slate-600">{profile.bio}</p>
-            </div>
+              <p className="mt-2 text-xs font-medium text-pink-600">Open profile</p>
+            </Link>
             <button
               type="button"
               onClick={() => handleToggleFollow(profile.id, profile.isFollowing)}

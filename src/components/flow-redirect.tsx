@@ -17,7 +17,7 @@ const allowedByStep: Record<string, string[]> = {
   auth: ["/auth", "/"],
   username: ["/welcome", "/auth", "/"],
   rating: ["/rate", "/welcome", "/auth", "/"],
-  unlocked: ["/profile", "/upload", "/following", "/liked", "/disliked", "/rate", "/welcome", "/auth", "/"],
+  unlocked: ["/profile", "/people", "/upload", "/following", "/liked", "/disliked", "/rate", "/welcome", "/auth", "/"],
 };
 
 function isPathAllowed(step: keyof typeof allowedByStep, pathname: string) {
