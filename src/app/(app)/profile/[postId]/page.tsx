@@ -6,10 +6,15 @@ type PostDetailPageProps = {
   params: Promise<{
     postId: string;
   }>;
+  searchParams?: Promise<{
+    from?: string;
+    profileId?: string;
+  }>;
 };
 
-export default async function PostDetailPage({ params }: PostDetailPageProps) {
+export default async function PostDetailPage({ params, searchParams }: PostDetailPageProps) {
   const { postId } = await params;
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
 
   const { data: post, error } = await supabase
     .from("posts")
@@ -43,15 +48,20 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
   const showImage = post.image_url.startsWith("http");
   const authorName = author?.display_name || author?.username || "HowMyLook user";
   const authorHandle = author?.username ? `@${author.username}` : null;
+  const backHref =
+    resolvedSearchParams?.from === "people" && resolvedSearchParams.profileId
+      ? `/people/${resolvedSearchParams.profileId}`
+      : "/profile";
+  const backLabel = resolvedSearchParams?.from === "people" ? "← Back to profile" : "← Back to profile";
 
   return (
     <MobileShell title="Post" subtitle="A closer look at one outfit post.">
       <div className="space-y-4">
         <Link
-          href="/profile"
+          href={backHref}
           className="inline-flex rounded-full bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm"
         >
-          ← Back to profile
+          {backLabel}
         </Link>
 
         <article className="overflow-hidden rounded-[1.6rem] border border-pink-100 bg-white shadow-sm">

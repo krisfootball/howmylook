@@ -72,7 +72,11 @@ export default async function PeopleProfilePage({ params }: PeopleProfilePagePro
               {posts.map((post, index) => {
                 const showImage = post.image_url.startsWith("http");
                 return (
-                  <article key={post.id} className="overflow-hidden rounded-[1.4rem] border border-pink-100 bg-white shadow-sm">
+                  <Link
+                    key={post.id}
+                    href={`/profile/${post.id}?from=people&profileId=${profileId}`}
+                    className="overflow-hidden rounded-[1.4rem] border border-pink-100 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                  >
                     {showImage ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={post.image_url} alt={post.caption ?? "Outfit post"} className="aspect-square w-full object-cover" />
@@ -90,8 +94,9 @@ export default async function PeopleProfilePage({ params }: PeopleProfilePagePro
                     <div className="p-3">
                       <p className="text-sm font-semibold text-slate-900">{post.caption ?? "Untitled look"}</p>
                       <p className="mt-1 text-xs text-slate-500">{post.yes_count} yes · {post.no_count} no</p>
+                      <p className="mt-2 text-xs font-medium text-pink-600">Open post</p>
                     </div>
-                  </article>
+                  </Link>
                 );
               })}
             </div>
