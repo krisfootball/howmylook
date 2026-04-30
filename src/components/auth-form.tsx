@@ -34,7 +34,9 @@ export function AuthForm() {
           throw error;
         }
 
-        if (signUpData.user) {
+        const needsEmailConfirmation = !signUpData.session;
+
+        if (signUpData.user && !needsEmailConfirmation) {
           const fallbackUsername = `user_${signUpData.user.id.slice(0, 8)}`;
           const { error: profileError } = await supabase.from("profiles").upsert({
             id: signUpData.user.id,
@@ -47,8 +49,19 @@ export function AuthForm() {
           }
         }
 
-        setMessage("Account created. Check your email if Supabase asks for confirmation, then sign in.");
-        setMode("signin");
+        setMessage(
+          needsEmailConfirmation
+            ? "Account created. Check your email and confirm your signup, then come back and sign in."
+            : "Account created. You can now continue into the app.",
+        );
+
+        if (needsEmailConfirmation) {
+          setMode("signin");
+          return;
+        }
+
+        router.replace("/welcome");
+        router.refresh();
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
