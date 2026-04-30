@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
@@ -96,9 +97,10 @@ export function ProfilePostsClient() {
         const showImage = post.imageUrl.startsWith("http");
 
         return (
-          <article
+          <Link
             key={post.id}
-            className="overflow-hidden rounded-[1.4rem] border border-pink-100 bg-white shadow-sm"
+            href={`/profile/${post.id}`}
+            className="overflow-hidden rounded-[1.4rem] border border-pink-100 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
           >
             {showImage ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -119,9 +121,10 @@ export function ProfilePostsClient() {
               <p className="mt-1 text-xs text-slate-500">
                 {post.yesCount} yes · {post.noCount} no
               </p>
+              <p className="mt-2 text-xs font-medium text-pink-600">Open post</p>
               {!showImage ? <p className="mt-1 text-[11px] text-slate-400">Demo image placeholder</p> : null}
             </div>
-          </article>
+          </Link>
         );
       })}
     </div>
