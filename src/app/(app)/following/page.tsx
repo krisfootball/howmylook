@@ -6,7 +6,7 @@ export default function FollowingPage() {
   return (
     <MobileShell
       title="Following"
-      subtitle="Photos from people you follow. This is separate from the fairness-focused rating queue."
+      subtitle="Posts from people you follow first, with fresh public looks added when your feed needs more."
     >
       <AccessGateCard areaLabel="Following feed">
         <FollowingPageClient />
