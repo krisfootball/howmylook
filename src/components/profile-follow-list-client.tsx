@@ -1,0 +1,149 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
+import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
+
+type Mode = "followers" | "following";
+
+type Person = {
+  id: string;
+  displayName: string;
+  username: string;
+  bio: string;
+};
+
+export function ProfileFollowListClient({ mode }: { mode: Mode }) {
+  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
+  const [people, setPeople] = useState<Person[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
+
+        if (userError) {
+          throw userError;
+        }
+
+        if (!user) {
+          setError("Sign in to view this list.");
+          setLoading(false);
+          return;
+        }
+
+        let peopleIds: string[] = [];
+
+        if (mode === "following") {
+          const { data: follows, error: followsError } = await supabase
+            .from("follows")
+            .select("following_id,created_at")
+            .eq("follower_id", user.id)
+            .order("created_at", { ascending: false })
+            .limit(100);
+
+          if (followsError) {
+            throw followsError;
+          }
+
+          peopleIds = Array.from(new Set((follows ?? []).map((row) => row.following_id).filter(Boolean)));
+        } else {
+          const { data: follows, error: followsError } = await supabase
+            .from("follows")
+            .select("follower_id,created_at")
+            .eq("following_id", user.id)
+            .order("created_at", { ascending: false })
+            .limit(100);
+
+          if (followsError) {
+            throw followsError;
+          }
+
+          peopleIds = Array.from(new Set((follows ?? []).map((row) => row.follower_id).filter(Boolean)));
+        }
+
+        if (peopleIds.length === 0) {
+          setPeople([]);
+          setLoading(false);
+          return;
+        }
+
+        const { data: profiles, error: profilesError } = await supabase
+          .from("profiles")
+          .select("id,username,display_name,bio")
+          .in("id", peopleIds);
+
+        if (profilesError) {
+          throw profilesError;
+        }
+
+        const profileMap = new Map((profiles ?? []).map((profile) => [profile.id, profile]));
+
+        setPeople(
+          peopleIds
+            .map((id) => profileMap.get(id))
+            .filter(Boolean)
+            .map((profile) => ({
+              id: profile!.id,
+              displayName: profile!.display_name || "HowMyLook user",
+              username: profile!.username ? `@${profile!.username}` : "@username",
+              bio: profile!.bio || "Posting looks and getting quick feedback.",
+            })),
+        );
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Unable to load this list.";
+        setError(errorMessage);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    load();
+  }, [mode, supabase]);
+
+  if (loading) {
+    return (
+      <section className="rounded-[1.6rem] border border-pink-100 bg-white p-5 text-sm text-slate-600 shadow-sm">
+        Loading {mode}...
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="rounded-[1.6rem] border border-rose-100 bg-rose-50 p-5 text-sm leading-6 text-rose-700 shadow-sm">
+        {error}
+      </section>
+    );
+  }
+
+  if (people.length === 0) {
+    return (
+      <section className="rounded-[1.6rem] border border-pink-100 bg-white p-5 text-sm text-slate-600 shadow-sm">
+        {mode === "following" ? "You are not following anyone yet." : "You do not have followers yet."}
+      </section>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      {people.map((person) => (
+        <Link
+          key={person.id}
+          href={`/people/${person.id}`}
+          className="block rounded-[1.4rem] border border-pink-100 bg-white px-4 py-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+        >
+          <p className="font-semibold text-slate-900">{person.displayName}</p>
+          <p className="text-sm text-slate-500">{person.username}</p>
+          <p className="mt-2 text-sm leading-6 text-slate-600">{person.bio}</p>
+          <p className="mt-2 text-xs font-medium text-pink-600">Open profile</p>
+        </Link>
+      ))}
+    </div>
+  );
+}
