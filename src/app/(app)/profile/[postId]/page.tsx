@@ -18,7 +18,7 @@ export default async function PostDetailPage({ params, searchParams }: PostDetai
 
   const { data: post, error } = await supabase
     .from("posts")
-    .select("id,caption,image_url,yes_count,no_count,user_id,is_active")
+    .select("id,caption,image_url,yes_count,no_count,user_id,is_active,post_images(id,image_url,sort_order)")
     .eq("id", postId)
     .eq("is_active", true)
     .maybeSingle();
@@ -45,7 +45,13 @@ export default async function PostDetailPage({ params, searchParams }: PostDetai
     .eq("id", post.user_id)
     .maybeSingle();
 
-  const showImage = post.image_url.startsWith("http");
+  const galleryImages =
+    post.post_images && post.post_images.length > 0
+      ? [...post.post_images].sort((a, b) => a.sort_order - b.sort_order).map((image) => image.image_url)
+      : post.image_url.startsWith("http")
+        ? [post.image_url]
+        : [];
+  const showImage = galleryImages.length > 0;
   const authorName = author?.display_name || author?.username || "HowMyLook user";
   const authorHandle = author?.username ? `@${author.username}` : null;
   const backHref =
@@ -66,8 +72,17 @@ export default async function PostDetailPage({ params, searchParams }: PostDetai
 
         <article className="overflow-hidden rounded-[1.6rem] border border-pink-100 bg-white shadow-sm">
           {showImage ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={post.image_url} alt={post.caption ?? "Outfit post"} className="aspect-[4/5] w-full object-cover" />
+            <div className="space-y-2 p-2">
+              {galleryImages.map((imageUrl, index) => (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  key={`${imageUrl}-${index}`}
+                  src={imageUrl}
+                  alt={`${post.caption ?? "Outfit post"} ${index + 1}`}
+                  className="aspect-[4/5] w-full rounded-[1.1rem] object-cover"
+                />
+              ))}
+            </div>
           ) : (
             <div className="aspect-[4/5] bg-[linear-gradient(180deg,_#f6d6df_0%,_#dfc8ff_100%)]" />
           )}
@@ -80,6 +95,10 @@ export default async function PostDetailPage({ params, searchParams }: PostDetai
                 {authorHandle ? <span> · {authorHandle}</span> : null}
               </p>
             </div>
+
+            <p className="text-sm text-slate-500">
+              {galleryImages.length === 0 ? "No photos attached" : `${galleryImages.length} photo${galleryImages.length > 1 ? "s" : ""}`}
+            </p>
 
             <div className="grid grid-cols-2 gap-3 text-sm">
               <div className="rounded-2xl bg-pink-50 px-4 py-4">

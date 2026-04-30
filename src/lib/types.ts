@@ -19,4 +19,9 @@ export type DatabasePost = {
   yes_count: number;
   no_count: number;
   is_active: boolean;
+  post_images?: {
+    id: string;
+    image_url: string;
+    sort_order: number;
+  }[];
 };

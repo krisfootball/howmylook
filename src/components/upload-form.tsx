@@ -3,10 +3,12 @@
 import { useMemo, useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
+const MAX_FILES = 5;
+
 export function UploadForm() {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [caption, setCaption] = useState("");
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -29,11 +31,12 @@ export function UploadForm() {
         throw new Error("Sign in first before creating a post.");
       }
 
-      let imageUrl = `seed://user-post-${Date.now()}`;
+      const uploadedImageUrls: string[] = [];
+      let fallbackImageUrl = `seed://user-post-${Date.now()}`;
 
-      if (file) {
+      for (const [index, file] of files.entries()) {
         const fileExt = file.name.split(".").pop() || "jpg";
-        const filePath = `${user.id}/${Date.now()}.${fileExt}`;
+        const filePath = `${user.id}/${Date.now()}-${index}.${fileExt}`;
 
         const { error: uploadError } = await supabase.storage
           .from("post-images")
@@ -44,30 +47,62 @@ export function UploadForm() {
         }
 
         const { data } = supabase.storage.from("post-images").getPublicUrl(filePath);
-        imageUrl = data.publicUrl;
+        uploadedImageUrls.push(data.publicUrl);
       }
 
-      const { error } = await supabase.from("posts").insert({
-        user_id: user.id,
-        image_url: imageUrl,
-        caption: caption.trim() || null,
-        yes_count: 0,
-        no_count: 0,
-        is_active: true,
-      });
+      if (uploadedImageUrls.length > 0) {
+        fallbackImageUrl = uploadedImageUrls[0];
+      }
+
+      const { data: insertedPosts, error } = await supabase
+        .from("posts")
+        .insert({
+          user_id: user.id,
+          image_url: fallbackImageUrl,
+          caption: caption.trim() || null,
+          yes_count: 0,
+          no_count: 0,
+          is_active: true,
+        })
+        .select("id")
+        .single();
 
       if (error) {
         throw error;
       }
 
+      if (uploadedImageUrls.length > 0) {
+        const { error: postImagesError } = await supabase.from("post_images").insert(
+          uploadedImageUrls.map((imageUrl, index) => ({
+            post_id: insertedPosts.id,
+            image_url: imageUrl,
+            sort_order: index,
+          })),
+        );
+
+        if (postImagesError) {
+          throw postImagesError;
+        }
+      }
+
       setCaption("");
-      setFile(null);
-      setMessage(file ? "Post created with uploaded image." : "Post created. Add a photo next for the full flow.");
+      setFiles([]);
+      setMessage(
+        uploadedImageUrls.length > 1
+          ? `Post created with ${uploadedImageUrls.length} photos.`
+          : uploadedImageUrls.length === 1
+            ? "Post created with 1 photo."
+            : "Post created without photos.",
+      );
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unable to create post.";
-      const friendlyMessage = errorMessage.toLowerCase().includes("bucket")
-        ? "Photo upload is almost ready, but the Supabase storage bucket still needs setup. Run SUPABASE_STORAGE_SETUP.sql in Supabase, then try again."
-        : errorMessage;
+      const lower = errorMessage.toLowerCase();
+      const friendlyMessage =
+        lower.includes("post_images") || lower.includes("relation \"post_images\"")
+          ? "Multi-photo posts need one Supabase SQL migration first. Run SUPABASE_MIGRATION_POST_IMAGES.sql in Supabase, then try again."
+          : lower.includes("bucket")
+            ? "Photo upload is almost ready, but the Supabase storage bucket still needs setup. Run SUPABASE_STORAGE_SETUP.sql in Supabase, then try again."
+            : errorMessage;
       setMessage(friendlyMessage);
     } finally {
       setLoading(false);
@@ -80,19 +115,30 @@ export function UploadForm() {
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white text-2xl shadow-sm">
           📷
         </div>
-        <h2 className="mt-4 text-lg font-semibold tracking-tight text-slate-900">Upload outfit photo</h2>
+        <h2 className="mt-4 text-lg font-semibold tracking-tight text-slate-900">Upload outfit photos</h2>
         <p className="mt-2 text-sm leading-6 text-slate-600">
-          You can now attach a real image once the Supabase storage bucket is ready.
+          Photos are optional for now. You can attach up to 5 images once the Supabase storage bucket is ready.
         </p>
         <label className="mt-4 block rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-900 shadow-sm">
           <input
             type="file"
             accept="image/*"
+            multiple
             className="hidden"
-            onChange={(event) => setFile(event.target.files?.[0] ?? null)}
+            onChange={(event) => {
+              const nextFiles = Array.from(event.target.files ?? []).slice(0, MAX_FILES);
+              setFiles(nextFiles);
+            }}
           />
-          {file ? `Selected: ${file.name}` : "Choose photo"}
+          {files.length > 0 ? `${files.length} photo${files.length > 1 ? "s" : ""} selected` : "Choose up to 5 photos"}
         </label>
+        {files.length > 0 ? (
+          <div className="mt-3 text-left text-xs text-slate-500">
+            {files.map((file) => (
+              <p key={`${file.name}-${file.size}`}>• {file.name}</p>
+            ))}
+          </div>
+        ) : null}
       </section>
 
       <section className="rounded-[1.7rem] border border-pink-100 bg-white p-4 shadow-sm">
