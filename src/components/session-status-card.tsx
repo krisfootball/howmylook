@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { appConfig } from "@/lib/app-config";
-import { getNextRequiredStep } from "@/lib/app-state";
+import { getNextRequiredStep, hasCompletedUsername } from "@/lib/app-state";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
 type SessionState = {
@@ -65,7 +65,10 @@ export function SessionStatusCard() {
         const ratingsCompleted =
           profile?.unlock_votes_completed ??
           ((profile?.total_yes_given ?? 0) + (profile?.total_no_given ?? 0));
-        const hasUsername = Boolean(profile?.username);
+        const hasUsername = hasCompletedUsername({
+          id: user.id,
+          username: profile?.username,
+        });
         const nextStep = getNextRequiredStep({
           isAuthenticated: true,
           hasUsername,

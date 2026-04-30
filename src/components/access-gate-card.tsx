@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { appConfig } from "@/lib/app-config";
-import { getNextRequiredStep } from "@/lib/app-state";
+import { getNextRequiredStep, hasCompletedUsername } from "@/lib/app-state";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
 type AccessGateCardProps = {
@@ -44,7 +44,10 @@ export function AccessGateCard({ areaLabel, children }: AccessGateCardProps) {
 
         const step = getNextRequiredStep({
           isAuthenticated: true,
-          hasUsername: Boolean(profile?.username),
+          hasUsername: hasCompletedUsername({
+            id: user.id,
+            username: profile?.username,
+          }),
           ratingsCompleted: completed,
           unlockVoteCount: appConfig.unlockVoteCount,
         });

@@ -3,7 +3,7 @@
 import { useEffect, useMemo } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { appConfig } from "@/lib/app-config";
-import { getNextRequiredStep } from "@/lib/app-state";
+import { getNextRequiredStep, hasCompletedUsername } from "@/lib/app-state";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
 const stepToPath = {
@@ -50,7 +50,10 @@ export function FlowRedirect() {
 
       const step = getNextRequiredStep({
         isAuthenticated: true,
-        hasUsername: Boolean(profile?.username),
+        hasUsername: hasCompletedUsername({
+          id: user.id,
+          username: profile?.username,
+        }),
         ratingsCompleted,
         unlockVoteCount: appConfig.unlockVoteCount,
       });
