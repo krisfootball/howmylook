@@ -20,9 +20,10 @@ export function StatPill({
     return (
       <Link
         href={href}
-        className="rounded-2xl border border-pink-100 bg-pink-50/70 px-4 py-3 transition hover:-translate-y-0.5 hover:bg-pink-100"
+        className="block rounded-2xl border border-pink-100 bg-pink-50/70 px-4 py-3 transition hover:-translate-y-0.5 hover:bg-pink-100 active:scale-[0.99]"
       >
         {content}
+        <p className="mt-2 text-xs font-medium text-pink-600">Open</p>
       </Link>
     );
   }

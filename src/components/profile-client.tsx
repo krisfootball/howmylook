@@ -120,8 +120,8 @@ export function ProfileClient() {
         <div className="mt-5 grid grid-cols-2 gap-3">
           <StatPill label="Followers" value={state.followers} href="/profile/followers" />
           <StatPill label="Following" value={state.following} href="/profile/following" />
-          <StatPill label="Yes given" value={state.yesGiven} />
-          <StatPill label="No given" value={state.noGiven} />
+          <StatPill label="Yes given" value={state.yesGiven} href="/liked" />
+          <StatPill label="No given" value={state.noGiven} href="/disliked" />
         </div>
       </section>
 

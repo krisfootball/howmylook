@@ -13,7 +13,13 @@ type Person = {
   bio: string;
 };
 
-export function ProfileFollowListClient({ mode }: { mode: Mode }) {
+export function ProfileFollowListClient({
+  mode,
+  profileId,
+}: {
+  mode: Mode;
+  profileId?: string;
+}) {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [people, setPeople] = useState<Person[]>([]);
   const [loading, setLoading] = useState(true);
@@ -31,8 +37,16 @@ export function ProfileFollowListClient({ mode }: { mode: Mode }) {
           throw userError;
         }
 
-        if (!user) {
+        if (!user && !profileId) {
           setError("Sign in to view this list.");
+          setLoading(false);
+          return;
+        }
+
+        const targetProfileId = profileId || user?.id;
+
+        if (!targetProfileId) {
+          setError("Unable to determine which profile to load.");
           setLoading(false);
           return;
         }
@@ -43,7 +57,7 @@ export function ProfileFollowListClient({ mode }: { mode: Mode }) {
           const { data: follows, error: followsError } = await supabase
             .from("follows")
             .select("following_id,created_at")
-            .eq("follower_id", user.id)
+            .eq("follower_id", targetProfileId)
             .order("created_at", { ascending: false })
             .limit(100);
 
@@ -56,7 +70,7 @@ export function ProfileFollowListClient({ mode }: { mode: Mode }) {
           const { data: follows, error: followsError } = await supabase
             .from("follows")
             .select("follower_id,created_at")
-            .eq("following_id", user.id)
+            .eq("following_id", targetProfileId)
             .order("created_at", { ascending: false })
             .limit(100);
 
@@ -104,7 +118,7 @@ export function ProfileFollowListClient({ mode }: { mode: Mode }) {
     }
 
     load();
-  }, [mode, supabase]);
+  }, [mode, profileId, supabase]);
 
   if (loading) {
     return (
@@ -125,7 +139,7 @@ export function ProfileFollowListClient({ mode }: { mode: Mode }) {
   if (people.length === 0) {
     return (
       <section className="rounded-[1.6rem] border border-pink-100 bg-white p-5 text-sm text-slate-600 shadow-sm">
-        {mode === "following" ? "You are not following anyone yet." : "You do not have followers yet."}
+        {mode === "following" ? "No following yet." : "No followers yet."}
       </section>
     );
   }

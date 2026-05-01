@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { PublicVoteHistoryList } from "@/components/public-vote-history-list";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
 type VoteHistoryClientProps = {
@@ -11,6 +12,8 @@ type VoteHistoryItem = {
   id: string;
   caption: string;
   imageUrl: string;
+  yesCount: number;
+  noCount: number;
 };
 
 export function VoteHistoryClient({ value }: VoteHistoryClientProps) {
@@ -56,20 +59,25 @@ export function VoteHistoryClient({ value }: VoteHistoryClientProps) {
         const postIds = votes.map((vote) => vote.post_id);
         const { data: posts, error: postsError } = await supabase
           .from("posts")
-          .select("id,caption,image_url")
+          .select("id,caption,image_url,user_id,yes_count,no_count")
           .in("id", postIds);
 
         if (postsError) {
           throw postsError;
         }
 
-        setItems(
-          (posts ?? []).map((post) => ({
+        const orderedItems = postIds
+          .map((postId) => (posts ?? []).find((post) => post.id === postId))
+          .filter((post): post is NonNullable<typeof post> => Boolean(post))
+          .map((post) => ({
             id: post.id,
             caption: post.caption ?? "Would you wear this?",
             imageUrl: post.image_url,
-          })),
-        );
+            yesCount: post.yes_count,
+            noCount: post.no_count,
+          }));
+
+        setItems(orderedItems);
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Unable to load vote history.";
         setError(errorMessage);
@@ -105,37 +113,5 @@ export function VoteHistoryClient({ value }: VoteHistoryClientProps) {
     );
   }
 
-  return (
-    <div className="space-y-4">
-      {items.map((item, index) => {
-        const showImage = item.imageUrl.startsWith("http");
-
-        return (
-          <article
-            key={item.id}
-            className="overflow-hidden rounded-[1.6rem] border border-pink-100 bg-white shadow-sm"
-          >
-            {showImage ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={item.imageUrl} alt={item.caption} className="aspect-[4/5] w-full object-cover" />
-            ) : (
-              <div
-                className={`aspect-[4/5] ${
-                  index % 3 === 0
-                    ? "bg-[linear-gradient(180deg,_#f6d6df_0%,_#dfc8ff_100%)]"
-                    : index % 3 === 1
-                      ? "bg-[linear-gradient(180deg,_#f7e7c6_0%,_#ebb3b0_100%)]"
-                      : "bg-[linear-gradient(180deg,_#c9d4ff_0%,_#dfb2f4_100%)]"
-                }`}
-              />
-            )}
-            <div className="p-4">
-              <p className="font-semibold text-slate-900">{item.caption}</p>
-              {!showImage ? <p className="mt-2 text-xs text-slate-500">Demo image placeholder</p> : null}
-            </div>
-          </article>
-        );
-      })}
-    </div>
-  );
+  return <PublicVoteHistoryList items={items} value={value} profileId="" />;
 }

@@ -13,7 +13,7 @@ export default async function PeopleProfilePage({ params }: PeopleProfilePagePro
 
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
-    .select("id,username,display_name,bio")
+    .select("id,username,display_name,bio,total_yes_given,total_no_given")
     .eq("id", profileId)
     .maybeSingle();
 
@@ -30,16 +30,23 @@ export default async function PeopleProfilePage({ params }: PeopleProfilePagePro
     );
   }
 
-  const { data: posts } = await supabase
-    .from("posts")
-    .select("id,caption,image_url,yes_count,no_count")
-    .eq("user_id", profileId)
-    .eq("is_active", true)
-    .order("created_at", { ascending: false })
-    .limit(24);
+  const [{ data: posts }, { count: followersCount }, { count: followingCount }] = await Promise.all([
+    supabase
+      .from("posts")
+      .select("id,caption,image_url,yes_count,no_count")
+      .eq("user_id", profileId)
+      .eq("is_active", true)
+      .order("created_at", { ascending: false })
+      .limit(24),
+    supabase.from("follows").select("*", { count: "exact", head: true }).eq("following_id", profileId),
+    supabase.from("follows").select("*", { count: "exact", head: true }).eq("follower_id", profileId),
+  ]);
 
   return (
-    <MobileShell title={profile.display_name || profile.username || "Profile"} subtitle="Public creator profile.">
+    <MobileShell
+      title={profile.display_name || profile.username || "Profile"}
+      subtitle="Public creator profile with the same core stats and taste signals as your own profile."
+    >
       <div className="space-y-4">
         <Link href="/following" className="inline-flex rounded-full bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm">
           ← Back to following
@@ -55,6 +62,41 @@ export default async function PeopleProfilePage({ params }: PeopleProfilePagePro
               <p className="text-sm text-slate-500">{profile.username ? `@${profile.username}` : "@username"}</p>
               <p className="mt-3 text-sm leading-6 text-slate-700">{profile.bio || "Posting looks and getting quick feedback."}</p>
             </div>
+          </div>
+
+          <div className="mt-5 grid grid-cols-2 gap-3">
+            <Link
+              href={`/people/${profileId}/followers`}
+              className="block rounded-2xl border border-pink-100 bg-pink-50/70 px-4 py-3 transition hover:-translate-y-0.5 hover:bg-pink-100 active:scale-[0.99]"
+            >
+              <p className="text-xs font-medium uppercase tracking-[0.18em] text-pink-500">Followers</p>
+              <p className="mt-2 text-xl font-semibold tracking-tight text-slate-900">{followersCount ?? 0}</p>
+              <p className="mt-2 text-xs font-medium text-pink-600">Open</p>
+            </Link>
+            <Link
+              href={`/people/${profileId}/following`}
+              className="block rounded-2xl border border-pink-100 bg-pink-50/70 px-4 py-3 transition hover:-translate-y-0.5 hover:bg-pink-100 active:scale-[0.99]"
+            >
+              <p className="text-xs font-medium uppercase tracking-[0.18em] text-pink-500">Following</p>
+              <p className="mt-2 text-xl font-semibold tracking-tight text-slate-900">{followingCount ?? 0}</p>
+              <p className="mt-2 text-xs font-medium text-pink-600">Open</p>
+            </Link>
+            <Link
+              href={`/people/${profileId}/yes`}
+              className="block rounded-2xl border border-pink-100 bg-pink-50/70 px-4 py-3 transition hover:-translate-y-0.5 hover:bg-pink-100 active:scale-[0.99]"
+            >
+              <p className="text-xs font-medium uppercase tracking-[0.18em] text-pink-500">Yes given</p>
+              <p className="mt-2 text-xl font-semibold tracking-tight text-slate-900">{profile.total_yes_given ?? 0}</p>
+              <p className="mt-2 text-xs font-medium text-pink-600">Open</p>
+            </Link>
+            <Link
+              href={`/people/${profileId}/no`}
+              className="block rounded-2xl border border-pink-100 bg-pink-50/70 px-4 py-3 transition hover:-translate-y-0.5 hover:bg-pink-100 active:scale-[0.99]"
+            >
+              <p className="text-xs font-medium uppercase tracking-[0.18em] text-pink-500">No given</p>
+              <p className="mt-2 text-xl font-semibold tracking-tight text-slate-900">{profile.total_no_given ?? 0}</p>
+              <p className="mt-2 text-xs font-medium text-pink-600">Open</p>
+            </Link>
           </div>
         </section>
 

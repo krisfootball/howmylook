@@ -24,7 +24,7 @@ export default function RatePage() {
           </div>
           <div className="rounded-2xl bg-slate-50 px-3 py-3">
             <p className="font-semibold text-slate-900">Format</p>
-            <p className="mt-1">One photo per post</p>
+            <p className="mt-1">1 to 5 photos per post</p>
           </div>
         </div>
       </div>

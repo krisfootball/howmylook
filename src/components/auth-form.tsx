@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { appConfig } from "@/lib/app-config";
+import { getNextRequiredStep, hasCompletedUsername } from "@/lib/app-state";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
 type AuthMode = "signin" | "signup";
@@ -72,8 +74,58 @@ export function AuthForm() {
           throw error;
         }
 
-        setMessage("Signed in. Next step: choose your username.");
-        router.replace("/welcome");
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
+
+        if (userError) {
+          throw userError;
+        }
+
+        if (!user) {
+          throw new Error("Signed in, but the user session could not be loaded.");
+        }
+
+        const { data: profile, error: profileError } = await supabase
+          .from("profiles")
+          .select("username,unlock_votes_completed,total_yes_given,total_no_given")
+          .eq("id", user.id)
+          .maybeSingle();
+
+        if (profileError) {
+          throw profileError;
+        }
+
+        const ratingsCompleted =
+          profile?.unlock_votes_completed ??
+          ((profile?.total_yes_given ?? 0) + (profile?.total_no_given ?? 0));
+
+        const nextStep = getNextRequiredStep({
+          isAuthenticated: true,
+          hasUsername: hasCompletedUsername({
+            id: user.id,
+            username: profile?.username,
+          }),
+          ratingsCompleted,
+          unlockVoteCount: appConfig.unlockVoteCount,
+        });
+
+        const nextPath =
+          nextStep === "username"
+            ? "/welcome"
+            : nextStep === "rating"
+              ? "/rate"
+              : "/following";
+
+        setMessage(
+          nextStep === "username"
+            ? "Signed in. Next step: choose your username."
+            : nextStep === "rating"
+              ? "Signed in. Continue rating to unlock the app."
+              : "Signed in. Welcome back."
+        );
+        router.replace(nextPath);
         router.refresh();
       }
     } catch (error) {

@@ -7,7 +7,7 @@ export default function ProfilePage() {
   return (
     <MobileShell
       title="Profile"
-      subtitle="Your profile shows what you have posted, how you vote, and what you have rated yes or no over time."
+      subtitle="Your profile shows what you have posted, who you follow, and the kinds of looks you tend to vote yes or no on over time."
     >
       <AccessGateCard areaLabel="Profile">
         <div className="space-y-5">

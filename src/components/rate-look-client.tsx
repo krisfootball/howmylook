@@ -19,6 +19,8 @@ type QueuePost = {
   caption: string;
   yesCount: number;
   noCount: number;
+  imageUrl: string;
+  ratingsRemainingToUnlock: number;
   imageStyle: string;
   tags: string[];
 };
@@ -27,6 +29,8 @@ const fallbackQueue: QueuePost[] = ratingQueue.map((post) => ({
   ...post,
   id: post.id,
   authorId: undefined,
+  imageUrl: "",
+  ratingsRemainingToUnlock: Math.max(5 - (post.yesCount + post.noCount), 0),
   imageStyle: post.imageStyle,
   tags: post.tags,
 }));
@@ -92,6 +96,8 @@ export function RateLookClient({ initialRatingsCompleted }: RateLookClientProps)
           caption: post.caption ?? "Would you wear this?",
           yesCount: post.yes_count,
           noCount: post.no_count,
+          imageUrl: post.image_url,
+          ratingsRemainingToUnlock: Math.max(5 - (post.yes_count + post.no_count), 0),
           imageStyle:
             fallbackQueue[index % fallbackQueue.length]?.imageStyle ??
             "bg-[linear-gradient(180deg,_#f8d6df_0%,_#f1c9ef_35%,_#c8b6ff_70%,_#9b8cff_100%)]",
@@ -112,6 +118,8 @@ export function RateLookClient({ initialRatingsCompleted }: RateLookClientProps)
 
   const currentPost = queue[0] ?? null;
   const remaining = Math.max(appConfig.unlockVoteCount - ratingsCompleted, 0);
+  const currentPostNeedsMoreRatings = (currentPost?.yesCount ?? 0) + (currentPost?.noCount ?? 0) < 5;
+  const showImage = currentPost?.imageUrl?.startsWith("http") ?? false;
 
   async function handleVote(value: VoteValue) {
     if (!currentPost) {
@@ -227,52 +235,82 @@ export function RateLookClient({ initialRatingsCompleted }: RateLookClientProps)
         </div>
       </div>
 
-      <article className="rounded-[1.7rem] bg-slate-950 p-3 text-white shadow-[0_20px_60px_rgba(15,23,42,0.25)]">
-        <div className={`aspect-[9/16] rounded-[1.35rem] p-4 ${currentPost.imageStyle}`}>
-          <div className="flex h-full flex-col justify-between rounded-[1.1rem] bg-white/15 p-4 backdrop-blur-[2px]">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="text-sm font-semibold text-slate-950">{currentPost.authorName}</p>
-                <p className="text-xs text-slate-900/70">{currentPost.authorHandle}</p>
+      <article className="overflow-hidden rounded-[1.7rem] bg-slate-950 p-3 text-white shadow-[0_20px_60px_rgba(15,23,42,0.25)]">
+        <div className={`rounded-[1.35rem] ${showImage ? "bg-slate-950" : `aspect-[9/16] p-4 ${currentPost.imageStyle}`}`}>
+          <div className="relative overflow-hidden rounded-[1.1rem]">
+            {showImage ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={currentPost.imageUrl} alt={currentPost.caption} className="aspect-[4/5] w-full object-cover" />
+            ) : (
+              <div className={`aspect-[9/16] p-4 ${currentPost.imageStyle}`}>
+                <div className="flex h-full items-end rounded-[1.1rem] bg-white/10 p-4 backdrop-blur-[2px]">
+                  <p className="text-xs font-medium text-slate-950/70">Demo image placeholder</p>
+                </div>
               </div>
-              <span className="rounded-full bg-white/70 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-pink-600">
+            )}
+
+            <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-3 p-4">
+              <div className="rounded-2xl bg-white/78 px-3 py-2 text-slate-900 shadow-sm backdrop-blur">
+                <p className="text-sm font-semibold">{currentPost.authorName}</p>
+                <p className="text-xs text-slate-600">{currentPost.authorHandle}</p>
+              </div>
+              <span className="rounded-full bg-white/78 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-pink-600 shadow-sm backdrop-blur">
                 {Math.min(ratingsCompleted + 1, appConfig.unlockVoteCount)} of {appConfig.unlockVoteCount}
               </span>
             </div>
 
-            <div className="space-y-3 rounded-[1.1rem] bg-white/72 p-4 text-slate-900 shadow-sm backdrop-blur">
-              <p className="text-sm font-medium leading-6">{currentPost.caption}</p>
-              <div className="flex flex-wrap gap-2">
-                {currentPost.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="rounded-full bg-slate-900/7 px-3 py-1 text-[11px] font-medium text-slate-700"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  onClick={() => handleVote("yes")}
-                  disabled={loading}
-                  className="rounded-full bg-emerald-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/20 disabled:opacity-60"
-                >
-                  {loading ? "Saving..." : appConfig.yesLabel}
-                </button>
-                <button
-                  onClick={() => handleVote("no")}
-                  disabled={loading}
-                  className="rounded-full bg-rose-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-rose-900/20 disabled:opacity-60"
-                >
-                  {loading ? "Saving..." : appConfig.noLabel}
-                </button>
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/85 via-slate-950/50 to-transparent p-4 pt-16">
+              <div className="flex items-center justify-between rounded-full bg-black/35 px-4 py-2 text-sm text-white backdrop-blur-sm">
+                <span>{currentPost.yesCount} yes</span>
+                <span>{currentPost.noCount} no</span>
               </div>
             </div>
+          </div>
 
-            <div className="flex items-center justify-between rounded-full bg-black/28 px-4 py-2 text-sm text-white">
-              <span>{currentPost.yesCount} yes</span>
-              <span>{currentPost.noCount} no</span>
+          <div className="mt-3 space-y-3 rounded-[1.1rem] bg-white/92 p-4 text-slate-900 shadow-sm">
+            <div className="flex flex-wrap items-center gap-2">
+              {currentPostNeedsMoreRatings ? (
+                <span className="rounded-full bg-pink-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-pink-700">
+                  Needs {currentPost.ratingsRemainingToUnlock} more rating{currentPost.ratingsRemainingToUnlock === 1 ? "" : "s"}
+                </span>
+              ) : (
+                <span className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-600">
+                  Already past first 5 ratings
+                </span>
+              )}
+              <span className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-600">
+                Queue prioritizes fresh looks first
+              </span>
+            </div>
+
+            <p className="text-sm font-medium leading-6">{currentPost.caption}</p>
+
+            <div className="flex flex-wrap gap-2">
+              {currentPost.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="rounded-full bg-slate-900/7 px-3 py-1 text-[11px] font-medium text-slate-700"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => handleVote("yes")}
+                disabled={loading}
+                className="rounded-full bg-emerald-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/20 disabled:opacity-60"
+              >
+                {loading ? "Saving..." : appConfig.yesLabel}
+              </button>
+              <button
+                onClick={() => handleVote("no")}
+                disabled={loading}
+                className="rounded-full bg-rose-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-rose-900/20 disabled:opacity-60"
+              >
+                {loading ? "Saving..." : appConfig.noLabel}
+              </button>
             </div>
           </div>
         </div>

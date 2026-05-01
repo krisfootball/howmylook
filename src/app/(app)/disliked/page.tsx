@@ -5,10 +5,10 @@ import { VoteHistoryClient } from "@/components/vote-history-client";
 export default function DislikedPage() {
   return (
     <MobileShell
-      title="No history"
-      subtitle="These are the looks you voted no on. This stays visible only to you."
+      title="No given"
+      subtitle="These are the looks you voted no on. It helps you see the styles and outfit patterns you usually pass on."
     >
-      <AccessGateCard areaLabel="No history">
+      <AccessGateCard areaLabel="No given">
         <VoteHistoryClient value="no" />
       </AccessGateCard>
     </MobileShell>

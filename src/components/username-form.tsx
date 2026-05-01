@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { hasCompletedUsername } from "@/lib/app-state";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
 export function UsernameForm() {
@@ -11,6 +12,50 @@ export function UsernameForm() {
   const [displayName, setDisplayName] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [initializing, setInitializing] = useState(true);
+
+  useEffect(() => {
+    async function loadExistingProfile() {
+      try {
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
+
+        if (userError) {
+          throw userError;
+        }
+
+        if (!user) {
+          return;
+        }
+
+        const { data: profile, error: profileError } = await supabase
+          .from("profiles")
+          .select("username,display_name")
+          .eq("id", user.id)
+          .maybeSingle();
+
+        if (profileError) {
+          throw profileError;
+        }
+
+        const savedUsername = hasCompletedUsername({ id: user.id, username: profile?.username })
+          ? profile?.username ?? ""
+          : "";
+
+        setUsername(savedUsername);
+        setDisplayName(profile?.display_name ?? "");
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Unable to load your current profile.";
+        setMessage(errorMessage);
+      } finally {
+        setInitializing(false);
+      }
+    }
+
+    loadExistingProfile();
+  }, [supabase]);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -58,7 +103,7 @@ export function UsernameForm() {
         throw error;
       }
 
-      setMessage("Username saved. Next step: rate 5 looks to unlock the app.");
+      setMessage("Profile saved. Next step: rate 5 looks to unlock the app.");
       router.replace("/rate");
       router.refresh();
     } catch (error) {
@@ -82,6 +127,7 @@ export function UsernameForm() {
             className="mt-2 w-full rounded-xl bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none ring-0"
             required
             minLength={3}
+            disabled={initializing || loading}
           />
         </div>
 
@@ -93,15 +139,16 @@ export function UsernameForm() {
             onChange={(event) => setDisplayName(event.target.value)}
             placeholder="Sofia"
             className="mt-2 w-full rounded-xl bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none ring-0"
+            disabled={initializing || loading}
           />
         </div>
 
         <button
           type="submit"
-          disabled={loading}
+          disabled={initializing || loading}
           className="w-full rounded-full bg-pink-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-pink-500/20 disabled:opacity-60"
         >
-          {loading ? "Saving..." : "Save username"}
+          {initializing ? "Loading..." : loading ? "Saving..." : username ? "Save profile" : "Save username"}
         </button>
       </section>
 
