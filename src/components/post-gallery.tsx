@@ -1,0 +1,57 @@
+"use client";
+
+import { useState } from "react";
+
+type PostGalleryProps = {
+  images: string[];
+  altBase: string;
+};
+
+export function PostGallery({ images, altBase }: PostGalleryProps) {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  return (
+    <div className="p-2">
+      <div className="relative">
+        <div
+          className="hide-scrollbar flex snap-x snap-mandatory overflow-x-auto scroll-smooth rounded-[1.1rem]"
+          onScroll={(event) => {
+            const target = event.currentTarget;
+            const nextIndex = Math.round(target.scrollLeft / Math.max(target.clientWidth, 1));
+            if (nextIndex !== activeIndex) {
+              setActiveIndex(nextIndex);
+            }
+          }}
+        >
+          {images.map((imageUrl, index) => (
+            <div key={`${imageUrl}-${index}`} className="min-w-full snap-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={imageUrl}
+                alt={`${altBase} ${index + 1}`}
+                className="aspect-[4/5] w-full rounded-[1.1rem] object-cover"
+              />
+            </div>
+          ))}
+        </div>
+
+        {images.length > 1 ? (
+          <div className="pointer-events-none absolute right-3 top-3 rounded-full bg-black/55 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+            {activeIndex + 1} / {images.length}
+          </div>
+        ) : null}
+      </div>
+
+      {images.length > 1 ? (
+        <div className="mt-3 flex items-center justify-center gap-2">
+          {images.map((_, index) => (
+            <span
+              key={`dot-${index}`}
+              className={`h-2 w-2 rounded-full transition ${index === activeIndex ? "bg-pink-500" : "bg-pink-200"}`}
+            />
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}

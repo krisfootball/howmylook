@@ -47,7 +47,7 @@ export function UploadForm() {
           .upload(filePath, file, { upsert: false });
 
         if (uploadError) {
-          throw uploadError;
+          throw new Error(`Photo upload failed: ${uploadError.message}`);
         }
 
         const { data } = supabase.storage.from("post-images").getPublicUrl(filePath);
@@ -67,12 +67,14 @@ export function UploadForm() {
           yes_count: 0,
           no_count: 0,
           is_active: true,
+          keep_forever: false,
+          expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
         })
         .select("id")
         .single();
 
       if (error) {
-        throw error;
+        throw new Error(`Post insert failed: ${error.message}`);
       }
 
       if (uploadedImageUrls.length > 0) {
@@ -85,7 +87,7 @@ export function UploadForm() {
         );
 
         if (postImagesError) {
-          throw postImagesError;
+          throw new Error(`Post images insert failed: ${postImagesError.message}`);
         }
       }
 
@@ -104,7 +106,9 @@ export function UploadForm() {
           ? "Multi-photo posts need one Supabase SQL migration first. Run SUPABASE_MIGRATION_POST_IMAGES.sql in Supabase, then try again."
           : lower.includes("bucket")
             ? "Photo upload is almost ready, but the Supabase storage bucket still needs setup. Run SUPABASE_STORAGE_SETUP.sql in Supabase, then try again."
-            : errorMessage;
+            : lower === "unable to create post."
+              ? "Unable to create post. The exact Supabase error did not come through cleanly yet."
+              : `Unable to create post: ${errorMessage}`;
       setMessage(friendlyMessage);
     } finally {
       setLoading(false);
@@ -152,6 +156,10 @@ export function UploadForm() {
           placeholder="Where will you wear this?"
           className="mt-3 min-h-28 w-full rounded-[1.2rem] bg-slate-50 p-4 text-sm leading-6 text-slate-900 outline-none placeholder:text-slate-400"
         />
+      </section>
+
+      <section className="rounded-[1.4rem] border border-pink-100 bg-pink-50/70 p-4 text-sm leading-6 text-slate-700">
+        Posts auto-delete after 30 days by default. Later you will be able to keep up to 10 looks on your profile for longer.
       </section>
 
       <button

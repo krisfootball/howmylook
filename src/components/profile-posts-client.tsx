@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
+const MAX_KEPT_POSTS = 10;
+
 type ProfilePost = {
   id: string;
   caption: string;
@@ -11,6 +13,8 @@ type ProfilePost = {
   imageCount: number;
   yesCount: number;
   noCount: number;
+  keepForever: boolean;
+  expiresAt: string;
 };
 
 export function ProfilePostsClient() {
@@ -18,6 +22,8 @@ export function ProfilePostsClient() {
   const [posts, setPosts] = useState<ProfilePost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
+  const [busyId, setBusyId] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -39,9 +45,10 @@ export function ProfilePostsClient() {
 
         const { data: rows, error: postsError } = await supabase
           .from("posts")
-          .select("id,caption,image_url,yes_count,no_count,post_images(id)")
+          .select("id,caption,image_url,yes_count,no_count,keep_forever,expires_at,post_images(id)")
           .eq("user_id", user.id)
           .eq("is_active", true)
+          .or(`keep_forever.eq.true,expires_at.gt.${new Date().toISOString()}`)
           .order("created_at", { ascending: false });
 
         if (postsError) {
@@ -56,6 +63,8 @@ export function ProfilePostsClient() {
             imageCount: post.post_images?.length ?? (post.image_url.startsWith("seed://") ? 0 : 1),
             yesCount: post.yes_count,
             noCount: post.no_count,
+            keepForever: Boolean(post.keep_forever),
+            expiresAt: post.expires_at,
           })),
         );
       } catch (error) {
@@ -68,6 +77,46 @@ export function ProfilePostsClient() {
 
     load();
   }, [supabase]);
+
+  async function handleToggleKeep(postId: string, nextKeepForever: boolean) {
+    setBusyId(postId);
+    setMessage(null);
+
+    try {
+      if (nextKeepForever) {
+        const keptCount = posts.filter((post) => post.keepForever).length;
+        if (keptCount >= MAX_KEPT_POSTS) {
+          throw new Error(`You can keep up to ${MAX_KEPT_POSTS} looks on your profile.`);
+        }
+      }
+
+      const { error: updateError } = await supabase
+        .from("posts")
+        .update({ keep_forever: nextKeepForever })
+        .eq("id", postId);
+
+      if (updateError) {
+        throw updateError;
+      }
+
+      setPosts((current) =>
+        current.map((post) =>
+          post.id === postId
+            ? {
+                ...post,
+                keepForever: nextKeepForever,
+              }
+            : post,
+        ),
+      );
+      setMessage(nextKeepForever ? "Look kept on profile." : "Look will expire normally again.");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Unable to update keep setting.";
+      setMessage(errorMessage);
+    } finally {
+      setBusyId(null);
+    }
+  }
 
   if (loading) {
     return (
@@ -104,20 +153,27 @@ export function ProfilePostsClient() {
             href={`/profile/${post.id}`}
             className="overflow-hidden rounded-[1.4rem] border border-pink-100 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
           >
-            {showImage ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={post.imageUrl} alt={post.caption} className="aspect-square w-full object-cover" />
-            ) : (
-              <div
-                className={`aspect-square ${
-                  index % 3 === 0
-                    ? "bg-[linear-gradient(180deg,_#f6d6df_0%,_#dfc8ff_100%)]"
-                    : index % 3 === 1
-                      ? "bg-[linear-gradient(180deg,_#f7e7c6_0%,_#ebb3b0_100%)]"
-                      : "bg-[linear-gradient(180deg,_#c9d4ff_0%,_#dfb2f4_100%)]"
-                }`}
-              />
-            )}
+            <div className="relative">
+              {showImage ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={post.imageUrl} alt={post.caption} className="aspect-square w-full object-cover" />
+              ) : (
+                <div
+                  className={`aspect-square ${
+                    index % 3 === 0
+                      ? "bg-[linear-gradient(180deg,_#f6d6df_0%,_#dfc8ff_100%)]"
+                      : index % 3 === 1
+                        ? "bg-[linear-gradient(180deg,_#f7e7c6_0%,_#ebb3b0_100%)]"
+                        : "bg-[linear-gradient(180deg,_#c9d4ff_0%,_#dfb2f4_100%)]"
+                  }`}
+                />
+              )}
+              {post.imageCount > 1 ? (
+                <div className="pointer-events-none absolute right-2 top-2 rounded-full bg-black/55 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
+                  {post.imageCount} photos
+                </div>
+              ) : null}
+            </div>
             <div className="p-3">
               <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-pink-500">Occasion</p>
               <p className="mt-1 text-sm font-semibold text-slate-900">{post.caption}</p>
@@ -127,12 +183,39 @@ export function ProfilePostsClient() {
               <p className="mt-1 text-xs text-slate-500">
                 {post.imageCount === 0 ? "No photos" : `${post.imageCount} photo${post.imageCount > 1 ? "s" : ""}`}
               </p>
-              <p className="mt-2 text-xs font-medium text-pink-600">Open post</p>
+              <p className="mt-1 text-xs text-slate-500">
+                {post.keepForever
+                  ? "Kept on profile"
+                  : `Expires ${new Date(post.expiresAt).toLocaleDateString()}`}
+              </p>
+              <div className="mt-2 flex items-center justify-between gap-2">
+                <p className="text-xs font-medium text-pink-600">Open post</p>
+                <button
+                  type="button"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    handleToggleKeep(post.id, !post.keepForever);
+                  }}
+                  disabled={busyId === post.id}
+                  className={`rounded-full px-3 py-1.5 text-[11px] font-semibold ${
+                    post.keepForever
+                      ? "bg-slate-900 text-white"
+                      : "bg-pink-50 text-pink-700 ring-1 ring-pink-200"
+                  } disabled:opacity-60`}
+                >
+                  {busyId === post.id ? "Saving..." : post.keepForever ? "Unkeep" : "Keep"}
+                </button>
+              </div>
               {!showImage ? <p className="mt-1 text-[11px] text-slate-400">Demo image placeholder</p> : null}
             </div>
           </Link>
         );
       })}
+      {message ? (
+        <div className="col-span-2 rounded-[1.2rem] bg-white px-4 py-3 text-sm leading-6 text-slate-600 shadow-sm">
+          {message}
+        </div>
+      ) : null}
     </div>
   );
 }

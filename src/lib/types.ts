@@ -19,6 +19,8 @@ export type DatabasePost = {
   yes_count: number;
   no_count: number;
   is_active: boolean;
+  expires_at?: string;
+  keep_forever?: boolean;
   post_images?: {
     id: string;
     image_url: string;

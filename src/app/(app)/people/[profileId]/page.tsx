@@ -33,9 +33,10 @@ export default async function PeopleProfilePage({ params }: PeopleProfilePagePro
   const [{ data: posts }, { count: followersCount }, { count: followingCount }] = await Promise.all([
     supabase
       .from("posts")
-      .select("id,caption,image_url,yes_count,no_count")
+      .select("id,caption,image_url,yes_count,no_count,keep_forever,expires_at,post_images(id)")
       .eq("user_id", profileId)
       .eq("is_active", true)
+      .or(`keep_forever.eq.true,expires_at.gt.${new Date().toISOString()}`)
       .order("created_at", { ascending: false })
       .limit(24),
     supabase.from("follows").select("*", { count: "exact", head: true }).eq("following_id", profileId),
@@ -113,30 +114,48 @@ export default async function PeopleProfilePage({ params }: PeopleProfilePagePro
             <div className="grid grid-cols-2 gap-3">
               {posts.map((post, index) => {
                 const showImage = post.image_url.startsWith("http");
+                const imageCount = post.post_images?.length ?? (post.image_url.startsWith("seed://") ? 0 : 1);
                 return (
                   <Link
                     key={post.id}
                     href={`/profile/${post.id}?from=people&profileId=${profileId}`}
                     className="overflow-hidden rounded-[1.4rem] border border-pink-100 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
                   >
-                    {showImage ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={post.image_url} alt={post.caption ?? "Outfit for an occasion"} className="aspect-square w-full object-cover" />
-                    ) : (
-                      <div
-                        className={`aspect-square ${
-                          index % 3 === 0
-                            ? "bg-[linear-gradient(180deg,_#f6d6df_0%,_#dfc8ff_100%)]"
-                            : index % 3 === 1
-                              ? "bg-[linear-gradient(180deg,_#f7e7c6_0%,_#ebb3b0_100%)]"
-                              : "bg-[linear-gradient(180deg,_#c9d4ff_0%,_#dfb2f4_100%)]"
-                        }`}
-                      />
-                    )}
+                    <div className="relative">
+                      {showImage ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={post.image_url} alt={post.caption ?? "Outfit for an occasion"} className="aspect-square w-full object-cover" />
+                      ) : (
+                        <div
+                          className={`aspect-square ${
+                            index % 3 === 0
+                              ? "bg-[linear-gradient(180deg,_#f6d6df_0%,_#dfc8ff_100%)]"
+                              : index % 3 === 1
+                                ? "bg-[linear-gradient(180deg,_#f7e7c6_0%,_#ebb3b0_100%)]"
+                                : "bg-[linear-gradient(180deg,_#c9d4ff_0%,_#dfb2f4_100%)]"
+                          }`}
+                        />
+                      )}
+                      {imageCount > 1 ? (
+                        <div className="pointer-events-none absolute right-2 top-2 rounded-full bg-black/55 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
+                          {imageCount} photos
+                        </div>
+                      ) : null}
+                    </div>
                     <div className="p-3">
                       <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-pink-500">Occasion</p>
                       <p className="mt-1 text-sm font-semibold text-slate-900">{post.caption ?? "No occasion added yet"}</p>
                       <p className="mt-1 text-xs text-slate-500">{post.yes_count} yes · {post.no_count} no</p>
+                      <p className="mt-1 text-xs text-slate-500">
+                        {imageCount === 0 ? "No photos" : `${imageCount} photo${imageCount > 1 ? "s" : ""}`}
+                      </p>
+                      <p className="mt-1 text-xs text-slate-500">
+                        {post.keep_forever
+                          ? "Kept on profile"
+                          : post.expires_at
+                            ? `Expires ${new Date(post.expires_at).toLocaleDateString()}`
+                            : "30-day look"}
+                      </p>
                       <p className="mt-2 text-xs font-medium text-pink-600">Open post</p>
                     </div>
                   </Link>

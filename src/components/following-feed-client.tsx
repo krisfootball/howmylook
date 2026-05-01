@@ -13,6 +13,7 @@ type FeedPost = {
   yesCount: number;
   noCount: number;
   imageUrl: string;
+  imageCount: number;
   authorId: string;
   source: "following" | "latest";
 };
@@ -59,9 +60,10 @@ export function FollowingFeedClient({ refreshKey = 0 }: FollowingFeedClientProps
         if (followingIds.length > 0) {
           const { data: followedPostRows, error: postsError } = await supabase
             .from("posts")
-            .select("id,caption,image_url,yes_count,no_count,user_id")
+            .select("id,caption,image_url,yes_count,no_count,user_id,post_images(id)")
             .in("user_id", followingIds)
             .eq("is_active", true)
+            .or(`keep_forever.eq.true,expires_at.gt.${new Date().toISOString()}`)
             .order("created_at", { ascending: false })
             .limit(TARGET_FEED_COUNT);
 
@@ -81,6 +83,7 @@ export function FollowingFeedClient({ refreshKey = 0 }: FollowingFeedClientProps
               yesCount: post.yes_count,
               noCount: post.no_count,
               imageUrl: post.image_url,
+              imageCount: post.post_images?.length ?? (post.image_url.startsWith("seed://") ? 0 : 1),
               authorId: post.user_id,
               source: "following",
             });
@@ -90,9 +93,10 @@ export function FollowingFeedClient({ refreshKey = 0 }: FollowingFeedClientProps
         if (combinedPosts.length < TARGET_FEED_COUNT) {
           const { data: latestPostRows, error: latestPostsError } = await supabase
             .from("posts")
-            .select("id,caption,image_url,yes_count,no_count,user_id")
+            .select("id,caption,image_url,yes_count,no_count,user_id,post_images(id)")
             .eq("is_active", true)
             .neq("user_id", user.id)
+            .or(`keep_forever.eq.true,expires_at.gt.${new Date().toISOString()}`)
             .order("created_at", { ascending: false })
             .limit(30);
 
@@ -112,6 +116,7 @@ export function FollowingFeedClient({ refreshKey = 0 }: FollowingFeedClientProps
               yesCount: post.yes_count,
               noCount: post.no_count,
               imageUrl: post.image_url,
+              imageCount: post.post_images?.length ?? (post.image_url.startsWith("seed://") ? 0 : 1),
               authorId: post.user_id,
               source: "latest",
             });
@@ -168,20 +173,27 @@ export function FollowingFeedClient({ refreshKey = 0 }: FollowingFeedClientProps
             key={post.id}
             className="overflow-hidden rounded-[1.6rem] border border-pink-100 bg-white shadow-sm"
           >
-            {showImage ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={post.imageUrl} alt={post.caption} className="aspect-[4/5] w-full object-cover" />
-            ) : (
-              <div
-                className={`aspect-[4/5] ${
-                  index % 3 === 0
-                    ? "bg-[linear-gradient(180deg,_#f6d6df_0%,_#dfc8ff_100%)]"
-                    : index % 3 === 1
-                      ? "bg-[linear-gradient(180deg,_#f7e7c6_0%,_#ebb3b0_100%)]"
-                      : "bg-[linear-gradient(180deg,_#c9d4ff_0%,_#dfb2f4_100%)]"
-                }`}
-              />
-            )}
+            <div className="relative">
+              {showImage ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={post.imageUrl} alt={post.caption} className="aspect-[4/5] w-full object-cover" />
+              ) : (
+                <div
+                  className={`aspect-[4/5] ${
+                    index % 3 === 0
+                      ? "bg-[linear-gradient(180deg,_#f6d6df_0%,_#dfc8ff_100%)]"
+                      : index % 3 === 1
+                        ? "bg-[linear-gradient(180deg,_#f7e7c6_0%,_#ebb3b0_100%)]"
+                        : "bg-[linear-gradient(180deg,_#c9d4ff_0%,_#dfb2f4_100%)]"
+                  }`}
+                />
+              )}
+              {post.imageCount > 1 ? (
+                <div className="pointer-events-none absolute right-3 top-3 rounded-full bg-black/55 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+                  {post.imageCount} photos
+                </div>
+              ) : null}
+            </div>
             <div className="space-y-3 p-4">
               <div>
                 <p className="font-semibold text-slate-900">
@@ -194,6 +206,9 @@ export function FollowingFeedClient({ refreshKey = 0 }: FollowingFeedClientProps
                 <span>{post.yesCount} yes</span>
                 <span>{post.noCount} no</span>
               </div>
+              <p className="text-xs text-slate-500">
+                {post.imageCount === 0 ? "No photos" : `${post.imageCount} photo${post.imageCount > 1 ? "s" : ""}`}
+              </p>
               {!showImage ? <p className="text-xs text-slate-400">Demo image placeholder</p> : null}
             </div>
           </article>

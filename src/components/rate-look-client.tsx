@@ -53,8 +53,9 @@ export function RateLookClient({ initialRatingsCompleted }: RateLookClientProps)
 
         const { data, error } = await supabase
           .from("posts")
-          .select("id,user_id,image_url,caption,yes_count,no_count,is_active,created_at")
+          .select("id,user_id,image_url,caption,yes_count,no_count,is_active,created_at,expires_at,keep_forever")
           .eq("is_active", true)
+          .or(`keep_forever.eq.true,expires_at.gt.${new Date().toISOString()}`)
           .order("created_at", { ascending: false })
           .limit(50);
 

@@ -2,6 +2,7 @@ import { AccessGateCard } from "@/components/access-gate-card";
 import { MobileShell } from "@/components/mobile-shell";
 import { ProfileClient } from "@/components/profile-client";
 import { ProfilePostsClient } from "@/components/profile-posts-client";
+import { ProfileRetentionNote } from "@/components/profile-retention-note";
 
 export default function ProfilePage() {
   return (
@@ -12,6 +13,8 @@ export default function ProfilePage() {
       <AccessGateCard areaLabel="Profile">
         <div className="space-y-5">
           <ProfileClient />
+
+          <ProfileRetentionNote />
 
           <section>
             <div className="mb-3 flex items-center justify-between">

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { MobileShell } from "@/components/mobile-shell";
+import { PostGallery } from "@/components/post-gallery";
 import { supabase } from "@/lib/supabase";
 
 type PostDetailPageProps = {
@@ -72,31 +73,7 @@ export default async function PostDetailPage({ params, searchParams }: PostDetai
 
         <article className="overflow-hidden rounded-[1.6rem] border border-pink-100 bg-white shadow-sm">
           {showImage ? (
-            <div className="p-2">
-              <div className="hide-scrollbar flex snap-x snap-mandatory overflow-x-auto scroll-smooth rounded-[1.1rem]">
-                {galleryImages.map((imageUrl, index) => (
-                  <div key={`${imageUrl}-${index}`} className="min-w-full snap-center">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={imageUrl}
-                      alt={`${post.caption ?? "Outfit for an occasion"} ${index + 1}`}
-                      className="aspect-[4/5] w-full rounded-[1.1rem] object-cover"
-                    />
-                  </div>
-                ))}
-              </div>
-
-              {galleryImages.length > 1 ? (
-                <div className="mt-3 flex items-center justify-center gap-2">
-                  {galleryImages.map((_, index) => (
-                    <span
-                      key={`dot-${index}`}
-                      className={`h-2 w-2 rounded-full ${index === 0 ? "bg-pink-500" : "bg-pink-200"}`}
-                    />
-                  ))}
-                </div>
-              ) : null}
-            </div>
+            <PostGallery images={galleryImages} altBase={post.caption ?? "Outfit for an occasion"} />
           ) : (
             <div className="aspect-[4/5] bg-[linear-gradient(180deg,_#f6d6df_0%,_#dfc8ff_100%)]" />
           )}
