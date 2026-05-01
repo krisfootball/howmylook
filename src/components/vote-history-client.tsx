@@ -71,7 +71,7 @@ export function VoteHistoryClient({ value }: VoteHistoryClientProps) {
           .filter((post): post is NonNullable<typeof post> => Boolean(post))
           .map((post) => ({
             id: post.id,
-            caption: post.caption ?? "Would you wear this?",
+            caption: post.caption ?? "No occasion added yet",
             imageUrl: post.image_url,
             yesCount: post.yes_count,
             noCount: post.no_count,

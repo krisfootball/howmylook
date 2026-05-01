@@ -51,7 +51,7 @@ export function ProfilePostsClient() {
         setPosts(
           (rows ?? []).map((post) => ({
             id: post.id,
-            caption: post.caption ?? "Untitled look",
+            caption: post.caption ?? "No occasion added yet",
             imageUrl: post.image_url,
             imageCount: post.post_images?.length ?? (post.image_url.startsWith("seed://") ? 0 : 1),
             yesCount: post.yes_count,
@@ -119,7 +119,8 @@ export function ProfilePostsClient() {
               />
             )}
             <div className="p-3">
-              <p className="text-sm font-semibold text-slate-900">{post.caption}</p>
+              <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-pink-500">Occasion</p>
+              <p className="mt-1 text-sm font-semibold text-slate-900">{post.caption}</p>
               <p className="mt-1 text-xs text-slate-500">
                 {post.yesCount} yes · {post.noCount} no
               </p>

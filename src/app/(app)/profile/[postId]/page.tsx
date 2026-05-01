@@ -79,7 +79,7 @@ export default async function PostDetailPage({ params, searchParams }: PostDetai
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={imageUrl}
-                      alt={`${post.caption ?? "Outfit post"} ${index + 1}`}
+                      alt={`${post.caption ?? "Outfit for an occasion"} ${index + 1}`}
                       className="aspect-[4/5] w-full rounded-[1.1rem] object-cover"
                     />
                   </div>
@@ -103,7 +103,8 @@ export default async function PostDetailPage({ params, searchParams }: PostDetai
 
           <div className="space-y-4 p-4">
             <div>
-              <p className="text-lg font-semibold tracking-tight text-slate-900">{post.caption ?? "Untitled look"}</p>
+              <p className="text-xs font-medium uppercase tracking-[0.18em] text-pink-500">Occasion</p>
+              <p className="mt-2 text-lg font-semibold tracking-tight text-slate-900">{post.caption ?? "No occasion added yet"}</p>
               <p className="mt-2 text-sm text-slate-500">
                 {authorName}
                 {authorHandle ? <span> · {authorHandle}</span> : null}

@@ -121,7 +121,7 @@ export default async function PeopleProfilePage({ params }: PeopleProfilePagePro
                   >
                     {showImage ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={post.image_url} alt={post.caption ?? "Outfit post"} className="aspect-square w-full object-cover" />
+                      <img src={post.image_url} alt={post.caption ?? "Outfit for an occasion"} className="aspect-square w-full object-cover" />
                     ) : (
                       <div
                         className={`aspect-square ${
@@ -134,7 +134,8 @@ export default async function PeopleProfilePage({ params }: PeopleProfilePagePro
                       />
                     )}
                     <div className="p-3">
-                      <p className="text-sm font-semibold text-slate-900">{post.caption ?? "Untitled look"}</p>
+                      <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-pink-500">Occasion</p>
+                      <p className="mt-1 text-sm font-semibold text-slate-900">{post.caption ?? "No occasion added yet"}</p>
                       <p className="mt-1 text-xs text-slate-500">{post.yes_count} yes · {post.no_count} no</p>
                       <p className="mt-2 text-xs font-medium text-pink-600">Open post</p>
                     </div>

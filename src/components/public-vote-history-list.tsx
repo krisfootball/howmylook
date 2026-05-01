@@ -51,7 +51,8 @@ export function PublicVoteHistoryList({
               />
             )}
             <div className="space-y-2 p-4">
-              <p className="font-semibold text-slate-900">{item.caption}</p>
+              <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-pink-500">Occasion</p>
+              <p className="mt-1 font-semibold text-slate-900">{item.caption}</p>
               <div className="flex items-center gap-3 text-sm text-slate-500">
                 <span>{item.yesCount} yes</span>
                 <span>{item.noCount} no</span>

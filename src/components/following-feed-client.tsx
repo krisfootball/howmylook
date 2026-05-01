@@ -77,7 +77,7 @@ export function FollowingFeedClient({ refreshKey = 0 }: FollowingFeedClientProps
             seenPostIds.add(post.id);
             combinedPosts.push({
               id: post.id,
-              caption: post.caption ?? "Would you wear this?",
+              caption: post.caption ?? "No occasion added yet",
               yesCount: post.yes_count,
               noCount: post.no_count,
               imageUrl: post.image_url,
@@ -108,7 +108,7 @@ export function FollowingFeedClient({ refreshKey = 0 }: FollowingFeedClientProps
             seenPostIds.add(post.id);
             combinedPosts.push({
               id: post.id,
-              caption: post.caption ?? "Would you wear this?",
+              caption: post.caption ?? "No occasion added yet",
               yesCount: post.yes_count,
               noCount: post.no_count,
               imageUrl: post.image_url,
@@ -187,7 +187,8 @@ export function FollowingFeedClient({ refreshKey = 0 }: FollowingFeedClientProps
                 <p className="font-semibold text-slate-900">
                   {post.source === "following" ? "From people you follow" : "Fresh from the community"}
                 </p>
-                <p className="mt-3 text-sm leading-6 text-slate-700">{post.caption}</p>
+                <p className="mt-3 text-[11px] font-medium uppercase tracking-[0.16em] text-pink-500">Occasion</p>
+                <p className="mt-1 text-sm leading-6 text-slate-700">{post.caption}</p>
               </div>
               <div className="flex items-center gap-3 text-sm text-slate-500">
                 <span>{post.yesCount} yes</span>

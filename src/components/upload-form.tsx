@@ -144,12 +144,13 @@ export function UploadForm() {
       </section>
 
       <section className="rounded-[1.7rem] border border-pink-100 bg-white p-4 shadow-sm">
-        <label className="text-sm font-semibold text-slate-900">Caption</label>
+        <label className="text-sm font-semibold text-slate-900">Occasion</label>
+        <p className="mt-2 text-xs leading-5 text-slate-500">Help people understand where you plan to wear this outfit.</p>
         <textarea
           value={caption}
           onChange={(event) => setCaption(event.target.value)}
-          placeholder="Wedding guest dress for next Saturday — yes or no?"
-          className="mt-3 min-h-28 w-full rounded-[1.2rem] bg-slate-50 p-4 text-sm leading-6 text-slate-900 outline-none"
+          placeholder="Where will you wear this?"
+          className="mt-3 min-h-28 w-full rounded-[1.2rem] bg-slate-50 p-4 text-sm leading-6 text-slate-900 outline-none placeholder:text-slate-400"
         />
       </section>
 

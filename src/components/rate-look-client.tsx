@@ -93,7 +93,7 @@ export function RateLookClient({ initialRatingsCompleted }: RateLookClientProps)
           authorId: post.user_id,
           authorName: `Look ${index + 1}`,
           authorHandle: `@howmylook${index + 1}`,
-          caption: post.caption ?? "Would you wear this?",
+          caption: post.caption ?? "No occasion added yet",
           yesCount: post.yes_count,
           noCount: post.no_count,
           imageUrl: post.image_url,
