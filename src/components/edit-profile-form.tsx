@@ -82,6 +82,10 @@ export function EditProfileForm({
 
       const cleanUsername = username.trim().toLowerCase();
 
+      if (!cleanUsername) {
+        throw new Error("Username is required.");
+      }
+
       if (cleanUsername.length < 3) {
         throw new Error("Username must be at least 3 characters.");
       }
@@ -123,13 +127,15 @@ export function EditProfileForm({
         nextAvatarUrl = data.publicUrl;
       }
 
-      const { error: updateError } = await supabase.from("profiles").upsert({
-        id: user.id,
-        username: cleanUsername,
-        display_name: displayName.trim() || null,
-        bio: bio.trim() || null,
-        avatar_url: nextAvatarUrl,
-      });
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({
+          username: cleanUsername,
+          display_name: displayName.trim() || null,
+          bio: bio.trim() || null,
+          avatar_url: nextAvatarUrl,
+        })
+        .eq("id", user.id);
 
       if (updateError) {
         throw updateError;
@@ -155,7 +161,7 @@ export function EditProfileForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 rounded-[1.6rem] border border-pink-100 bg-white p-4 shadow-sm">
+    <form noValidate onSubmit={handleSubmit} className="space-y-4 rounded-[1.6rem] border border-pink-100 bg-white p-4 shadow-sm">
       <div className="flex items-center gap-4">
         {avatarUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -199,6 +205,7 @@ export function EditProfileForm({
           required
           disabled={loading || saving}
         />
+        <p className="mt-2 text-xs text-slate-500">At least 3 characters. Letters and numbers work best.</p>
       </div>
 
       <div>
@@ -232,7 +239,15 @@ export function EditProfileForm({
       </button>
 
       {message ? (
-        <div className="rounded-[1.2rem] bg-pink-50 px-4 py-3 text-sm leading-6 text-slate-700">{message}</div>
+        <div
+          className={`rounded-[1.2rem] px-4 py-3 text-sm leading-6 ${
+            message.toLowerCase().includes("updated") || message.toLowerCase().includes("selected")
+              ? "bg-pink-50 text-slate-700"
+              : "bg-rose-50 text-rose-700"
+          }`}
+        >
+          {message}
+        </div>
       ) : null}
     </form>
   );
