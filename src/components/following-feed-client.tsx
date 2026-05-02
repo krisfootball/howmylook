@@ -255,65 +255,58 @@ export function FollowingFeedClient() {
 
   return (
     <div className="space-y-4">
-      <article className="overflow-hidden rounded-[1.7rem] bg-slate-950 p-3 text-white shadow-[0_20px_60px_rgba(15,23,42,0.25)]">
-        <div className="rounded-[1.35rem] bg-slate-950">
-          <div className="relative overflow-hidden rounded-[1.1rem]">
-            {showImage ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={currentPost.imageUrl} alt={currentPost.caption} className="aspect-[4/5] w-full object-cover" />
-            ) : (
-              <div className="aspect-[4/5] bg-[linear-gradient(180deg,_#f6d6df_0%,_#dfc8ff_100%)]" />
-            )}
+      <article className="overflow-hidden rounded-[1.8rem] bg-slate-950 text-white shadow-[0_20px_60px_rgba(15,23,42,0.25)]">
+        <div className="relative">
+          {showImage ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={currentPost.imageUrl} alt={currentPost.caption} className="aspect-[9/16] w-full object-cover" />
+          ) : (
+            <div className="aspect-[9/16] bg-[linear-gradient(180deg,_#f6d6df_0%,_#dfc8ff_100%)]" />
+          )}
 
-            <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-3 p-4">
-              <div className="rounded-2xl bg-white/78 px-3 py-2 text-slate-900 shadow-sm backdrop-blur">
-                <p className="text-sm font-semibold">{currentPost.authorName}</p>
-                <p className="text-xs text-slate-600">{currentPost.authorUsername}</p>
-              </div>
-              <span className="rounded-full bg-white/78 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-pink-600 shadow-sm backdrop-blur">
-                {currentPost.source === "following" ? "Following" : "Fresh"}
-              </span>
-            </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/18 to-black/20" />
 
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/90 via-slate-950/50 to-transparent p-4 pt-16">
-              <div className="flex items-center justify-between rounded-full bg-black/35 px-4 py-2 text-sm text-white backdrop-blur-sm">
-                <span>{currentPost.yesCount} yes</span>
-                <span>{currentPost.noCount} no</span>
-              </div>
+          <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-3 p-4">
+            <div className="rounded-2xl border border-white/25 bg-black/20 px-3 py-2 text-white backdrop-blur-sm">
+              <p className="text-sm font-semibold">{currentPost.authorName}</p>
+              <p className="text-xs text-white/80">{currentPost.authorUsername}</p>
             </div>
+            <span className="rounded-full border border-white/20 bg-black/15 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white backdrop-blur-sm">
+              {currentPost.source === "following" ? "Following" : "Fresh"}
+            </span>
           </div>
 
-          <div className="mt-2 rounded-[1.05rem] bg-white/92 p-3 text-slate-900 shadow-sm">
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-pink-500">Occasion</p>
-                <p className="mt-1 text-sm font-medium leading-5 text-slate-900">{currentPost.caption}</p>
-              </div>
-              <Link href={`/people/${currentPost.authorId}`} className="shrink-0 text-[11px] font-medium text-slate-500">
+          <div className="absolute inset-x-0 bottom-0 p-4 pb-5 text-white">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/75">Occasion</p>
+              <Link href={`/people/${currentPost.authorId}`} className="text-[11px] font-medium text-white/80">
                 Profile
               </Link>
             </div>
 
-            <div className="mt-3 flex items-center gap-2">
+            <p className="mt-2 text-[15px] font-medium leading-6 text-white">
+              {currentPost.caption}
+            </p>
+
+            <div className="mt-3 flex items-center justify-between text-xs text-white/85">
+              <span>{currentPost.yesCount} yes</span>
+              <span>{currentPost.noCount} no</span>
+            </div>
+
+            <div className="mt-4 grid grid-cols-2 gap-3">
               <button
                 onClick={() => handleVote("yes")}
                 disabled={saving}
-                className="flex-1 rounded-2xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-pink-200 hover:bg-pink-50 disabled:opacity-60"
+                className="rounded-full border border-white/55 bg-white/5 px-4 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/10 disabled:opacity-60"
               >
-                <span className="inline-flex items-center gap-2">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-[11px] text-slate-700">Y</span>
-                  <span>{saving ? "Saving..." : appConfig.yesLabel}</span>
-                </span>
+                {saving ? "Saving..." : appConfig.yesLabel}
               </button>
               <button
                 onClick={() => handleVote("no")}
                 disabled={saving}
-                className="flex-1 rounded-2xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-pink-200 hover:bg-pink-50 disabled:opacity-60"
+                className="rounded-full border border-white/55 bg-white/5 px-4 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/10 disabled:opacity-60"
               >
-                <span className="inline-flex items-center gap-2">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-[11px] text-slate-700">N</span>
-                  <span>{saving ? "Saving..." : appConfig.noLabel}</span>
-                </span>
+                {saving ? "Saving..." : appConfig.noLabel}
               </button>
             </div>
           </div>
