@@ -69,14 +69,14 @@ export function SearchExploreClient() {
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.22em] text-pink-500">Search</p>
-            <h2 className="mt-2 text-lg font-semibold tracking-tight text-slate-900">Explore popular looks</h2>
+            <h2 className="mt-2 text-lg font-semibold tracking-tight text-slate-900">Popular looks</h2>
           </div>
           <span className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600">
-            Popular now
+            3-column grid
           </span>
         </div>
         <p className="mt-2 text-sm leading-6 text-slate-600">
-          Browse the most popular photos across the app, similar to an explore page.
+          Browse the most popular photos across the app in one clean photo grid.
         </p>
         <div className="mt-4 flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-3">
           <span className="text-sm text-slate-400">⌕</span>
@@ -84,7 +84,7 @@ export function SearchExploreClient() {
             type="text"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search by occasion"
+            placeholder="Search photos by occasion"
             className="w-full bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-400"
           />
           {query ? (

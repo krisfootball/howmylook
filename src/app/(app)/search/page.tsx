@@ -6,7 +6,7 @@ export default function SearchPage() {
   return (
     <MobileShell
       title="Search"
-      subtitle="Explore popular looks from across the app and discover what is getting the most yes votes."
+      subtitle="Explore popular looks from across the app in a simple 3-column photo grid."
     >
       <AccessGateCard areaLabel="Search and explore">
         <SearchExploreClient />
