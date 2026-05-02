@@ -8,9 +8,9 @@ type NavItem = {
 };
 
 const navItems: NavItem[] = [
-  { href: "/following", label: "Home", icon: "🏠" },
-  { href: "/upload", label: "Post", icon: "📸" },
-  { href: "/profile", label: "Profile", icon: "🪞" },
+  { href: "/following", label: "Home", icon: "⌂" },
+  { href: "/upload", label: "Post", icon: "+" },
+  { href: "/profile", label: "Profile", icon: "○" },
 ];
 
 export function MobileShell({
@@ -42,7 +42,9 @@ export function MobileShell({
               href={item.href}
               className="flex flex-col items-center gap-1 rounded-2xl px-2 py-2 text-center text-[11px] font-medium text-slate-600 transition hover:bg-pink-50 hover:text-pink-600"
             >
-              <span className="text-lg leading-none">{item.icon}</span>
+              <span className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-white text-base leading-none text-slate-700">
+                {item.icon}
+              </span>
               <span>{item.label}</span>
             </Link>
           ))}
