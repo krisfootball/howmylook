@@ -15,8 +15,10 @@ type DiscoverProfile = {
 
 export function DiscoverCreatorsClient({
   onChanged,
+  query = "",
 }: {
   onChanged?: () => void;
+  query?: string;
 }) {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [profiles, setProfiles] = useState<DiscoverProfile[]>([]);
@@ -65,16 +67,23 @@ export function DiscoverCreatorsClient({
 
         const followingIds = new Set((followRows ?? []).map((row) => row.following_id));
 
-        setProfiles(
-          (allProfiles ?? []).map((profile) => ({
-            id: profile.id,
-            username: profile.username ? `@${profile.username}` : "@username",
-            displayName: profile.display_name || "HowMyLook user",
-            bio: profile.bio || "Posting looks and getting quick feedback.",
-            avatarUrl: profile.avatar_url || null,
-            isFollowing: followingIds.has(profile.id),
-          })),
-        );
+        const mappedProfiles = (allProfiles ?? []).map((profile) => ({
+          id: profile.id,
+          username: profile.username ? `@${profile.username}` : "@username",
+          displayName: profile.display_name || "HowMyLook user",
+          bio: profile.bio || "Posting looks and getting quick feedback.",
+          avatarUrl: profile.avatar_url || null,
+          isFollowing: followingIds.has(profile.id),
+        }));
+
+        const filteredProfiles = !query
+          ? mappedProfiles
+          : mappedProfiles.filter((profile) => {
+              const haystack = `${profile.displayName} ${profile.username} ${profile.bio}`.toLowerCase();
+              return haystack.includes(query.toLowerCase());
+            });
+
+        setProfiles(filteredProfiles);
         setMessage(null);
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Unable to load suggested people.";
@@ -85,7 +94,7 @@ export function DiscoverCreatorsClient({
     }
 
     load();
-  }, [supabase]);
+  }, [query, supabase]);
 
   async function handleToggleFollow(profileId: string, isFollowing: boolean) {
     setBusyId(profileId);
@@ -162,7 +171,7 @@ export function DiscoverCreatorsClient({
       {loading ? <p className="text-sm text-slate-600">Loading suggestions...</p> : null}
 
       {!loading && profiles.length === 0 && !message ? (
-        <p className="text-sm text-slate-600">No other profiles are available yet.</p>
+        <p className="text-sm text-slate-600">No matching creators found yet.</p>
       ) : null}
 
       <div className="space-y-3">

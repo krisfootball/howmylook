@@ -1,15 +1,15 @@
 import { AccessGateCard } from "@/components/access-gate-card";
-import { FollowingPageClient } from "@/components/following-page-client";
+import { HomeFeedClient } from "@/components/home-feed-client";
 import { MobileShell } from "@/components/mobile-shell";
 
 export default function FollowingPage() {
   return (
     <MobileShell
-      title="Following"
-      subtitle="Posts from people you follow first, with fresh public looks added when your feed needs more."
+      title="Home"
+      subtitle="Your main feed: people you follow first, with fresh public looks and creator search built in."
     >
-      <AccessGateCard areaLabel="Following feed">
-        <FollowingPageClient />
+      <AccessGateCard areaLabel="Home feed">
+        <HomeFeedClient />
       </AccessGateCard>
     </MobileShell>
   );
