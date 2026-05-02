@@ -283,34 +283,37 @@ export function FollowingFeedClient() {
             </div>
           </div>
 
-          <div className="mt-3 space-y-3 rounded-[1.1rem] bg-white/92 p-4 text-slate-900 shadow-sm">
-            <div className="flex items-center justify-between gap-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-pink-500">Occasion</p>
-              <Link href={`/people/${currentPost.authorId}`} className="text-xs font-medium text-slate-500">
-                View profile
+          <div className="mt-2 rounded-[1.05rem] bg-white/92 p-3 text-slate-900 shadow-sm">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-pink-500">Occasion</p>
+                <p className="mt-1 text-sm font-medium leading-5 text-slate-900">{currentPost.caption}</p>
+              </div>
+              <Link href={`/people/${currentPost.authorId}`} className="shrink-0 text-[11px] font-medium text-slate-500">
+                Profile
               </Link>
             </div>
 
-            <p className="text-sm font-medium leading-6">{currentPost.caption}</p>
-
-            <p className="text-xs text-slate-500">
-              Rate this look and it disappears from your main feed immediately.
-            </p>
-
-            <div className="grid grid-cols-2 gap-3">
+            <div className="mt-3 flex items-center gap-2">
               <button
                 onClick={() => handleVote("yes")}
                 disabled={saving}
-                className="rounded-full bg-emerald-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/20 disabled:opacity-60"
+                className="flex-1 rounded-2xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-pink-200 hover:bg-pink-50 disabled:opacity-60"
               >
-                {saving ? "Saving..." : appConfig.yesLabel}
+                <span className="inline-flex items-center gap-2">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-[11px] text-slate-700">Y</span>
+                  <span>{saving ? "Saving..." : appConfig.yesLabel}</span>
+                </span>
               </button>
               <button
                 onClick={() => handleVote("no")}
                 disabled={saving}
-                className="rounded-full bg-rose-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-rose-900/20 disabled:opacity-60"
+                className="flex-1 rounded-2xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-pink-200 hover:bg-pink-50 disabled:opacity-60"
               >
-                {saving ? "Saving..." : appConfig.noLabel}
+                <span className="inline-flex items-center gap-2">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-[11px] text-slate-700">N</span>
+                  <span>{saving ? "Saving..." : appConfig.noLabel}</span>
+                </span>
               </button>
             </div>
           </div>
