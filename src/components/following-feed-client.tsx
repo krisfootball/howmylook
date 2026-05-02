@@ -2,11 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { appConfig } from "@/lib/app-config";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
-
-type FollowingFeedClientProps = {
-  refreshKey?: number;
-};
 
 type FeedPost = {
   id: string;
@@ -36,13 +33,15 @@ function getJoinedAuthor(profiles: JoinedAuthor[] | JoinedAuthor | null | undefi
   return Array.isArray(profiles) ? (profiles[0] ?? null) : profiles;
 }
 
-const TARGET_FEED_COUNT = 10;
+const TARGET_FEED_COUNT = 25;
 
-export function FollowingFeedClient({ refreshKey = 0 }: FollowingFeedClientProps) {
+export function FollowingFeedClient() {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [posts, setPosts] = useState<FeedPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -57,7 +56,7 @@ export function FollowingFeedClient({ refreshKey = 0 }: FollowingFeedClientProps
         }
 
         if (!user) {
-          setError("Sign in to view the following feed.");
+          setError("Sign in to view and rate looks.");
           setLoading(false);
           return;
         }
@@ -71,6 +70,16 @@ export function FollowingFeedClient({ refreshKey = 0 }: FollowingFeedClientProps
           throw followsError;
         }
 
+        const { data: voteRows, error: votesError } = await supabase
+          .from("votes")
+          .select("post_id")
+          .eq("user_id", user.id);
+
+        if (votesError) {
+          throw votesError;
+        }
+
+        const ratedPostIds = new Set((voteRows ?? []).map((vote) => vote.post_id));
         const followingIds = (followRows ?? []).map((row) => row.following_id);
         const combinedPosts: FeedPost[] = [];
         const seenPostIds = new Set<string>();
@@ -92,7 +101,7 @@ export function FollowingFeedClient({ refreshKey = 0 }: FollowingFeedClientProps
           }
 
           for (const post of followedPostRows ?? []) {
-            if (post.user_id === user.id || seenPostIds.has(post.id)) {
+            if (post.user_id === user.id || seenPostIds.has(post.id) || ratedPostIds.has(post.id)) {
               continue;
             }
 
@@ -125,14 +134,14 @@ export function FollowingFeedClient({ refreshKey = 0 }: FollowingFeedClientProps
             .neq("user_id", user.id)
             .or(`keep_forever.eq.true,expires_at.gt.${new Date().toISOString()}`)
             .order("created_at", { ascending: false })
-            .limit(30);
+            .limit(60);
 
           if (latestPostsError) {
             throw latestPostsError;
           }
 
           for (const post of latestPostRows ?? []) {
-            if (seenPostIds.has(post.id)) {
+            if (seenPostIds.has(post.id) || ratedPostIds.has(post.id)) {
               continue;
             }
 
@@ -161,7 +170,7 @@ export function FollowingFeedClient({ refreshKey = 0 }: FollowingFeedClientProps
 
         setPosts(combinedPosts);
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Unable to load following feed.";
+        const errorMessage = error instanceof Error ? error.message : "Unable to load home feed.";
         setError(errorMessage);
       } finally {
         setLoading(false);
@@ -169,12 +178,59 @@ export function FollowingFeedClient({ refreshKey = 0 }: FollowingFeedClientProps
     }
 
     load();
-  }, [refreshKey, supabase]);
+  }, [supabase]);
+
+  const currentPost = posts[0] ?? null;
+
+  async function handleVote(value: "yes" | "no") {
+    if (!currentPost) {
+      return;
+    }
+
+    setSaving(true);
+    setMessage(null);
+
+    try {
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError) {
+        throw userError;
+      }
+
+      if (!user) {
+        throw new Error("Sign in first before rating looks.");
+      }
+
+      const { error: rpcError } = await supabase.rpc("cast_vote", {
+        target_post_id: currentPost.id,
+        vote_value: value,
+      });
+
+      if (rpcError) {
+        throw rpcError;
+      }
+
+      setPosts((current) => current.slice(1));
+      setMessage(`${value === "yes" ? appConfig.yesLabel : appConfig.noLabel} saved.`);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Unable to save vote.";
+      const friendlyMessage =
+        errorMessage.toLowerCase().includes("cast_vote") || errorMessage.toLowerCase().includes("function")
+          ? "Voting needs the SQL function in SUPABASE_RPC_CAST_VOTE.sql applied in Supabase before this safer flow can work."
+          : errorMessage;
+      setError(friendlyMessage);
+    } finally {
+      setSaving(false);
+    }
+  }
 
   if (loading) {
     return (
       <section className="rounded-[1.6rem] border border-pink-100 bg-white p-5 text-sm text-slate-600 shadow-sm">
-        Loading following feed...
+        Loading home feed...
       </section>
     );
   }
@@ -187,95 +243,85 @@ export function FollowingFeedClient({ refreshKey = 0 }: FollowingFeedClientProps
     );
   }
 
-  if (posts.length === 0) {
+  if (!currentPost) {
     return (
       <section className="rounded-[1.6rem] border border-pink-100 bg-white p-5 text-sm text-slate-600 shadow-sm">
-        No posts are ready for your feed yet.
+        No unrated looks are ready right now.
       </section>
     );
   }
 
+  const showImage = currentPost.imageUrl.startsWith("http");
+
   return (
     <div className="space-y-4">
-      {posts.map((post, index) => {
-        const showImage = post.imageUrl.startsWith("http");
+      <article className="overflow-hidden rounded-[1.7rem] bg-slate-950 p-3 text-white shadow-[0_20px_60px_rgba(15,23,42,0.25)]">
+        <div className="rounded-[1.35rem] bg-slate-950">
+          <div className="relative overflow-hidden rounded-[1.1rem]">
+            {showImage ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={currentPost.imageUrl} alt={currentPost.caption} className="aspect-[4/5] w-full object-cover" />
+            ) : (
+              <div className="aspect-[4/5] bg-[linear-gradient(180deg,_#f6d6df_0%,_#dfc8ff_100%)]" />
+            )}
 
-        return (
-          <article
-            key={post.id}
-            className="overflow-hidden rounded-[1.6rem] border border-pink-100 bg-white shadow-sm"
-          >
-            <Link href={`/profile/${post.id}?from=people&profileId=${post.authorId}`} className="relative block">
-              {showImage ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={post.imageUrl} alt={post.caption} className="aspect-[4/5] w-full object-cover" />
-              ) : (
-                <div
-                  className={`aspect-[4/5] ${
-                    index % 3 === 0
-                      ? "bg-[linear-gradient(180deg,_#f6d6df_0%,_#dfc8ff_100%)]"
-                      : index % 3 === 1
-                        ? "bg-[linear-gradient(180deg,_#f7e7c6_0%,_#ebb3b0_100%)]"
-                        : "bg-[linear-gradient(180deg,_#c9d4ff_0%,_#dfb2f4_100%)]"
-                  }`}
-                />
-              )}
-              {post.imageCount > 1 ? (
-                <div className="pointer-events-none absolute right-3 top-3 rounded-full bg-black/55 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
-                  {post.imageCount} photos
-                </div>
-              ) : null}
-            </Link>
-
-            <div className="space-y-3 p-4">
-              <div className="flex items-center justify-between gap-3">
-                <p className="font-semibold text-slate-900">
-                  {post.source === "following" ? "From people you follow" : "Fresh from the community"}
-                </p>
-                <Link href={`/people/${post.authorId}`} className="flex items-center gap-2 rounded-full bg-pink-50 px-2.5 py-1.5">
-                  {post.authorAvatarUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={post.authorAvatarUrl} alt={post.authorName} className="h-7 w-7 rounded-full object-cover" />
-                  ) : (
-                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[linear-gradient(180deg,_#f6c4d5_0%,_#ddb7ff_100%)] text-xs">
-                      ✨
-                    </div>
-                  )}
-                  <div className="min-w-0 text-right">
-                    <p className="max-w-[7rem] truncate text-xs font-semibold text-slate-900">{post.authorName}</p>
-                    <p className="max-w-[7rem] truncate text-[11px] text-slate-500">{post.authorUsername}</p>
-                  </div>
-                </Link>
+            <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-3 p-4">
+              <div className="rounded-2xl bg-white/78 px-3 py-2 text-slate-900 shadow-sm backdrop-blur">
+                <p className="text-sm font-semibold">{currentPost.authorName}</p>
+                <p className="text-xs text-slate-600">{currentPost.authorUsername}</p>
               </div>
-
-              <Link href={`/profile/${post.id}?from=people&profileId=${post.authorId}`} className="block">
-                <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-pink-500">Occasion</p>
-                <p className="mt-1 text-sm leading-6 text-slate-700">{post.caption}</p>
-              </Link>
-
-              <div className="flex items-center gap-3 text-sm text-slate-500">
-                <span>{post.yesCount} yes</span>
-                <span>{post.noCount} no</span>
-              </div>
-              <p className="text-xs text-slate-500">
-                {post.imageCount === 0 ? "No photos" : `${post.imageCount} photo${post.imageCount > 1 ? "s" : ""}`}
-              </p>
-              <div className="flex items-center justify-between gap-3">
-                <Link
-                  href={`/profile/${post.id}?from=people&profileId=${post.authorId}`}
-                  className="text-xs font-semibold text-pink-600"
-                >
-                  Open post
-                </Link>
-                <Link href={`/people/${post.authorId}`} className="text-xs font-medium text-slate-500">
-                  View profile
-                </Link>
-              </div>
-              {!showImage ? <p className="text-xs text-slate-400">Demo image placeholder</p> : null}
+              <span className="rounded-full bg-white/78 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-pink-600 shadow-sm backdrop-blur">
+                {currentPost.source === "following" ? "Following" : "Fresh"}
+              </span>
             </div>
-          </article>
-        );
-      })}
+
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/90 via-slate-950/50 to-transparent p-4 pt-16">
+              <div className="flex items-center justify-between rounded-full bg-black/35 px-4 py-2 text-sm text-white backdrop-blur-sm">
+                <span>{currentPost.yesCount} yes</span>
+                <span>{currentPost.noCount} no</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-3 space-y-3 rounded-[1.1rem] bg-white/92 p-4 text-slate-900 shadow-sm">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-pink-500">Occasion</p>
+              <Link href={`/people/${currentPost.authorId}`} className="text-xs font-medium text-slate-500">
+                View profile
+              </Link>
+            </div>
+
+            <p className="text-sm font-medium leading-6">{currentPost.caption}</p>
+
+            <p className="text-xs text-slate-500">
+              Rate this look and it disappears from your main feed immediately.
+            </p>
+
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => handleVote("yes")}
+                disabled={saving}
+                className="rounded-full bg-emerald-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/20 disabled:opacity-60"
+              >
+                {saving ? "Saving..." : appConfig.yesLabel}
+              </button>
+              <button
+                onClick={() => handleVote("no")}
+                disabled={saving}
+                className="rounded-full bg-rose-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-rose-900/20 disabled:opacity-60"
+              >
+                {saving ? "Saving..." : appConfig.noLabel}
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      {message ? (
+        <div className="rounded-[1.2rem] bg-white px-4 py-3 text-sm leading-6 text-slate-600 shadow-sm">
+          {message}
+        </div>
+      ) : null}
     </div>
   );
 }
