@@ -151,9 +151,14 @@ export function EditProfileForm({
       setAvatarUrl(nextAvatarUrl ?? null);
       setAvatarFile(null);
       setMessage(avatarWarning ?? "Profile updated.");
+
+      if (avatarWarning) {
+        return;
+      }
+
       window.setTimeout(() => {
         onSaved?.();
-      }, avatarWarning ? 900 : 600);
+      }, 600);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unable to update profile.";
       const lower = errorMessage.toLowerCase();
