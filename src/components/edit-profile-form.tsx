@@ -16,6 +16,7 @@ export function EditProfileForm({
   const [bio, setBio] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [removeAvatar, setRemoveAvatar] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -50,6 +51,7 @@ export function EditProfileForm({
         setDisplayName(profile?.display_name ?? "");
         setBio(profile?.bio ?? "");
         setAvatarUrl(profile?.avatar_url ?? null);
+        setRemoveAvatar(false);
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Unable to load your profile.";
         setMessage(errorMessage);
@@ -105,7 +107,7 @@ export function EditProfileForm({
         throw new Error("That username is already taken.");
       }
 
-      let nextAvatarUrl = avatarUrl;
+      let nextAvatarUrl = removeAvatar ? null : avatarUrl;
       let avatarWarning: string | null = null;
 
       if (avatarFile) {
@@ -175,7 +177,7 @@ export function EditProfileForm({
   return (
     <form noValidate onSubmit={handleSubmit} className="space-y-4 rounded-[1.6rem] border border-pink-100 bg-white p-4 shadow-sm">
       <div className="flex items-center gap-4">
-        {avatarUrl ? (
+        {avatarUrl && !removeAvatar ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={avatarUrl} alt="Your profile photo" className="h-16 w-16 rounded-full object-cover shadow-sm" />
         ) : (
@@ -187,22 +189,52 @@ export function EditProfileForm({
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold text-slate-900">Profile photo</p>
           <p className="mt-1 text-xs leading-5 text-slate-500">Upload a square photo if you can. Max 5 MB. This is optional.</p>
-          <label className="mt-3 inline-flex cursor-pointer rounded-full bg-pink-50 px-4 py-2 text-sm font-semibold text-pink-700 ring-1 ring-pink-200">
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              disabled={loading || saving}
-              onChange={(event) => {
-                const nextFile = event.target.files?.[0] ?? null;
-                setAvatarFile(nextFile);
-                if (nextFile) {
-                  setMessage(`Selected ${nextFile.name}`);
-                }
-              }}
-            />
-            {avatarFile ? "Change selected photo" : "Choose photo"}
-          </label>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <label className="inline-flex cursor-pointer rounded-full bg-pink-50 px-4 py-2 text-sm font-semibold text-pink-700 ring-1 ring-pink-200">
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                disabled={loading || saving}
+                onChange={(event) => {
+                  const nextFile = event.target.files?.[0] ?? null;
+                  setAvatarFile(nextFile);
+                  setRemoveAvatar(false);
+                  if (nextFile) {
+                    setMessage(`Selected ${nextFile.name}`);
+                  }
+                }}
+              />
+              {avatarFile ? "Change selected photo" : avatarUrl && !removeAvatar ? "Change photo" : "Choose photo"}
+            </label>
+            {avatarUrl && !removeAvatar ? (
+              <button
+                type="button"
+                onClick={() => {
+                  setAvatarFile(null);
+                  setRemoveAvatar(true);
+                  setMessage("Profile photo will be removed when you save.");
+                }}
+                disabled={loading || saving}
+                className="inline-flex rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-700 ring-1 ring-slate-200 disabled:opacity-60"
+              >
+                Remove photo
+              </button>
+            ) : null}
+            {removeAvatar ? (
+              <button
+                type="button"
+                onClick={() => {
+                  setRemoveAvatar(false);
+                  setMessage("Photo removal canceled.");
+                }}
+                disabled={loading || saving}
+                className="inline-flex rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-700 ring-1 ring-slate-200 disabled:opacity-60"
+              >
+                Keep current photo
+              </button>
+            ) : null}
+          </div>
         </div>
       </div>
 
@@ -255,7 +287,9 @@ export function EditProfileForm({
           className={`rounded-[1.2rem] px-4 py-3 text-sm leading-6 ${
             message.toLowerCase().includes("updated") ||
             message.toLowerCase().includes("selected") ||
-            message.toLowerCase().includes("text profile changes were saved")
+            message.toLowerCase().includes("text profile changes were saved") ||
+            message.toLowerCase().includes("will be removed") ||
+            message.toLowerCase().includes("canceled")
               ? "bg-pink-50 text-slate-700"
               : "bg-rose-50 text-rose-700"
           }`}
