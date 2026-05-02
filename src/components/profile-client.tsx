@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import { StatPill } from "@/components/stat-pill";
 
@@ -19,8 +19,10 @@ type ProfileState = {
 
 export function ProfileClient({
   onEdit,
+  refreshKey = 0,
 }: {
   onEdit?: () => void;
+  refreshKey?: number;
 }) {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [state, setState] = useState<ProfileState>({
@@ -36,71 +38,71 @@ export function ProfileClient({
     error: null,
   });
 
-  useEffect(() => {
-    async function load() {
-      try {
-        const {
-          data: { user },
-          error: userError,
-        } = await supabase.auth.getUser();
+  const load = useCallback(async () => {
+    try {
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
 
-        if (userError) {
-          throw userError;
-        }
+      if (userError) {
+        throw userError;
+      }
 
-        if (!user) {
-          setState((current) => ({
-            ...current,
-            loading: false,
-            error: "Sign in to load your profile.",
-          }));
-          return;
-        }
-
-        const { data: profile, error: profileError } = await supabase
-          .from("profiles")
-          .select("username,display_name,bio,avatar_url,total_yes_given,total_no_given")
-          .eq("id", user.id)
-          .maybeSingle();
-
-        if (profileError) {
-          throw profileError;
-        }
-
-        const { count: followersCount } = await supabase
-          .from("follows")
-          .select("*", { count: "exact", head: true })
-          .eq("following_id", user.id);
-
-        const { count: followingCount } = await supabase
-          .from("follows")
-          .select("*", { count: "exact", head: true })
-          .eq("follower_id", user.id);
-
-        setState({
-          loading: false,
-          username: profile?.username ? `@${profile.username}` : "@username",
-          displayName: profile?.display_name || "Your profile",
-          bio: profile?.bio || "No bio yet.",
-          avatarUrl: profile?.avatar_url || null,
-          yesGiven: profile?.total_yes_given ?? 0,
-          noGiven: profile?.total_no_given ?? 0,
-          followers: followersCount ?? 0,
-          following: followingCount ?? 0,
-          error: null,
-        });
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Unable to load profile.";
+      if (!user) {
         setState((current) => ({
           ...current,
           loading: false,
-          error: errorMessage,
+          error: "Sign in to load your profile.",
         }));
+        return;
       }
-    }
 
-    load();
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("username,display_name,bio,avatar_url,total_yes_given,total_no_given")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      if (profileError) {
+        throw profileError;
+      }
+
+      const { count: followersCount } = await supabase
+        .from("follows")
+        .select("*", { count: "exact", head: true })
+        .eq("following_id", user.id);
+
+      const { count: followingCount } = await supabase
+        .from("follows")
+        .select("*", { count: "exact", head: true })
+        .eq("follower_id", user.id);
+
+      setState({
+        loading: false,
+        username: profile?.username ? `@${profile.username}` : "@username",
+        displayName: profile?.display_name || "Your profile",
+        bio: profile?.bio || "No bio yet.",
+        avatarUrl: profile?.avatar_url || null,
+        yesGiven: profile?.total_yes_given ?? 0,
+        noGiven: profile?.total_no_given ?? 0,
+        followers: followersCount ?? 0,
+        following: followingCount ?? 0,
+        error: null,
+      });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Unable to load profile.";
+      setState((current) => ({
+        ...current,
+        loading: false,
+        error: errorMessage,
+      }));
+    }
   }, [supabase]);
+
+  useEffect(() => {
+    load();
+  }, [load, refreshKey]);
 
   if (state.loading) {
     return (

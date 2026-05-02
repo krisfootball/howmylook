@@ -18,6 +18,7 @@ export default function ProfilePage() {
     >
       <div className="space-y-5">
         <ProfileClient
+          refreshKey={refreshKey}
           onEdit={() => {
             setShowEditor((current) => !current);
           }}
