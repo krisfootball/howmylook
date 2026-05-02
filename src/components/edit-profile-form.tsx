@@ -106,6 +106,7 @@ export function EditProfileForm({
       }
 
       let nextAvatarUrl = avatarUrl;
+      let avatarWarning: string | null = null;
 
       if (avatarFile) {
         if (avatarFile.size > MAX_AVATAR_SIZE_BYTES) {
@@ -120,11 +121,17 @@ export function EditProfileForm({
           .upload(filePath, avatarFile, { upsert: true });
 
         if (uploadError) {
-          throw new Error(`Profile photo upload failed: ${uploadError.message}`);
-        }
+          const uploadMessage = uploadError.message.toLowerCase();
 
-        const { data } = supabase.storage.from("profile-avatars").getPublicUrl(filePath);
-        nextAvatarUrl = data.publicUrl;
+          if (uploadMessage.includes("bucket") || uploadMessage.includes("profile-avatars")) {
+            avatarWarning = "Text profile changes were saved, but profile photo upload still needs SUPABASE_STORAGE_PROFILE_AVATARS.sql run in Supabase.";
+          } else {
+            throw new Error(`Profile photo upload failed: ${uploadError.message}`);
+          }
+        } else {
+          const { data } = supabase.storage.from("profile-avatars").getPublicUrl(filePath);
+          nextAvatarUrl = data.publicUrl;
+        }
       }
 
       const { error: updateError } = await supabase
@@ -143,10 +150,10 @@ export function EditProfileForm({
 
       setAvatarUrl(nextAvatarUrl ?? null);
       setAvatarFile(null);
-      setMessage("Profile updated.");
+      setMessage(avatarWarning ?? "Profile updated.");
       window.setTimeout(() => {
         onSaved?.();
-      }, 600);
+      }, avatarWarning ? 900 : 600);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unable to update profile.";
       const lower = errorMessage.toLowerCase();
@@ -174,7 +181,7 @@ export function EditProfileForm({
 
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold text-slate-900">Profile photo</p>
-          <p className="mt-1 text-xs leading-5 text-slate-500">Upload a square photo if you can. Max 5 MB.</p>
+          <p className="mt-1 text-xs leading-5 text-slate-500">Upload a square photo if you can. Max 5 MB. This is optional.</p>
           <label className="mt-3 inline-flex cursor-pointer rounded-full bg-pink-50 px-4 py-2 text-sm font-semibold text-pink-700 ring-1 ring-pink-200">
             <input
               type="file"
@@ -241,7 +248,9 @@ export function EditProfileForm({
       {message ? (
         <div
           className={`rounded-[1.2rem] px-4 py-3 text-sm leading-6 ${
-            message.toLowerCase().includes("updated") || message.toLowerCase().includes("selected")
+            message.toLowerCase().includes("updated") ||
+            message.toLowerCase().includes("selected") ||
+            message.toLowerCase().includes("text profile changes were saved")
               ? "bg-pink-50 text-slate-700"
               : "bg-rose-50 text-rose-700"
           }`}
