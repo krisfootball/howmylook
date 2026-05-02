@@ -59,26 +59,30 @@ export function SearchExploreClient() {
     load();
   }, [supabase]);
 
-  const filteredPosts = !query.trim()
-    ? posts
-    : posts.filter((post) => post.caption.toLowerCase().includes(query.trim().toLowerCase()));
+  const filteredPosts = useMemo(
+    () =>
+      !query.trim()
+        ? posts
+        : posts.filter((post) => post.caption.toLowerCase().includes(query.trim().toLowerCase())),
+    [posts, query],
+  );
 
   return (
     <div className="space-y-5">
-      <section className="rounded-[1.6rem] border border-pink-100 bg-white p-4 shadow-sm">
+      <section className="rounded-[1.7rem] border border-pink-100 bg-white p-4 shadow-sm">
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.22em] text-pink-500">Search</p>
             <h2 className="mt-2 text-lg font-semibold tracking-tight text-slate-900">Popular looks</h2>
           </div>
-          <span className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600">
-            3-column grid
+          <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-600">
+            Top yes votes
           </span>
         </div>
         <p className="mt-2 text-sm leading-6 text-slate-600">
-          Browse the most popular photos across the app in one clean photo grid.
+          Explore the strongest outfit photos across the app in a clean 3-column grid.
         </p>
-        <div className="mt-4 flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-3">
+        <div className="mt-4 flex items-center gap-2 rounded-[1.3rem] border border-slate-200 bg-slate-50 px-3 py-3">
           <span className="text-sm text-slate-400">⌕</span>
           <input
             type="text"
@@ -125,12 +129,12 @@ export function SearchExploreClient() {
                 <Link
                   key={post.id}
                   href={`/profile/${post.id}?from=people&profileId=${post.authorId}`}
-                  className="group overflow-hidden rounded-[1.2rem] border border-pink-100 bg-white shadow-sm"
+                  className="group overflow-hidden rounded-[1rem] bg-white shadow-sm ring-1 ring-pink-100 transition hover:-translate-y-0.5 hover:shadow-md"
                 >
                   <div className="relative">
                     {showImage ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={post.imageUrl} alt={post.caption} className="aspect-square w-full object-cover transition group-hover:scale-[1.02]" />
+                      <img src={post.imageUrl} alt={post.caption} className="aspect-square w-full object-cover transition duration-300 group-hover:scale-[1.03]" />
                     ) : (
                       <div
                         className={`aspect-square ${
@@ -142,12 +146,14 @@ export function SearchExploreClient() {
                         }`}
                       />
                     )}
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent px-2 py-2 text-white">
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 via-black/20 to-transparent px-2 pb-2 pt-6 text-white">
                       <p className="truncate text-[11px] font-semibold">{post.caption}</p>
-                      <p className="mt-1 text-[10px] text-white/85">{post.yesCount} yes</p>
+                    </div>
+                    <div className="pointer-events-none absolute left-2 top-2 rounded-full bg-black/50 px-2 py-0.5 text-[10px] font-semibold text-white backdrop-blur-sm">
+                      {post.yesCount} yes
                     </div>
                     {post.imageCount > 1 ? (
-                      <div className="pointer-events-none absolute right-2 top-2 rounded-full bg-black/55 px-2 py-0.5 text-[10px] font-semibold text-white">
+                      <div className="pointer-events-none absolute right-2 top-2 rounded-full bg-black/50 px-2 py-0.5 text-[10px] font-semibold text-white backdrop-blur-sm">
                         {post.imageCount}
                       </div>
                     ) : null}

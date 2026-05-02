@@ -42,7 +42,7 @@ export default async function PostDetailPage({ params, searchParams }: PostDetai
 
   const { data: author } = await supabase
     .from("profiles")
-    .select("username,display_name")
+    .select("id,username,display_name,avatar_url")
     .eq("id", post.user_id)
     .maybeSingle();
 
@@ -60,18 +60,30 @@ export default async function PostDetailPage({ params, searchParams }: PostDetai
   const backHref =
     resolvedSearchParams?.from === "people" && resolvedSearchParams.profileId
       ? `/people/${resolvedSearchParams.profileId}`
-      : "/profile";
-  const backLabel = resolvedSearchParams?.from === "people" ? "← Back to profile" : "← Back to profile";
+      : resolvedSearchParams?.from === "search"
+        ? "/search"
+        : "/profile";
+  const backLabel = resolvedSearchParams?.from === "search" ? "← Back to search" : "← Back to profile";
 
   return (
     <MobileShell title="Post" subtitle="A closer look at one outfit post.">
       <div className="space-y-4">
-        <Link
-          href={backHref}
-          className="inline-flex rounded-full bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm"
-        >
-          {backLabel}
-        </Link>
+        <div className="flex items-center justify-between gap-3">
+          <Link
+            href={backHref}
+            className="inline-flex rounded-full bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm"
+          >
+            {backLabel}
+          </Link>
+          {author?.id ? (
+            <Link
+              href={`/people/${author.id}`}
+              className="inline-flex rounded-full bg-pink-50 px-4 py-3 text-sm font-semibold text-pink-700 ring-1 ring-pink-200"
+            >
+              View author
+            </Link>
+          ) : null}
+        </div>
 
         <article className="overflow-hidden rounded-[1.6rem] border border-pink-100 bg-white shadow-sm">
           {showImage ? (
@@ -81,18 +93,39 @@ export default async function PostDetailPage({ params, searchParams }: PostDetai
           )}
 
           <div className="space-y-4 p-4">
-            <div>
-              <p className="text-xs font-medium uppercase tracking-[0.18em] text-pink-500">Occasion</p>
-              <p className="mt-2 text-lg font-semibold tracking-tight text-slate-900">{post.caption ?? "No occasion added yet"}</p>
-              <p className="mt-2 text-sm text-slate-500">
-                {authorName}
-                {authorHandle ? <span> · {authorHandle}</span> : null}
-              </p>
+            <div className="flex items-start gap-3">
+              {author?.avatar_url ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={author.avatar_url} alt={authorName} className="h-11 w-11 rounded-full object-cover shadow-sm" />
+              ) : (
+                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[linear-gradient(180deg,_#f6c4d5_0%,_#ddb7ff_100%)] text-sm shadow-sm">
+                  ✨
+                </div>
+              )}
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-medium uppercase tracking-[0.18em] text-pink-500">Occasion</p>
+                <p className="mt-2 text-lg font-semibold tracking-tight text-slate-900">{post.caption ?? "No occasion added yet"}</p>
+                <p className="mt-2 text-sm text-slate-500">
+                  {authorName}
+                  {authorHandle ? <span> · {authorHandle}</span> : null}
+                </p>
+              </div>
             </div>
 
-            <p className="text-sm text-slate-500">
-              {galleryImages.length === 0 ? "No photos attached" : `${galleryImages.length} photo${galleryImages.length > 1 ? "s" : ""}`}
-            </p>
+            <div className="grid grid-cols-3 gap-3 text-sm">
+              <div className="rounded-2xl bg-pink-50 px-4 py-4">
+                <p className="text-slate-500">Yes</p>
+                <p className="mt-1 font-semibold text-slate-900">{post.yes_count}</p>
+              </div>
+              <div className="rounded-2xl bg-slate-50 px-4 py-4">
+                <p className="text-slate-500">No</p>
+                <p className="mt-1 font-semibold text-slate-900">{post.no_count}</p>
+              </div>
+              <div className="rounded-2xl bg-slate-50 px-4 py-4">
+                <p className="text-slate-500">Photos</p>
+                <p className="mt-1 font-semibold text-slate-900">{galleryImages.length || 0}</p>
+              </div>
+            </div>
 
             <div className="rounded-2xl bg-pink-50/70 px-4 py-4 text-sm text-slate-600">
               <p className="text-slate-500">Availability</p>
@@ -105,15 +138,21 @@ export default async function PostDetailPage({ params, searchParams }: PostDetai
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <div className="rounded-2xl bg-pink-50 px-4 py-4">
-                <p className="text-slate-500">Yes</p>
-                <p className="mt-1 font-semibold text-slate-900">{post.yes_count}</p>
-              </div>
-              <div className="rounded-2xl bg-slate-50 px-4 py-4">
-                <p className="text-slate-500">No</p>
-                <p className="mt-1 font-semibold text-slate-900">{post.no_count}</p>
-              </div>
+            <div className="flex flex-wrap gap-2">
+              <Link
+                href="/rate"
+                className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white"
+              >
+                Rate looks
+              </Link>
+              {author?.id ? (
+                <Link
+                  href={`/people/${author.id}`}
+                  className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-700 ring-1 ring-slate-200"
+                >
+                  More from this person
+                </Link>
+              ) : null}
             </div>
 
             {!showImage ? <p className="text-xs text-slate-400">Demo image placeholder</p> : null}
