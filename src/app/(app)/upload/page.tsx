@@ -6,7 +6,7 @@ export default function UploadPage() {
   return (
     <MobileShell
       title="Create post"
-      subtitle="Add 1 to 5 photos per post. Keep posting quick, but give people enough context to rate the full look."
+      subtitle="Take a photo instantly or choose up to 5 images. Keep posting quick, but give people enough context to rate the full look."
     >
       <AccessGateCard areaLabel="Posting">
         <div className="space-y-4">

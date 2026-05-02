@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
 const MAX_FILES = 5;
@@ -9,10 +9,16 @@ const POST_LIFETIME_DAYS = 30;
 
 export function UploadForm() {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
+  const galleryInputRef = useRef<HTMLInputElement | null>(null);
+  const cameraInputRef = useRef<HTMLInputElement | null>(null);
   const [caption, setCaption] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+
+  function applyFiles(nextFiles: File[]) {
+    setFiles(nextFiles.slice(0, MAX_FILES));
+  }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -95,6 +101,12 @@ export function UploadForm() {
 
       setCaption("");
       setFiles([]);
+      if (galleryInputRef.current) {
+        galleryInputRef.current.value = "";
+      }
+      if (cameraInputRef.current) {
+        cameraInputRef.current.value = "";
+      }
       setMessage(
         uploadedImageUrls.length > 1
           ? `Post created with ${uploadedImageUrls.length} photos.`
@@ -104,7 +116,7 @@ export function UploadForm() {
       const errorMessage = error instanceof Error ? error.message : "Unable to create post.";
       const lower = errorMessage.toLowerCase();
       const friendlyMessage =
-        lower.includes("post_images") || lower.includes("relation \"post_images\"")
+        lower.includes("post_images") || lower.includes('relation "post_images"')
           ? "Multi-photo posts need one Supabase SQL migration first. Run SUPABASE_MIGRATION_POST_IMAGES.sql in Supabase, then try again."
           : lower.includes("bucket")
             ? "Photo upload is almost ready, but the Supabase storage bucket still needs setup. Run SUPABASE_STORAGE_SETUP.sql in Supabase, then try again."
@@ -125,26 +137,68 @@ export function UploadForm() {
         </div>
         <h2 className="mt-4 text-lg font-semibold tracking-tight text-slate-900">Upload outfit photos</h2>
         <p className="mt-2 text-sm leading-6 text-slate-600">
-          Add between 1 and 5 images for each post once the Supabase storage bucket is ready.
+          Take a photo directly with your camera or choose up to 5 images from your gallery.
         </p>
-        <label className="mt-4 block rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-900 shadow-sm">
-          <input
-            type="file"
-            accept="image/*"
-            multiple
-            className="hidden"
-            onChange={(event) => {
-              const nextFiles = Array.from(event.target.files ?? []).slice(0, MAX_FILES);
-              setFiles(nextFiles);
-            }}
-          />
-          {files.length > 0 ? `${files.length} photo${files.length > 1 ? "s" : ""} selected` : "Choose up to 5 photos"}
-        </label>
+
+        <div className="mt-4 grid grid-cols-2 gap-3">
+          <button
+            type="button"
+            onClick={() => cameraInputRef.current?.click()}
+            className="rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-sm"
+          >
+            Take photo
+          </button>
+          <button
+            type="button"
+            onClick={() => galleryInputRef.current?.click()}
+            className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-pink-100"
+          >
+            Choose photos
+          </button>
+        </div>
+
+        <input
+          ref={cameraInputRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          className="hidden"
+          onChange={(event) => {
+            const nextFiles = Array.from(event.target.files ?? []);
+            if (nextFiles.length > 0) {
+              applyFiles(nextFiles);
+              setMessage(`Camera photo ready: ${nextFiles[0].name}`);
+            }
+          }}
+        />
+
+        <input
+          ref={galleryInputRef}
+          type="file"
+          accept="image/*"
+          multiple
+          className="hidden"
+          onChange={(event) => {
+            const nextFiles = Array.from(event.target.files ?? []);
+            if (nextFiles.length > 0) {
+              applyFiles(nextFiles);
+              setMessage(
+                nextFiles.length > 1
+                  ? `${Math.min(nextFiles.length, MAX_FILES)} photos selected.`
+                  : `${nextFiles[0].name} selected.`,
+              );
+            }
+          }}
+        />
+
         {files.length > 0 ? (
-          <div className="mt-3 text-left text-xs text-slate-500">
-            {files.map((file) => (
-              <p key={`${file.name}-${file.size}`}>• {file.name}</p>
-            ))}
+          <div className="mt-4 rounded-[1.2rem] bg-white p-3 text-left text-xs text-slate-500 shadow-sm">
+            <p className="font-semibold text-slate-900">Ready to upload</p>
+            <div className="mt-2 space-y-1">
+              {files.map((file) => (
+                <p key={`${file.name}-${file.size}`}>• {file.name}</p>
+              ))}
+            </div>
           </div>
         ) : null}
       </section>
