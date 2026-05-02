@@ -55,13 +55,6 @@ export default async function PostDetailPage({ params, searchParams }: PostDetai
           ? "/home"
           : "/profile";
 
-  const backLabel =
-    resolvedSearchParams?.from === "search"
-      ? "Back"
-      : resolvedSearchParams?.from === "home"
-        ? "Back"
-        : "Back";
-
   return (
     <MobileShell title="Post" subtitle="Open post view.">
       <PostView
@@ -74,8 +67,7 @@ export default async function PostDetailPage({ params, searchParams }: PostDetai
         authorUsername={author?.username ? `@${author.username}` : null}
         authorAvatarUrl={author?.avatar_url || null}
         backHref={backHref}
-        backLabel={backLabel}
-        sourceLabel={resolvedSearchParams?.from === "search" ? "Search" : resolvedSearchParams?.from === "home" ? "Home" : "Profile"}
+        backLabel="Back"
       />
     </MobileShell>
   );

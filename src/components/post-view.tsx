@@ -10,10 +10,8 @@ type PostViewProps = {
   authorName: string;
   authorUsername?: string | null;
   authorAvatarUrl?: string | null;
-  sourceLabel?: string;
   backHref?: string;
   backLabel?: string;
-  compactActions?: boolean;
 };
 
 export function PostView({
@@ -25,10 +23,8 @@ export function PostView({
   authorName,
   authorUsername,
   authorAvatarUrl,
-  sourceLabel,
   backHref,
   backLabel,
-  compactActions = false,
 }: PostViewProps) {
   const showImage = images.length > 0;
 
@@ -45,74 +41,47 @@ export function PostView({
 
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/18 to-black/20" />
 
-        {(backHref && backLabel) || sourceLabel ? (
-          <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-3 p-4">
-            {backHref && backLabel ? (
-              <Link
-                href={backHref}
-                className="rounded-full border border-white/25 bg-black/20 px-3 py-2 text-xs font-semibold text-white backdrop-blur-sm"
-              >
-                {backLabel}
-              </Link>
-            ) : <div />}
-            {sourceLabel ? (
-              <span className="rounded-full border border-white/20 bg-black/15 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white backdrop-blur-sm">
-                {sourceLabel}
-              </span>
-            ) : null}
-          </div>
-        ) : null}
+        <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-3 p-4">
+          {backHref && backLabel ? (
+            <Link
+              href={backHref}
+              className="rounded-full border border-white/25 bg-black/20 px-3 py-2 text-xs font-semibold text-white backdrop-blur-sm"
+            >
+              {backLabel}
+            </Link>
+          ) : <div />}
+        </div>
 
         <div className="absolute inset-x-0 bottom-0 p-4 pb-5 text-white">
-          <div className="flex items-start gap-3">
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/75">Occasion</p>
+            {authorId ? (
+              <Link href={`/people/${authorId}`} className="text-[11px] font-medium text-white/80">
+                Profile
+              </Link>
+            ) : null}
+          </div>
+
+          <p className="mt-2 text-[15px] font-medium leading-6 text-white">{caption}</p>
+
+          <div className="mt-3 flex items-center justify-between text-xs text-white/85">
+            <span>{yesCount} yes</span>
+            <span>{noCount} no</span>
+          </div>
+
+          <div className="mt-4 flex items-center gap-3">
+            <div className="rounded-full border border-white/25 bg-black/20 px-3 py-2 text-white backdrop-blur-sm">
+              <p className="text-sm font-semibold">{authorName}</p>
+              {authorUsername ? <p className="text-xs text-white/80">{authorUsername}</p> : null}
+            </div>
             {authorAvatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={authorAvatarUrl} alt={authorName} className="h-11 w-11 rounded-full object-cover ring-1 ring-white/20" />
+              <img src={authorAvatarUrl} alt={authorName} className="h-10 w-10 rounded-full object-cover ring-1 ring-white/20" />
             ) : (
-              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-sm ring-1 ring-white/20 backdrop-blur-sm">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-sm ring-1 ring-white/20 backdrop-blur-sm">
                 ✨
               </div>
             )}
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <p className="text-sm font-semibold text-white">{authorName}</p>
-                  {authorUsername ? <p className="text-xs text-white/80">{authorUsername}</p> : null}
-                </div>
-                {authorId ? (
-                  <Link href={`/people/${authorId}`} className="text-[11px] font-medium text-white/80">
-                    Profile
-                  </Link>
-                ) : null}
-              </div>
-
-              <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/75">Occasion</p>
-              <p className="mt-2 text-[15px] font-medium leading-6 text-white">{caption}</p>
-
-              <div className="mt-3 flex items-center justify-between text-xs text-white/85">
-                <span>{yesCount} yes</span>
-                <span>{noCount} no</span>
-              </div>
-
-              {compactActions ? null : (
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <Link
-                    href="/home"
-                    className="rounded-full border border-white/55 bg-white/5 px-4 py-2 text-sm font-semibold text-white backdrop-blur-sm"
-                  >
-                    Keep rating
-                  </Link>
-                  {authorId ? (
-                    <Link
-                      href={`/people/${authorId}`}
-                      className="rounded-full border border-white/25 bg-black/20 px-4 py-2 text-sm font-semibold text-white/90 backdrop-blur-sm"
-                    >
-                      More from this person
-                    </Link>
-                  ) : null}
-                </div>
-              )}
-            </div>
           </div>
         </div>
       </div>
