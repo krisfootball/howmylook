@@ -10,14 +10,14 @@ const stepToPath = {
   auth: "/auth",
   username: "/welcome",
   rating: "/rate",
-  unlocked: "/following",
+  unlocked: "/home",
 } as const;
 
 const allowedByStep: Record<string, string[]> = {
   auth: ["/auth", "/"],
   username: ["/welcome", "/auth", "/"],
   rating: ["/rate", "/welcome", "/auth", "/"],
-  unlocked: ["/profile", "/people", "/upload", "/following", "/search", "/liked", "/disliked", "/rate", "/welcome", "/auth", "/"],
+  unlocked: ["/profile", "/people", "/upload", "/home", "/following", "/search", "/liked", "/disliked", "/rate", "/welcome", "/auth", "/"],
 };
 
 function isPathAllowed(step: keyof typeof allowedByStep, pathname: string) {

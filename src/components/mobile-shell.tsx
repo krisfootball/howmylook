@@ -11,7 +11,7 @@ type NavItem = {
 };
 
 const navItems: NavItem[] = [
-  { href: "/following", label: "Home", icon: "⌂" },
+  { href: "/home", label: "Home", icon: "⌂" },
   { href: "/search", label: "Search", icon: "⌕" },
   { href: "/upload", label: "Post", icon: "+" },
   { href: "/profile", label: "Profile", icon: "○" },
