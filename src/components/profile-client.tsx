@@ -9,6 +9,7 @@ type ProfileState = {
   username: string;
   displayName: string;
   bio: string;
+  avatarUrl: string | null;
   yesGiven: number;
   noGiven: number;
   followers: number;
@@ -16,13 +17,18 @@ type ProfileState = {
   error: string | null;
 };
 
-export function ProfileClient() {
+export function ProfileClient({
+  onEdit,
+}: {
+  onEdit?: () => void;
+}) {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [state, setState] = useState<ProfileState>({
     loading: true,
     username: "",
     displayName: "Your profile",
     bio: "Your profile data will appear here once connected.",
+    avatarUrl: null,
     yesGiven: 0,
     noGiven: 0,
     followers: 0,
@@ -53,7 +59,7 @@ export function ProfileClient() {
 
         const { data: profile, error: profileError } = await supabase
           .from("profiles")
-          .select("username,display_name,bio,total_yes_given,total_no_given")
+          .select("username,display_name,bio,avatar_url,total_yes_given,total_no_given")
           .eq("id", user.id)
           .maybeSingle();
 
@@ -76,6 +82,7 @@ export function ProfileClient() {
           username: profile?.username ? `@${profile.username}` : "@username",
           displayName: profile?.display_name || "Your profile",
           bio: profile?.bio || "No bio yet.",
+          avatarUrl: profile?.avatar_url || null,
           yesGiven: profile?.total_yes_given ?? 0,
           noGiven: profile?.total_no_given ?? 0,
           followers: followersCount ?? 0,
@@ -107,14 +114,29 @@ export function ProfileClient() {
     <div className="space-y-5">
       <section className="rounded-[1.6rem] border border-pink-100 bg-gradient-to-br from-pink-50 to-white p-5">
         <div className="flex items-start gap-4">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[linear-gradient(180deg,_#f6c4d5_0%,_#ddb7ff_100%)] text-2xl shadow-sm">
-            ✨
-          </div>
+          {state.avatarUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={state.avatarUrl} alt={state.displayName} className="h-16 w-16 rounded-full object-cover shadow-sm" />
+          ) : (
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[linear-gradient(180deg,_#f6c4d5_0%,_#ddb7ff_100%)] text-2xl shadow-sm">
+              ✨
+            </div>
+          )}
           <div className="min-w-0 flex-1">
             <p className="text-lg font-semibold tracking-tight text-slate-900">{state.displayName}</p>
             <p className="text-sm text-slate-500">{state.username}</p>
             <p className="mt-3 text-sm leading-6 text-slate-700">{state.bio}</p>
           </div>
+        </div>
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={onEdit}
+            className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white"
+          >
+            Edit profile
+          </button>
         </div>
 
         <div className="mt-5 grid grid-cols-2 gap-3">

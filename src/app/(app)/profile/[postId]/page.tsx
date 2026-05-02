@@ -19,7 +19,7 @@ export default async function PostDetailPage({ params, searchParams }: PostDetai
 
   const { data: post, error } = await supabase
     .from("posts")
-    .select("id,caption,image_url,yes_count,no_count,user_id,is_active,post_images(id,image_url,sort_order)")
+    .select("id,caption,image_url,yes_count,no_count,user_id,is_active,keep_forever,expires_at,post_images(id,image_url,sort_order)")
     .eq("id", postId)
     .eq("is_active", true)
     .maybeSingle();
@@ -53,6 +53,8 @@ export default async function PostDetailPage({ params, searchParams }: PostDetai
         ? [post.image_url]
         : [];
   const showImage = galleryImages.length > 0;
+  const isKeptForever = Boolean(post.keep_forever);
+  const expiresAt = post.expires_at;
   const authorName = author?.display_name || author?.username || "HowMyLook user";
   const authorHandle = author?.username ? `@${author.username}` : null;
   const backHref =
@@ -91,6 +93,17 @@ export default async function PostDetailPage({ params, searchParams }: PostDetai
             <p className="text-sm text-slate-500">
               {galleryImages.length === 0 ? "No photos attached" : `${galleryImages.length} photo${galleryImages.length > 1 ? "s" : ""}`}
             </p>
+
+            <div className="rounded-2xl bg-pink-50/70 px-4 py-4 text-sm text-slate-600">
+              <p className="text-slate-500">Availability</p>
+              <p className="mt-1 font-semibold text-slate-900">
+                {isKeptForever
+                  ? "Kept on profile"
+                  : expiresAt
+                    ? `Expires ${new Date(expiresAt).toLocaleDateString()}`
+                    : "30-day post"}
+              </p>
+            </div>
 
             <div className="grid grid-cols-2 gap-3 text-sm">
               <div className="rounded-2xl bg-pink-50 px-4 py-4">

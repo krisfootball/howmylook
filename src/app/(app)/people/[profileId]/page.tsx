@@ -13,7 +13,7 @@ export default async function PeopleProfilePage({ params }: PeopleProfilePagePro
 
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
-    .select("id,username,display_name,bio,total_yes_given,total_no_given")
+    .select("id,username,display_name,bio,avatar_url,total_yes_given,total_no_given")
     .eq("id", profileId)
     .maybeSingle();
 
@@ -55,9 +55,14 @@ export default async function PeopleProfilePage({ params }: PeopleProfilePagePro
 
         <section className="rounded-[1.6rem] border border-pink-100 bg-gradient-to-br from-pink-50 to-white p-5">
           <div className="flex items-start gap-4">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[linear-gradient(180deg,_#f6c4d5_0%,_#ddb7ff_100%)] text-2xl shadow-sm">
-              ✨
-            </div>
+            {profile.avatar_url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={profile.avatar_url} alt={profile.display_name || profile.username || "HowMyLook user"} className="h-16 w-16 rounded-full object-cover shadow-sm" />
+            ) : (
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[linear-gradient(180deg,_#f6c4d5_0%,_#ddb7ff_100%)] text-2xl shadow-sm">
+                ✨
+              </div>
+            )}
             <div className="min-w-0 flex-1">
               <p className="text-lg font-semibold tracking-tight text-slate-900">{profile.display_name || "HowMyLook user"}</p>
               <p className="text-sm text-slate-500">{profile.username ? `@${profile.username}` : "@username"}</p>

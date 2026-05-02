@@ -9,6 +9,7 @@ type DiscoverProfile = {
   username: string;
   displayName: string;
   bio: string;
+  avatarUrl: string | null;
   isFollowing: boolean;
 };
 
@@ -44,7 +45,7 @@ export function DiscoverCreatorsClient({
 
         const { data: allProfiles, error: profilesError } = await supabase
           .from("profiles")
-          .select("id,username,display_name,bio")
+          .select("id,username,display_name,bio,avatar_url")
           .neq("id", user.id)
           .order("created_at", { ascending: false })
           .limit(12);
@@ -70,6 +71,7 @@ export function DiscoverCreatorsClient({
             username: profile.username ? `@${profile.username}` : "@username",
             displayName: profile.display_name || "HowMyLook user",
             bio: profile.bio || "Posting looks and getting quick feedback.",
+            avatarUrl: profile.avatar_url || null,
             isFollowing: followingIds.has(profile.id),
           })),
         );
@@ -170,10 +172,22 @@ export function DiscoverCreatorsClient({
             className="flex items-start justify-between gap-3 rounded-[1.2rem] bg-slate-50 px-4 py-4"
           >
             <Link href={`/people/${profile.id}`} className="min-w-0 flex-1">
-              <p className="font-semibold text-slate-900">{profile.displayName}</p>
-              <p className="text-sm text-slate-500">{profile.username}</p>
-              <p className="mt-2 text-sm leading-6 text-slate-600">{profile.bio}</p>
-              <p className="mt-2 text-xs font-medium text-pink-600">Open profile</p>
+              <div className="flex items-start gap-3">
+                {profile.avatarUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={profile.avatarUrl} alt={profile.displayName} className="h-12 w-12 rounded-full object-cover shadow-sm" />
+                ) : (
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[linear-gradient(180deg,_#f6c4d5_0%,_#ddb7ff_100%)] text-lg shadow-sm">
+                    ✨
+                  </div>
+                )}
+                <div className="min-w-0 flex-1">
+                  <p className="font-semibold text-slate-900">{profile.displayName}</p>
+                  <p className="text-sm text-slate-500">{profile.username}</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-600">{profile.bio}</p>
+                  <p className="mt-2 text-xs font-medium text-pink-600">Open profile</p>
+                </div>
+              </div>
             </Link>
             <button
               type="button"

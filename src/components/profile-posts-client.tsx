@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { ProfileRetentionNote } from "@/components/profile-retention-note";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
 const MAX_KEPT_POSTS = 10;
+const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 
 type ProfilePost = {
   id: string;
@@ -16,6 +18,27 @@ type ProfilePost = {
   keepForever: boolean;
   expiresAt: string;
 };
+
+function formatExpiryLabel(expiresAt: string) {
+  const expiryMs = new Date(expiresAt).getTime();
+
+  if (Number.isNaN(expiryMs)) {
+    return "Expires soon";
+  }
+
+  const diffMs = expiryMs - Date.now();
+  const diffDays = Math.ceil(diffMs / (24 * 60 * 60 * 1000));
+
+  if (diffDays <= 0) {
+    return "Expires today";
+  }
+
+  if (diffDays === 1) {
+    return "Expires in 1 day";
+  }
+
+  return `Expires in ${diffDays} days`;
+}
 
 export function ProfilePostsClient() {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
@@ -134,17 +157,25 @@ export function ProfilePostsClient() {
     );
   }
 
+  const keptCount = posts.filter((post) => post.keepForever).length;
+
   if (posts.length === 0) {
     return (
-      <section className="rounded-[1.6rem] border border-pink-100 bg-white p-5 text-sm text-slate-600 shadow-sm">
-        You have not posted any looks yet.
-      </section>
+      <div className="space-y-3">
+        <ProfileRetentionNote keptCount={0} maxKept={MAX_KEPT_POSTS} />
+        <section className="rounded-[1.6rem] border border-pink-100 bg-white p-5 text-sm text-slate-600 shadow-sm">
+          You have not posted any looks yet.
+        </section>
+      </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-2 gap-3">
-      {posts.map((post, index) => {
+    <div className="space-y-3">
+      <ProfileRetentionNote keptCount={keptCount} maxKept={MAX_KEPT_POSTS} />
+
+      <div className="grid grid-cols-2 gap-3">
+        {posts.map((post, index) => {
         const showImage = post.imageUrl.startsWith("http");
 
         return (
@@ -186,7 +217,7 @@ export function ProfilePostsClient() {
               <p className="mt-1 text-xs text-slate-500">
                 {post.keepForever
                   ? "Kept on profile"
-                  : `Expires ${new Date(post.expiresAt).toLocaleDateString()}`}
+                  : `${formatExpiryLabel(post.expiresAt)} · ${new Date(post.expiresAt).toLocaleDateString()}`}
               </p>
               <div className="mt-2 flex items-center justify-between gap-2">
                 <p className="text-xs font-medium text-pink-600">Open post</p>
@@ -196,7 +227,7 @@ export function ProfilePostsClient() {
                     event.preventDefault();
                     handleToggleKeep(post.id, !post.keepForever);
                   }}
-                  disabled={busyId === post.id}
+                  disabled={busyId === post.id || (!post.keepForever && keptCount >= MAX_KEPT_POSTS)}
                   className={`rounded-full px-3 py-1.5 text-[11px] font-semibold ${
                     post.keepForever
                       ? "bg-slate-900 text-white"
@@ -210,12 +241,17 @@ export function ProfilePostsClient() {
             </div>
           </Link>
         );
-      })}
-      {message ? (
-        <div className="col-span-2 rounded-[1.2rem] bg-white px-4 py-3 text-sm leading-6 text-slate-600 shadow-sm">
-          {message}
-        </div>
-      ) : null}
+        })}
+        {message ? (
+          <div className="col-span-2 rounded-[1.2rem] bg-white px-4 py-3 text-sm leading-6 text-slate-600 shadow-sm">
+            {message}
+          </div>
+        ) : null}
+      </div>
+
+      <section className="rounded-[1.4rem] border border-white/70 bg-white px-4 py-3 text-xs leading-5 text-slate-500 shadow-sm">
+        Posts start with a {Math.round(THIRTY_DAYS_MS / (24 * 60 * 60 * 1000))}-day life. Keep saves a look on your profile beyond that limit, up to {MAX_KEPT_POSTS} looks.
+      </section>
     </div>
   );
 }

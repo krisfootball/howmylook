@@ -4,6 +4,8 @@ import { useMemo, useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
 const MAX_FILES = 5;
+const MAX_KEPT_POSTS = 10;
+const POST_LIFETIME_DAYS = 30;
 
 export function UploadForm() {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
@@ -159,7 +161,7 @@ export function UploadForm() {
       </section>
 
       <section className="rounded-[1.4rem] border border-pink-100 bg-pink-50/70 p-4 text-sm leading-6 text-slate-700">
-        Posts auto-delete after 30 days by default. Later you will be able to keep up to 10 looks on your profile for longer.
+        Posts auto-delete after {POST_LIFETIME_DAYS} days by default. You can keep up to {MAX_KEPT_POSTS} looks on your profile for longer.
       </section>
 
       <button
