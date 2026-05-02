@@ -1,5 +1,5 @@
 import { MobileShell } from "@/components/mobile-shell";
-import { PostView } from "@/components/post-view";
+import { PostSurface } from "@/components/post-surface";
 import { supabase } from "@/lib/supabase";
 
 type PostDetailPageProps = {
@@ -18,7 +18,7 @@ export default async function PostDetailPage({ params, searchParams }: PostDetai
 
   const { data: post, error } = await supabase
     .from("posts")
-    .select("id,caption,image_url,yes_count,no_count,user_id,is_active,keep_forever,expires_at,post_images(id,image_url,sort_order)")
+    .select("id,caption,image_url,yes_count,no_count,user_id,is_active,post_images(id,image_url,sort_order)")
     .eq("id", postId)
     .eq("is_active", true)
     .maybeSingle();
@@ -57,7 +57,7 @@ export default async function PostDetailPage({ params, searchParams }: PostDetai
 
   return (
     <MobileShell title="Post" subtitle="Open post view.">
-      <PostView
+      <PostSurface
         images={galleryImages}
         caption={post.caption ?? "No occasion added yet"}
         yesCount={post.yes_count}
