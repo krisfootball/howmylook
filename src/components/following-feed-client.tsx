@@ -293,18 +293,18 @@ export function FollowingFeedClient() {
               <span>{currentPost.noCount} no</span>
             </div>
 
-            <div className="mt-4 grid grid-cols-2 gap-3">
+            <div className="mt-4 flex items-center gap-3">
               <button
                 onClick={() => handleVote("yes")}
                 disabled={saving}
-                className="rounded-full border border-white/55 bg-white/5 px-4 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/10 disabled:opacity-60"
+                className="min-w-[5.5rem] rounded-full border border-white/55 bg-white/5 px-4 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/10 disabled:opacity-60"
               >
                 {saving ? "Saving..." : appConfig.yesLabel}
               </button>
               <button
                 onClick={() => handleVote("no")}
                 disabled={saving}
-                className="rounded-full border border-white/55 bg-white/5 px-4 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/10 disabled:opacity-60"
+                className="min-w-[5.5rem] rounded-full border border-white/55 bg-white/5 px-4 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/10 disabled:opacity-60"
               >
                 {saving ? "Saving..." : appConfig.noLabel}
               </button>
