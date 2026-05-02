@@ -175,7 +175,7 @@ export function EditProfileForm({
   }
 
   return (
-    <form noValidate onSubmit={handleSubmit} className="space-y-4 rounded-[1.6rem] border border-pink-100 bg-white p-4 shadow-sm">
+    <form noValidate onSubmit={handleSubmit} className="space-y-4 rounded-[1.6rem] border border-pink-100 bg-white p-4 shadow-xl shadow-slate-900/5">
       <div className="flex items-center gap-4">
         {avatarUrl && !removeAvatar ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -274,13 +274,15 @@ export function EditProfileForm({
         />
       </div>
 
-      <button
-        type="submit"
-        disabled={loading || saving}
-        className="w-full rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white disabled:opacity-60"
-      >
-        {loading ? "Loading..." : saving ? "Saving..." : "Save profile"}
-      </button>
+      <div className="flex gap-3">
+        <button
+          type="submit"
+          disabled={loading || saving}
+          className="flex-1 rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white disabled:opacity-60"
+        >
+          {loading ? "Loading..." : saving ? "Saving..." : "Save profile"}
+        </button>
+      </div>
 
       {message ? (
         <div
