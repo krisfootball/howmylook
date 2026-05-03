@@ -32,10 +32,7 @@ export function MobileShell({
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_#fff_0%,_#fff6fb_40%,_#f5edf8_100%)] px-4 py-6 text-slate-900">
       <div className="mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-sm flex-col overflow-hidden rounded-[2rem] border border-white/70 bg-white/85 shadow-[0_25px_80px_rgba(76,29,149,0.18)] backdrop-blur">
         <header className="border-b border-pink-100 px-5 pb-4 pt-5">
-          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-pink-500">
-            HowMyLook
-          </p>
-          <h1 className="mt-2 text-2xl font-semibold tracking-tight">{title}</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">{title}</h1>
           {subtitle ? <p className="mt-2 text-sm leading-6 text-slate-600">{subtitle}</p> : null}
         </header>
 

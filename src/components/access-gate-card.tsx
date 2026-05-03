@@ -66,7 +66,7 @@ export function AccessGateCard({ areaLabel, children }: AccessGateCardProps) {
   if (loading) {
     return (
       <div className="rounded-[1.6rem] border border-pink-100 bg-white p-5 text-sm text-slate-600 shadow-sm">
-        Checking access to {areaLabel}...
+        Loading...
       </div>
     );
   }
@@ -77,11 +77,8 @@ export function AccessGateCard({ areaLabel, children }: AccessGateCardProps) {
 
   return (
     <section className="rounded-[1.6rem] border border-pink-100 bg-white p-5 shadow-sm">
-      <p className="text-sm font-semibold uppercase tracking-[0.22em] text-pink-500">Locked area</p>
-      <h2 className="mt-3 text-xl font-semibold tracking-tight text-slate-900">{areaLabel} unlocks after the first 5 ratings.</h2>
-      <p className="mt-3 text-sm leading-6 text-slate-600">
-        Current next step: <span className="font-semibold text-slate-900">{nextStep}</span>. Ratings completed: {ratingsCompleted} / {appConfig.unlockVoteCount}.
-      </p>
+      <h2 className="text-xl font-semibold tracking-tight text-slate-900">{areaLabel}</h2>
+      <p className="mt-2 text-sm text-slate-600">{ratingsCompleted} / {appConfig.unlockVoteCount}</p>
 
       <div className="mt-5 flex flex-col gap-3 sm:flex-row">
         {nextStep === "auth" ? (

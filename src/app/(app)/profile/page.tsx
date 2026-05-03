@@ -12,10 +12,7 @@ export default function ProfilePage() {
   const [refreshKey, setRefreshKey] = useState(0);
 
   return (
-    <MobileShell
-      title="Profile"
-      subtitle="Your profile shows what you have posted, who you follow, and the kinds of looks you tend to vote yes or no on over time."
-    >
+    <MobileShell title="Profile">
       <div className="space-y-5">
         <ProfileClient
           refreshKey={refreshKey}
@@ -33,7 +30,6 @@ export default function ProfilePage() {
               <div className="flex items-center justify-between px-4 pb-2 pt-3">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-pink-500">Edit profile</p>
-                  <p className="mt-1 text-sm text-slate-500">Update your public identity and profile photo.</p>
                 </div>
                 <button
                   type="button"

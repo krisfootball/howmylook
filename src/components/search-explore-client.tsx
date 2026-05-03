@@ -70,25 +70,13 @@ export function SearchExploreClient() {
   return (
     <div className="space-y-5">
       <section className="rounded-[1.7rem] border border-pink-100 bg-white p-4 shadow-sm">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-pink-500">Search</p>
-            <h2 className="mt-2 text-lg font-semibold tracking-tight text-slate-900">Popular looks</h2>
-          </div>
-          <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-600">
-            Top yes votes
-          </span>
-        </div>
-        <p className="mt-2 text-sm leading-6 text-slate-600">
-          Explore the strongest outfit photos across the app in a clean 3-column grid.
-        </p>
         <div className="mt-4 flex items-center gap-2 rounded-[1.3rem] border border-slate-200 bg-slate-50 px-3 py-3">
           <span className="text-sm text-slate-400">⌕</span>
           <input
             type="text"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search photos by occasion"
+            placeholder="Search"
             className="w-full bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-400"
           />
           {query ? (
@@ -105,7 +93,7 @@ export function SearchExploreClient() {
 
       {loading ? (
         <section className="rounded-[1.6rem] border border-pink-100 bg-white p-5 text-sm text-slate-600 shadow-sm">
-          Loading explore page...
+          Loading...
         </section>
       ) : null}
 
