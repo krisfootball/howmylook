@@ -116,7 +116,7 @@ export default async function PeopleProfilePage({ params }: PeopleProfilePagePro
               No posts yet.
             </section>
           ) : (
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-2">
               {posts.map((post, index) => {
                 const showImage = post.image_url.startsWith("http");
                 const imageCount = post.post_images?.length ?? (post.image_url.startsWith("seed://") ? 0 : 1);
@@ -124,12 +124,12 @@ export default async function PeopleProfilePage({ params }: PeopleProfilePagePro
                   <Link
                     key={post.id}
                     href={`/profile/${post.id}?from=people&profileId=${profileId}`}
-                    className="overflow-hidden rounded-[1.4rem] border border-pink-100 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                    className="group overflow-hidden rounded-[1rem] bg-white shadow-sm ring-1 ring-pink-100 transition hover:-translate-y-0.5 hover:shadow-md"
                   >
                     <div className="relative">
                       {showImage ? (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={post.image_url} alt={post.caption ?? "Outfit for an occasion"} className="aspect-square w-full object-cover" />
+                        <img src={post.image_url} alt={post.caption ?? "Outfit for an occasion"} className="aspect-square w-full object-cover transition duration-300 group-hover:scale-[1.03]" />
                       ) : (
                         <div
                           className={`aspect-square ${
@@ -142,26 +142,16 @@ export default async function PeopleProfilePage({ params }: PeopleProfilePagePro
                         />
                       )}
                       {imageCount > 1 ? (
-                        <div className="pointer-events-none absolute right-2 top-2 rounded-full bg-black/55 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
-                          {imageCount} photos
+                        <div className="pointer-events-none absolute right-2 top-2 rounded-full bg-black/50 px-2 py-0.5 text-[10px] font-semibold text-white backdrop-blur-sm">
+                          {imageCount}
                         </div>
                       ) : null}
-                    </div>
-                    <div className="p-3">
-                      <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-pink-500">Occasion</p>
-                      <p className="mt-1 text-sm font-semibold text-slate-900">{post.caption ?? "No occasion added yet"}</p>
-                      <p className="mt-1 text-xs text-slate-500">{post.yes_count} yes · {post.no_count} no</p>
-                      <p className="mt-1 text-xs text-slate-500">
-                        {imageCount === 0 ? "No photos" : `${imageCount} photo${imageCount > 1 ? "s" : ""}`}
-                      </p>
-                      <p className="mt-1 text-xs text-slate-500">
-                        {post.keep_forever
-                          ? "Kept on profile"
-                          : post.expires_at
-                            ? `Expires ${new Date(post.expires_at).toLocaleDateString()}`
-                            : "30-day look"}
-                      </p>
-                      <p className="mt-2 text-xs font-medium text-pink-600">Open post</p>
+                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/18 to-transparent px-2 pb-2 pt-6 text-white">
+                        <div className="flex items-center gap-3 text-[10px] font-medium text-white/88">
+                          <span>{post.yes_count} yes</span>
+                          <span>{post.no_count} no</span>
+                        </div>
+                      </div>
                     </div>
                   </Link>
                 );

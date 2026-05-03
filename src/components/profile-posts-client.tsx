@@ -174,7 +174,7 @@ export function ProfilePostsClient() {
     <div className="space-y-3">
       <ProfileRetentionNote keptCount={keptCount} maxKept={MAX_KEPT_POSTS} />
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-3 gap-2">
         {posts.map((post, index) => {
         const showImage = post.imageUrl.startsWith("http");
 
@@ -182,12 +182,12 @@ export function ProfilePostsClient() {
           <Link
             key={post.id}
             href={`/profile/${post.id}`}
-            className="overflow-hidden rounded-[1.4rem] border border-pink-100 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+            className="group overflow-hidden rounded-[1rem] bg-white shadow-sm ring-1 ring-pink-100 transition hover:-translate-y-0.5 hover:shadow-md"
           >
             <div className="relative">
               {showImage ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={post.imageUrl} alt={post.caption} className="aspect-square w-full object-cover" />
+                <img src={post.imageUrl} alt={post.caption} className="aspect-square w-full object-cover transition duration-300 group-hover:scale-[1.03]" />
               ) : (
                 <div
                   className={`aspect-square ${
@@ -200,44 +200,40 @@ export function ProfilePostsClient() {
                 />
               )}
               {post.imageCount > 1 ? (
-                <div className="pointer-events-none absolute right-2 top-2 rounded-full bg-black/55 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
-                  {post.imageCount} photos
+                <div className="pointer-events-none absolute right-2 top-2 rounded-full bg-black/50 px-2 py-0.5 text-[10px] font-semibold text-white backdrop-blur-sm">
+                  {post.imageCount}
                 </div>
               ) : null}
-            </div>
-            <div className="p-3">
-              <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-pink-500">Occasion</p>
-              <p className="mt-1 text-sm font-semibold text-slate-900">{post.caption}</p>
-              <p className="mt-1 text-xs text-slate-500">
-                {post.yesCount} yes · {post.noCount} no
-              </p>
-              <p className="mt-1 text-xs text-slate-500">
-                {post.imageCount === 0 ? "No photos" : `${post.imageCount} photo${post.imageCount > 1 ? "s" : ""}`}
-              </p>
-              <p className="mt-1 text-xs text-slate-500">
-                {post.keepForever
-                  ? "Kept on profile"
-                  : `${formatExpiryLabel(post.expiresAt)} · ${new Date(post.expiresAt).toLocaleDateString()}`}
-              </p>
-              <div className="mt-2 flex items-center justify-between gap-2">
-                <p className="text-xs font-medium text-pink-600">Open post</p>
-                <button
-                  type="button"
-                  onClick={(event) => {
-                    event.preventDefault();
-                    handleToggleKeep(post.id, !post.keepForever);
-                  }}
-                  disabled={busyId === post.id || (!post.keepForever && keptCount >= MAX_KEPT_POSTS)}
-                  className={`rounded-full px-3 py-1.5 text-[11px] font-semibold ${
-                    post.keepForever
-                      ? "bg-slate-900 text-white"
-                      : "bg-pink-50 text-pink-700 ring-1 ring-pink-200"
-                  } disabled:opacity-60`}
-                >
-                  {busyId === post.id ? "Saving..." : post.keepForever ? "Unkeep" : "Keep"}
-                </button>
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/18 to-transparent px-2 pb-2 pt-6 text-white">
+                <div className="flex items-center gap-3 text-[10px] font-medium text-white/88">
+                  <span>{post.yesCount} yes</span>
+                  <span>{post.noCount} no</span>
+                </div>
               </div>
-              {!showImage ? <p className="mt-1 text-[11px] text-slate-400">Demo image placeholder</p> : null}
+            </div>
+            <div className="flex items-center justify-between gap-2 px-1 pb-1 pt-2">
+              <div className="min-w-0 text-[10px] text-slate-500">
+                <p className="truncate">
+                  {post.keepForever
+                    ? "Kept on profile"
+                    : `${formatExpiryLabel(post.expiresAt)}`}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={(event) => {
+                  event.preventDefault();
+                  handleToggleKeep(post.id, !post.keepForever);
+                }}
+                disabled={busyId === post.id || (!post.keepForever && keptCount >= MAX_KEPT_POSTS)}
+                className={`rounded-full px-2.5 py-1 text-[10px] font-semibold ${
+                  post.keepForever
+                    ? "bg-slate-900 text-white"
+                    : "bg-pink-50 text-pink-700 ring-1 ring-pink-200"
+                } disabled:opacity-60`}
+              >
+                {busyId === post.id ? "..." : post.keepForever ? "Unkeep" : "Keep"}
+              </button>
             </div>
           </Link>
         );
