@@ -70,14 +70,9 @@ export function PostSurface({
         </div>
 
         <div className="absolute inset-x-0 bottom-0 p-4 pb-5 text-white">
-          <div className="flex items-center justify-between gap-3">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/75">Occasion</p>
-            {showVoting && authorId ? (
-              <Link href={`/people/${authorId}`} className="text-[11px] font-medium text-white/80">
-                Profile
-              </Link>
-            ) : null}
-          </div>
+          {showVoting ? <p className="text-sm font-semibold text-white">{authorName}</p> : null}
+
+          <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/75">Occasion</p>
 
           <p className="mt-2 text-[15px] font-medium leading-6 text-white">{caption}</p>
 
