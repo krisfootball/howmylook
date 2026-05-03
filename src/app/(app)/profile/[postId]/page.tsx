@@ -1,5 +1,4 @@
-import { MobileShell } from "@/components/mobile-shell";
-import { PostSurface } from "@/components/post-surface";
+import { PostView } from "@/components/post-view";
 import { supabase } from "@/lib/supabase";
 
 type PostDetailPageProps = {
@@ -25,11 +24,11 @@ export default async function PostDetailPage({ params, searchParams }: PostDetai
 
   if (error || !post) {
     return (
-      <MobileShell title="Post" subtitle="This look could not be opened.">
-        <section className="rounded-[1.6rem] border border-rose-100 bg-rose-50 p-5 text-sm leading-6 text-rose-700 shadow-sm">
+      <main className="min-h-screen bg-[radial-gradient(circle_at_top,_#fff_0%,_#fff6fb_40%,_#f5edf8_100%)] px-4 py-6 text-slate-900">
+        <div className="mx-auto w-full max-w-sm rounded-[2rem] border border-rose-100 bg-rose-50 p-5 text-sm leading-6 text-rose-700 shadow-sm">
           This post is unavailable right now.
-        </section>
-      </MobileShell>
+        </div>
+      </main>
     );
   }
 
@@ -56,19 +55,17 @@ export default async function PostDetailPage({ params, searchParams }: PostDetai
           : "/profile";
 
   return (
-    <MobileShell title="Post" subtitle="Open post view.">
-      <PostSurface
-        images={galleryImages}
-        caption={post.caption ?? "No occasion added yet"}
-        yesCount={post.yes_count}
-        noCount={post.no_count}
-        authorId={author?.id}
-        authorName={author?.display_name || author?.username || "HowMyLook user"}
-        authorUsername={author?.username ? `@${author.username}` : null}
-        authorAvatarUrl={author?.avatar_url || null}
-        backHref={backHref}
-        backLabel="Back"
-      />
-    </MobileShell>
+    <PostView
+      images={galleryImages}
+      caption={post.caption ?? "No occasion added yet"}
+      yesCount={post.yes_count}
+      noCount={post.no_count}
+      authorId={author?.id}
+      authorName={author?.display_name || author?.username || "HowMyLook user"}
+      authorUsername={author?.username ? `@${author.username}` : null}
+      authorAvatarUrl={author?.avatar_url || null}
+      backHref={backHref}
+      backLabel="Back"
+    />
   );
 }

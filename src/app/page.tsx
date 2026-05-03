@@ -5,9 +5,10 @@ const links = [
   { href: "/auth", label: "Auth" },
   { href: "/welcome", label: "Choose username" },
   { href: "/rate", label: "Rating queue" },
+  { href: "/home", label: "Home feed (will be gated)" },
+  { href: "/search", label: "Search (will be gated)" },
   { href: "/profile", label: "Profile (will be gated)" },
   { href: "/upload", label: "Post look (will be gated)" },
-  { href: "/following", label: "Following (will be gated)" },
 ];
 
 export default function Home() {
@@ -18,7 +19,7 @@ export default function Home() {
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-pink-500">{appConfig.name}</p>
           <h1 className="mt-3 text-4xl font-bold tracking-tight">Mobile-first MVP now in progress.</h1>
           <p className="mt-4 max-w-2xl text-base leading-7 text-slate-600">
-            Users must create an account, choose a username, and rate {appConfig.unlockVoteCount} looks before the rest of the app unlocks.
+            Users must create an account, choose a username, and rate {appConfig.unlockVoteCount} looks before Home, Profile, Post, and Search unlock.
           </p>
         </div>
 

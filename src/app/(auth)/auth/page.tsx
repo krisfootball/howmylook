@@ -16,7 +16,7 @@ export default function AuthPage() {
         <div className="rounded-[1.4rem] bg-slate-950 p-4 text-sm leading-6 text-white/80">
           <p className="font-semibold text-white">Current gated flow</p>
           <p className="mt-2">
-            Account first → username second → rate 5 looks → unlock profile, posting, and following.
+            Account first → username second → rate 5 looks → unlock Home, Search, Profile, and posting.
           </p>
         </div>
 

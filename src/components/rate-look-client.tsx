@@ -165,7 +165,7 @@ export function RateLookClient({ initialRatingsCompleted }: RateLookClientProps)
       );
 
       if (nextUnlockVotes >= appConfig.unlockVoteCount) {
-        router.replace("/following");
+        router.replace("/home");
         router.refresh();
       }
     } catch (error) {

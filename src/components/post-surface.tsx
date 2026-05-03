@@ -81,10 +81,12 @@ export function PostSurface({
 
           <p className="mt-2 text-[15px] font-medium leading-6 text-white">{caption}</p>
 
-          <div className="mt-3 flex items-center justify-between text-xs text-white/85">
-            <span>{yesCount} yes</span>
-            <span>{noCount} no</span>
-          </div>
+          {!showVoting ? (
+            <div className="mt-3 flex items-center justify-between text-xs text-white/85">
+              <span>{yesCount} yes</span>
+              <span>{noCount} no</span>
+            </div>
+          ) : null}
 
           <div className="mt-4 flex items-center gap-3">
             {showVoting ? (
@@ -92,16 +94,18 @@ export function PostSurface({
                 <button
                   onClick={onYes}
                   disabled={votingDisabled}
-                  className="min-w-[5.5rem] rounded-full border border-white/55 bg-white/5 px-4 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/10 disabled:opacity-60"
+                  className="flex-1 rounded-[1.6rem] border border-emerald-300/45 bg-emerald-500/16 px-4 py-3.5 text-white backdrop-blur-sm transition hover:bg-emerald-500/22 disabled:opacity-60"
                 >
-                  {yesLabel}
+                  <span className="block text-base font-semibold leading-none">{yesLabel}</span>
+                  <span className="mt-2 block text-2xl font-semibold leading-none">{yesCount}</span>
                 </button>
                 <button
                   onClick={onNo}
                   disabled={votingDisabled}
-                  className="min-w-[5.5rem] rounded-full border border-white/55 bg-white/5 px-4 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/10 disabled:opacity-60"
+                  className="flex-1 rounded-[1.6rem] border border-rose-300/45 bg-rose-500/16 px-4 py-3.5 text-white backdrop-blur-sm transition hover:bg-rose-500/22 disabled:opacity-60"
                 >
-                  {noLabel}
+                  <span className="block text-base font-semibold leading-none">{noLabel}</span>
+                  <span className="mt-2 block text-2xl font-semibold leading-none">{noCount}</span>
                 </button>
               </>
             ) : (

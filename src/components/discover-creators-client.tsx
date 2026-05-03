@@ -164,7 +164,7 @@ export function DiscoverCreatorsClient({
         <p className="text-sm font-semibold uppercase tracking-[0.22em] text-pink-500">Discover</p>
         <h2 className="mt-2 text-lg font-semibold tracking-tight text-slate-900">Find people to follow</h2>
         <p className="mt-2 text-sm leading-6 text-slate-600">
-          Follow a few creators so the following feed becomes useful right away.
+          Follow a few creators so your Home feed becomes more personal right away.
         </p>
       </div>
 

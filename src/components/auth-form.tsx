@@ -116,7 +116,7 @@ export function AuthForm() {
             ? "/welcome"
             : nextStep === "rating"
               ? "/rate"
-              : "/following";
+              : "/home";
 
         setMessage(
           nextStep === "username"

@@ -24,8 +24,8 @@ export default async function PublicYesPage({ params }: PublicYesPageProps) {
         <section className="rounded-[1.6rem] border border-rose-100 bg-rose-50 p-5 text-sm leading-6 text-rose-700 shadow-sm">
           This profile is unavailable right now.
         </section>
-        <Link href="/following" className="mt-4 inline-flex rounded-full bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm">
-          Back to following
+        <Link href="/home" className="mt-4 inline-flex rounded-full bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm">
+          Back to Home
         </Link>
       </MobileShell>
     );

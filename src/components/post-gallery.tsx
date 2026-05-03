@@ -5,16 +5,17 @@ import { useState } from "react";
 type PostGalleryProps = {
   images: string[];
   altBase: string;
+  fullBleed?: boolean;
 };
 
-export function PostGallery({ images, altBase }: PostGalleryProps) {
+export function PostGallery({ images, altBase, fullBleed = false }: PostGalleryProps) {
   const [activeIndex, setActiveIndex] = useState(0);
 
   return (
-    <div className="p-2">
-      <div className="relative">
+    <div className={fullBleed ? "h-full w-full" : "p-2"}>
+      <div className="relative h-full">
         <div
-          className="hide-scrollbar flex snap-x snap-mandatory overflow-x-auto scroll-smooth rounded-[1.1rem]"
+          className={`hide-scrollbar flex h-full snap-x snap-mandatory overflow-x-auto scroll-smooth ${fullBleed ? "" : "rounded-[1.1rem]"}`}
           onScroll={(event) => {
             const target = event.currentTarget;
             const nextIndex = Math.round(target.scrollLeft / Math.max(target.clientWidth, 1));
@@ -29,7 +30,7 @@ export function PostGallery({ images, altBase }: PostGalleryProps) {
               <img
                 src={imageUrl}
                 alt={`${altBase} ${index + 1}`}
-                className="aspect-[4/5] w-full rounded-[1.1rem] object-cover"
+                className={fullBleed ? "h-screen w-full object-cover" : "aspect-[4/5] w-full rounded-[1.1rem] object-cover"}
               />
             </div>
           ))}
@@ -43,7 +44,7 @@ export function PostGallery({ images, altBase }: PostGalleryProps) {
       </div>
 
       {images.length > 1 ? (
-        <div className="mt-3 flex items-center justify-center gap-2">
+        <div className={`flex items-center justify-center gap-2 ${fullBleed ? "absolute inset-x-0 bottom-28 z-10" : "mt-3"}`}>
           {images.map((_, index) => (
             <span
               key={`dot-${index}`}
