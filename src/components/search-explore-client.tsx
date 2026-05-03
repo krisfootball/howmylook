@@ -146,11 +146,11 @@ export function SearchExploreClient() {
                         }`}
                       />
                     )}
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 via-black/20 to-transparent px-2 pb-2 pt-6 text-white">
-                      <p className="truncate text-[11px] font-semibold">{post.caption}</p>
-                    </div>
-                    <div className="pointer-events-none absolute left-2 top-2 rounded-full bg-black/50 px-2 py-0.5 text-[10px] font-semibold text-white backdrop-blur-sm">
-                      {post.yesCount} yes
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/18 to-transparent px-2 pb-2 pt-6 text-white">
+                      <div className="flex items-center gap-3 text-[10px] font-medium text-white/88">
+                        <span>{post.yesCount} yes</span>
+                        <span>{post.noCount} no</span>
+                      </div>
                     </div>
                     {post.imageCount > 1 ? (
                       <div className="pointer-events-none absolute right-2 top-2 rounded-full bg-black/50 px-2 py-0.5 text-[10px] font-semibold text-white backdrop-blur-sm">
