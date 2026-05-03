@@ -73,7 +73,7 @@ export function PostView({
             <div className="space-y-3.5">
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/72">Occasion</p>
-                <p className="mt-1.5 max-w-[18rem] text-[1.65rem] font-semibold leading-[1.06] text-white drop-shadow-[0_8px_30px_rgba(0,0,0,0.45)]">
+                <p className="mt-1.5 max-w-[18rem] text-[15px] font-medium leading-6 text-white/90 drop-shadow-[0_4px_18px_rgba(0,0,0,0.4)]">
                   {caption}
                 </p>
               </div>
