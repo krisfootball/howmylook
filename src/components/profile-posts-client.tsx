@@ -211,7 +211,6 @@ export function ProfilePostsClient() {
                 </div>
               </div>
             </div>
-            <div className="px-1 pb-1 pt-2" />
           </Link>
         );
         })}
