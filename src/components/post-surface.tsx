@@ -94,18 +94,18 @@ export function PostSurface({
                 <button
                   onClick={onYes}
                   disabled={votingDisabled}
-                  className="flex-1 rounded-[1.6rem] border border-emerald-300/45 bg-emerald-500/16 px-4 py-3.5 text-white backdrop-blur-sm transition hover:bg-emerald-500/22 disabled:opacity-60"
+                  className="flex-1 rounded-[1.8rem] border border-white/28 bg-white/10 px-4 py-4 text-white shadow-[0_12px_32px_rgba(0,0,0,0.16)] backdrop-blur-md transition hover:bg-white/14 disabled:opacity-60"
                 >
-                  <span className="block text-base font-semibold leading-none">{yesLabel}</span>
-                  <span className="mt-2 block text-2xl font-semibold leading-none">{yesCount}</span>
+                  <span className="block text-[1.15rem] font-semibold leading-none tracking-tight">{yesLabel}</span>
+                  <span className="mt-2 block text-[12px] font-medium leading-none text-white/72">{yesCount}</span>
                 </button>
                 <button
                   onClick={onNo}
                   disabled={votingDisabled}
-                  className="flex-1 rounded-[1.6rem] border border-rose-300/45 bg-rose-500/16 px-4 py-3.5 text-white backdrop-blur-sm transition hover:bg-rose-500/22 disabled:opacity-60"
+                  className="flex-1 rounded-[1.8rem] border border-white/28 bg-white/10 px-4 py-4 text-white shadow-[0_12px_32px_rgba(0,0,0,0.16)] backdrop-blur-md transition hover:bg-white/14 disabled:opacity-60"
                 >
-                  <span className="block text-base font-semibold leading-none">{noLabel}</span>
-                  <span className="mt-2 block text-2xl font-semibold leading-none">{noCount}</span>
+                  <span className="block text-[1.15rem] font-semibold leading-none tracking-tight">{noLabel}</span>
+                  <span className="mt-2 block text-[12px] font-medium leading-none text-white/72">{noCount}</span>
                 </button>
               </>
             ) : (
