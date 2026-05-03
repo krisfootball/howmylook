@@ -78,11 +78,6 @@ export function PostView({
                 </p>
               </div>
 
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/72">Description</p>
-                <p className="mt-1.5 max-w-[18rem] text-[14px] leading-6 text-white/90 drop-shadow-[0_4px_18px_rgba(0,0,0,0.4)]">{caption}</p>
-              </div>
-
               <div className="flex items-center gap-4 pt-0.5 text-[11px] font-medium text-white/76">
                 <span className="drop-shadow-[0_4px_18px_rgba(0,0,0,0.35)]">{yesCount} yes</span>
                 <span className="drop-shadow-[0_4px_18px_rgba(0,0,0,0.35)]">{noCount} no</span>
