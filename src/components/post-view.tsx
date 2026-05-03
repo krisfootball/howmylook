@@ -66,19 +66,8 @@ export function PostView({
           </div>
 
           <div className="max-w-sm space-y-4 pb-2">
-            <div className="flex items-center gap-2.5">
-              {authorAvatarUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={authorAvatarUrl} alt={authorName} className="h-10 w-10 rounded-full object-cover ring-2 ring-white/25" />
-              ) : (
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/12 text-sm ring-2 ring-white/25 backdrop-blur-sm">
-                  ✨
-                </div>
-              )}
-              <div className="min-w-0">
-                <p className="truncate text-base font-semibold tracking-tight text-white drop-shadow-[0_2px_14px_rgba(0,0,0,0.45)]">{authorName}</p>
-                {authorUsername ? <p className="text-xs text-white/80">{authorUsername}</p> : null}
-              </div>
+            <div className="min-w-0">
+              <p className="truncate text-base font-semibold tracking-tight text-white drop-shadow-[0_2px_14px_rgba(0,0,0,0.45)]">{authorName}</p>
             </div>
 
             <div className="space-y-3.5">
@@ -94,7 +83,7 @@ export function PostView({
                 <p className="mt-1.5 max-w-[18rem] text-[14px] leading-6 text-white/90 drop-shadow-[0_4px_18px_rgba(0,0,0,0.4)]">{caption}</p>
               </div>
 
-              <div className="flex items-center gap-4 pt-0.5 text-[13px] font-medium text-white/92">
+              <div className="flex items-center gap-4 pt-0.5 text-[11px] font-medium text-white/76">
                 <span className="drop-shadow-[0_4px_18px_rgba(0,0,0,0.35)]">{yesCount} yes</span>
                 <span className="drop-shadow-[0_4px_18px_rgba(0,0,0,0.35)]">{noCount} no</span>
               </div>
