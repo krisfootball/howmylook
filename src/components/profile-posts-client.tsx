@@ -211,30 +211,7 @@ export function ProfilePostsClient() {
                 </div>
               </div>
             </div>
-            <div className="flex items-center justify-between gap-2 px-1 pb-1 pt-2">
-              <div className="min-w-0 text-[10px] text-slate-500">
-                <p className="truncate">
-                  {post.keepForever
-                    ? "Kept on profile"
-                    : `${formatExpiryLabel(post.expiresAt)}`}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={(event) => {
-                  event.preventDefault();
-                  handleToggleKeep(post.id, !post.keepForever);
-                }}
-                disabled={busyId === post.id || (!post.keepForever && keptCount >= MAX_KEPT_POSTS)}
-                className={`rounded-full px-2.5 py-1 text-[10px] font-semibold ${
-                  post.keepForever
-                    ? "bg-slate-900 text-white"
-                    : "bg-pink-50 text-pink-700 ring-1 ring-pink-200"
-                } disabled:opacity-60`}
-              >
-                {busyId === post.id ? "..." : post.keepForever ? "Unkeep" : "Keep"}
-              </button>
-            </div>
+            <div className="px-1 pb-1 pt-2" />
           </Link>
         );
         })}
