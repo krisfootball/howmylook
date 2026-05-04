@@ -34,20 +34,21 @@ export function PostView({
   const showImage = images.length > 0;
 
   return (
-    <article className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
-      <div className="relative min-h-screen">
+    <main className="min-h-screen bg-[radial-gradient(circle_at_top,_#fff_0%,_#fff6fb_40%,_#f5edf8_100%)] px-4 py-4 text-slate-900">
+      <article className="mx-auto w-full max-w-sm overflow-hidden rounded-[2rem] bg-slate-950 text-white shadow-[0_25px_80px_rgba(15,23,42,0.22)]">
+        <div className="relative">
         {showImage ? (
-          <div className="absolute inset-0 bg-slate-950">
-            <PostGallery images={images} altBase={caption} fullBleed />
+          <div className="aspect-[9/16] w-full bg-slate-950">
+            <PostGallery images={images} altBase={caption} />
           </div>
         ) : (
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,_#f6d6df_0%,_#dfc8ff_100%)]" />
+          <div className="aspect-[9/16] bg-[linear-gradient(180deg,_#f6d6df_0%,_#dfc8ff_100%)]" />
         )}
 
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/35 via-transparent to-black/85" />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
 
-        <div className="pointer-events-none relative z-10 flex min-h-screen flex-col justify-between px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(0.9rem,env(safe-area-inset-top))] sm:px-5">
+        <div className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-between px-4 pb-5 pt-4 sm:px-5">
           <div className="flex items-start justify-between gap-3">
             {backHref && backLabel ? (
               <Link
@@ -109,7 +110,8 @@ export function PostView({
             </div>
           </div>
         </div>
-      </div>
-    </article>
+        </div>
+      </article>
+    </main>
   );
 }
