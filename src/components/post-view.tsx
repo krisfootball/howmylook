@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { OwnPostActions } from "@/components/own-post-actions";
 import { PostGallery } from "@/components/post-gallery";
+import { PostOpenRatingActions } from "@/components/post-open-rating-actions";
 
 type PostViewProps = {
   images: string[];
@@ -35,10 +36,10 @@ export function PostView({
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_#fff_0%,_#fff6fb_40%,_#f5edf8_100%)] px-4 py-4 text-slate-900">
-      <article className="mx-auto w-full max-w-sm overflow-hidden rounded-[2rem] bg-slate-950 text-white shadow-[0_25px_80px_rgba(15,23,42,0.22)]">
+      <article className="mx-auto w-full max-w-sm overflow-hidden rounded-none bg-slate-950 text-white shadow-none">
         <div className="relative">
         {showImage ? (
-          <div className="aspect-[9/16] w-full bg-slate-950">
+          <div className="aspect-[9/16] w-full bg-white">
             <PostGallery images={images} altBase={caption} />
           </div>
         ) : (
@@ -107,6 +108,7 @@ export function PostView({
                 <span className="drop-shadow-[0_4px_18px_rgba(0,0,0,0.35)]">{noCount} no</span>
               </div>
 
+              {!isOwnPost && postId ? <PostOpenRatingActions postId={postId} ownerId={ownerId ?? authorId} /> : null}
             </div>
           </div>
         </div>
