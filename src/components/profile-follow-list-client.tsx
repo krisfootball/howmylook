@@ -10,7 +10,6 @@ type Person = {
   id: string;
   displayName: string;
   username: string;
-  bio: string;
   avatarUrl: string | null;
 };
 
@@ -107,7 +106,6 @@ export function ProfileFollowListClient({
               id: profile!.id,
               displayName: profile!.display_name || "HowMyLook user",
               username: profile!.username ? `@${profile!.username}` : "@username",
-              bio: profile!.bio || "Posting looks and getting quick feedback.",
               avatarUrl: profile!.avatar_url || null,
             })),
         );
@@ -152,22 +150,20 @@ export function ProfileFollowListClient({
         <Link
           key={person.id}
           href={`/people/${person.id}`}
-          className="block rounded-[1.4rem] border border-pink-100 bg-white px-4 py-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+          className="block rounded-[1.2rem] border border-pink-100 bg-white px-3 py-3 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
         >
-          <div className="flex items-start gap-3">
+          <div className="flex items-center gap-3">
             {person.avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={person.avatarUrl} alt={person.displayName} className="h-12 w-12 rounded-full object-cover shadow-sm" />
+              <img src={person.avatarUrl} alt={person.displayName} className="h-11 w-11 rounded-full object-cover shadow-sm" />
             ) : (
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[linear-gradient(180deg,_#f6c4d5_0%,_#ddb7ff_100%)] text-lg shadow-sm">
+              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[linear-gradient(180deg,_#f6c4d5_0%,_#ddb7ff_100%)] text-base shadow-sm">
                 ✨
               </div>
             )}
             <div className="min-w-0 flex-1">
               <p className="font-semibold text-slate-900">{person.displayName}</p>
               <p className="text-sm text-slate-500">{person.username}</p>
-              <p className="mt-2 text-sm leading-6 text-slate-600">{person.bio}</p>
-              <p className="mt-2 text-xs font-medium text-pink-600">Open profile</p>
             </div>
           </div>
         </Link>
