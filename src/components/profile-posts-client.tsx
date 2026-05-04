@@ -19,34 +19,12 @@ type ProfilePost = {
   expiresAt: string;
 };
 
-function formatExpiryLabel(expiresAt: string) {
-  const expiryMs = new Date(expiresAt).getTime();
-
-  if (Number.isNaN(expiryMs)) {
-    return "Expires soon";
-  }
-
-  const diffMs = expiryMs - Date.now();
-  const diffDays = Math.ceil(diffMs / (24 * 60 * 60 * 1000));
-
-  if (diffDays <= 0) {
-    return "Expires today";
-  }
-
-  if (diffDays === 1) {
-    return "Expires in 1 day";
-  }
-
-  return `Expires in ${diffDays} days`;
-}
 
 export function ProfilePostsClient() {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [posts, setPosts] = useState<ProfilePost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
-  const [busyId, setBusyId] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -101,45 +79,6 @@ export function ProfilePostsClient() {
     load();
   }, [supabase]);
 
-  async function handleToggleKeep(postId: string, nextKeepForever: boolean) {
-    setBusyId(postId);
-    setMessage(null);
-
-    try {
-      if (nextKeepForever) {
-        const keptCount = posts.filter((post) => post.keepForever).length;
-        if (keptCount >= MAX_KEPT_POSTS) {
-          throw new Error(`You can keep up to ${MAX_KEPT_POSTS} looks on your profile.`);
-        }
-      }
-
-      const { error: updateError } = await supabase
-        .from("posts")
-        .update({ keep_forever: nextKeepForever })
-        .eq("id", postId);
-
-      if (updateError) {
-        throw updateError;
-      }
-
-      setPosts((current) =>
-        current.map((post) =>
-          post.id === postId
-            ? {
-                ...post,
-                keepForever: nextKeepForever,
-              }
-            : post,
-        ),
-      );
-      setMessage(nextKeepForever ? "Look kept on profile." : "Look will expire normally again.");
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Unable to update keep setting.";
-      setMessage(errorMessage);
-    } finally {
-      setBusyId(null);
-    }
-  }
 
   if (loading) {
     return (
@@ -182,15 +121,15 @@ export function ProfilePostsClient() {
           <Link
             key={post.id}
             href={`/profile/${post.id}`}
-            className="group overflow-hidden rounded-[1rem] bg-white shadow-sm ring-1 ring-pink-100 transition hover:-translate-y-0.5 hover:shadow-md"
+            className="group overflow-hidden rounded-none bg-white shadow-sm ring-1 ring-pink-100 transition hover:-translate-y-0.5 hover:shadow-md"
           >
             <div className="relative">
               {showImage ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={post.imageUrl} alt={post.caption} className="aspect-square w-full object-cover transition duration-300 group-hover:scale-[1.03]" />
+                <img src={post.imageUrl} alt={post.caption} className="aspect-[9/16] w-full object-cover transition duration-300 group-hover:scale-[1.03]" />
               ) : (
                 <div
-                  className={`aspect-square ${
+                  className={`aspect-[9/16] ${
                     index % 3 === 0
                       ? "bg-[linear-gradient(180deg,_#f6d6df_0%,_#dfc8ff_100%)]"
                       : index % 3 === 1
@@ -214,11 +153,6 @@ export function ProfilePostsClient() {
           </Link>
         );
         })}
-        {message ? (
-          <div className="col-span-2 rounded-[1.2rem] bg-white px-4 py-3 text-sm leading-6 text-slate-600 shadow-sm">
-            {message}
-          </div>
-        ) : null}
       </div>
 
       <section className="rounded-[1.4rem] border border-white/70 bg-white px-4 py-3 text-xs leading-5 text-slate-500 shadow-sm">

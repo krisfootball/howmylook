@@ -117,15 +117,15 @@ export function SearchExploreClient() {
                 <Link
                   key={post.id}
                   href={`/profile/${post.id}?from=people&profileId=${post.authorId}`}
-                  className="group overflow-hidden rounded-[1rem] bg-white shadow-sm ring-1 ring-pink-100 transition hover:-translate-y-0.5 hover:shadow-md"
+                  className="group overflow-hidden rounded-none bg-white shadow-sm ring-1 ring-pink-100 transition hover:-translate-y-0.5 hover:shadow-md"
                 >
                   <div className="relative">
                     {showImage ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={post.imageUrl} alt={post.caption} className="aspect-square w-full object-cover transition duration-300 group-hover:scale-[1.03]" />
+                      <img src={post.imageUrl} alt={post.caption} className="aspect-[9/16] w-full object-cover transition duration-300 group-hover:scale-[1.03]" />
                     ) : (
                       <div
-                        className={`aspect-square ${
+                        className={`aspect-[9/16] ${
                           index % 3 === 0
                             ? "bg-[linear-gradient(180deg,_#f6d6df_0%,_#dfc8ff_100%)]"
                             : index % 3 === 1

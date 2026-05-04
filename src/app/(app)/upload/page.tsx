@@ -4,7 +4,7 @@ import { UploadForm } from "@/components/upload-form";
 
 export default function UploadPage() {
   return (
-    <MobileShell title="Create post">
+    <MobileShell title="Create post" hideHeader>
       <AccessGateCard areaLabel="Post">
         <UploadForm />
       </AccessGateCard>
