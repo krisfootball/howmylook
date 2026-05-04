@@ -40,14 +40,14 @@ export function PostSurface({
   const showVoting = Boolean(onYes && onNo);
 
   return (
-    <article className="relative h-full min-h-[calc(100vh-8.5rem)] overflow-hidden bg-slate-950 text-white">
-      <div className="relative h-full min-h-[calc(100vh-8.5rem)]">
+    <article className="relative min-h-full overflow-hidden bg-slate-950 text-white">
+      <div className="relative min-h-full">
         {showImage ? (
-          <div className="h-full bg-slate-950">
+          <div className="min-h-full bg-slate-950">
             <PostGallery images={images} altBase={caption} fullBleed />
           </div>
         ) : (
-          <div className="h-full bg-[linear-gradient(180deg,_#f6d6df_0%,_#dfc8ff_100%)]" />
+          <div className="min-h-full bg-[linear-gradient(180deg,_#f6d6df_0%,_#dfc8ff_100%)]" />
         )}
 
         <div className="absolute inset-0 bg-gradient-to-t from-black/88 via-black/10 to-black/18" />

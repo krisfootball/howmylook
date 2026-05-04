@@ -9,10 +9,9 @@ import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 type AccessGateCardProps = {
   areaLabel: string;
   children: React.ReactNode;
-  bare?: boolean;
 };
 
-export function AccessGateCard({ areaLabel, children, bare = false }: AccessGateCardProps) {
+export function AccessGateCard({ areaLabel, children }: AccessGateCardProps) {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [loading, setLoading] = useState(true);
   const [allowed, setAllowed] = useState(false);
@@ -73,7 +72,7 @@ export function AccessGateCard({ areaLabel, children, bare = false }: AccessGate
   }
 
   if (allowed) {
-    return bare ? <div className="min-h-full">{children}</div> : <>{children}</>;
+    return <>{children}</>;
   }
 
   return (
