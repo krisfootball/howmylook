@@ -50,29 +50,29 @@ export function PostSurface({
           <div className="aspect-[9/16] bg-[linear-gradient(180deg,_#f6d6df_0%,_#dfc8ff_100%)]" />
         )}
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/18 to-black/20" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/18 to-black/20" />
 
-        <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-3 p-4">
+        <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-3 p-4">
           {backHref && backLabel ? (
             <Link
               href={backHref}
-              className="rounded-full border border-white/25 bg-black/20 px-3 py-2 text-xs font-semibold text-white backdrop-blur-sm"
+              className="pointer-events-auto rounded-full border border-white/25 bg-black/20 px-3 py-2 text-xs font-semibold text-white backdrop-blur-sm"
             >
               {backLabel}
             </Link>
           ) : <div />}
 
           {!showVoting && authorId ? (
-            <Link href={`/people/${authorId}`} className="text-[11px] font-medium text-white/80">
+            <Link href={`/people/${authorId}`} className="pointer-events-auto text-[11px] font-medium text-white/80">
               Profile
             </Link>
           ) : <div />}
         </div>
 
-        <div className="absolute inset-x-0 bottom-0 p-4 pb-5 text-white">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 p-4 pb-5 text-white">
           {showVoting ? (
             authorId ? (
-              <Link href={`/people/${authorId}`} className="text-sm font-semibold text-white underline-offset-4 hover:underline">
+              <Link href={`/people/${authorId}`} className="pointer-events-auto text-sm font-semibold text-white underline-offset-4 hover:underline">
                 {authorName}
               </Link>
             ) : (
@@ -97,7 +97,7 @@ export function PostSurface({
                 <button
                   onClick={onYes}
                   disabled={votingDisabled}
-                  className="flex-1 rounded-[1.8rem] border border-white/28 bg-white/10 px-4 py-3 text-white shadow-[0_12px_32px_rgba(0,0,0,0.16)] backdrop-blur-md transition hover:bg-white/14 disabled:opacity-60"
+                  className="pointer-events-auto flex-1 rounded-[1.8rem] border border-white/28 bg-white/10 px-4 py-3 text-white shadow-[0_12px_32px_rgba(0,0,0,0.16)] backdrop-blur-md transition hover:bg-white/14 disabled:opacity-60"
                 >
                   <span className="block text-[1.15rem] font-semibold leading-none tracking-tight">{yesLabel}</span>
                   <span className="mt-2 block text-[12px] font-medium leading-none text-white/72">{yesCount}</span>
@@ -105,7 +105,7 @@ export function PostSurface({
                 <button
                   onClick={onNo}
                   disabled={votingDisabled}
-                  className="flex-1 rounded-[1.8rem] border border-white/28 bg-white/10 px-4 py-3 text-white shadow-[0_12px_32px_rgba(0,0,0,0.16)] backdrop-blur-md transition hover:bg-white/14 disabled:opacity-60"
+                  className="pointer-events-auto flex-1 rounded-[1.8rem] border border-white/28 bg-white/10 px-4 py-3 text-white shadow-[0_12px_32px_rgba(0,0,0,0.16)] backdrop-blur-md transition hover:bg-white/14 disabled:opacity-60"
                 >
                   <span className="block text-[1.15rem] font-semibold leading-none tracking-tight">{noLabel}</span>
                   <span className="mt-2 block text-[12px] font-medium leading-none text-white/72">{noCount}</span>

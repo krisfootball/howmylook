@@ -42,15 +42,15 @@ export function PostView({
           <div className="absolute inset-0 bg-[linear-gradient(180deg,_#f6d6df_0%,_#dfc8ff_100%)]" />
         )}
 
-        <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-transparent to-black/85" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/35 via-transparent to-black/85" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
 
-        <div className="relative z-10 flex min-h-screen flex-col justify-between px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(0.9rem,env(safe-area-inset-top))] sm:px-5">
+        <div className="pointer-events-none relative z-10 flex min-h-screen flex-col justify-between px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(0.9rem,env(safe-area-inset-top))] sm:px-5">
           <div className="flex items-start justify-between gap-3">
             {backHref && backLabel ? (
               <Link
                 href={backHref}
-                className="rounded-full bg-black/35 px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(0,0,0,0.18)] backdrop-blur-sm"
+                className="pointer-events-auto rounded-full bg-black/35 px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(0,0,0,0.18)] backdrop-blur-sm"
               >
                 {backLabel}
               </Link>
@@ -61,7 +61,7 @@ export function PostView({
             {authorId ? (
               <Link
                 href={`/people/${authorId}`}
-                className="rounded-full bg-black/35 px-4 py-2 text-sm font-medium text-white shadow-[0_10px_30px_rgba(0,0,0,0.18)] backdrop-blur-sm"
+                className="pointer-events-auto rounded-full bg-black/35 px-4 py-2 text-sm font-medium text-white shadow-[0_10px_30px_rgba(0,0,0,0.18)] backdrop-blur-sm"
               >
                 Profile
               </Link>
@@ -73,7 +73,7 @@ export function PostView({
               {authorId ? (
                 <Link
                   href={`/people/${authorId}`}
-                  className="truncate text-base font-semibold tracking-tight text-white drop-shadow-[0_2px_14px_rgba(0,0,0,0.45)] underline-offset-4 hover:underline"
+                  className="pointer-events-auto truncate text-base font-semibold tracking-tight text-white drop-shadow-[0_2px_14px_rgba(0,0,0,0.45)] underline-offset-4 hover:underline"
                 >
                   {authorName}
                 </Link>
