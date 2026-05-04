@@ -147,7 +147,7 @@ export function OwnPostActions({
 
   if (compact) {
     return (
-      <div className="pointer-events-auto relative">
+      <div className="pointer-events-auto relative flex items-start justify-end">
         <button
           type="button"
           onClick={() => setMenuOpen((current) => !current)}
@@ -191,7 +191,11 @@ export function OwnPostActions({
           </div>
         ) : null}
 
-        {message ? <p className="mt-3 max-w-56 text-right text-xs leading-5 text-white/80">{message}</p> : null}
+        {message ? (
+          <div className="absolute right-0 top-[4.6rem] z-10 mt-2 max-w-56 rounded-[1rem] bg-black/45 px-3 py-2 text-right text-xs leading-5 text-white backdrop-blur-sm">
+            {message}
+          </div>
+        ) : null}
       </div>
     );
   }
