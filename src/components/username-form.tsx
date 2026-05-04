@@ -115,8 +115,13 @@ export function UsernameForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <section className="space-y-3 rounded-[1.5rem] border border-pink-100 bg-pink-50/70 p-4">
+    <form onSubmit={handleSubmit} className="space-y-4 rounded-[1.6rem] border border-pink-100 bg-pink-50/70 p-4 shadow-sm">
+      <div className="rounded-[1.4rem] bg-white/75 p-4">
+        <p className="text-sm font-semibold text-slate-900">Your profile name</p>
+        <p className="mt-1 text-xs leading-5 text-slate-500">This is the name people will recognize on your profile and photos.</p>
+      </div>
+
+      <section className="space-y-3">
         <div>
           <label className="text-sm font-semibold text-slate-900">Username</label>
           <input
@@ -146,7 +151,7 @@ export function UsernameForm() {
         <button
           type="submit"
           disabled={initializing || loading}
-          className="w-full rounded-full bg-pink-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-pink-500/20 disabled:opacity-60"
+          className="w-full rounded-full bg-pink-500 px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-pink-500/20 disabled:opacity-60"
         >
           {initializing ? "Loading..." : loading ? "Saving..." : username ? "Save profile" : "Save username"}
         </button>
