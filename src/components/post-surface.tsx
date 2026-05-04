@@ -43,7 +43,7 @@ export function PostSurface({
     <article className="overflow-hidden rounded-none bg-slate-950 text-white shadow-none">
       <div className="relative">
         {showImage ? (
-          <div className="aspect-[9/16] w-full bg-slate-950">
+          <div className="aspect-[9/16] w-full bg-white">
             <PostGallery images={images} altBase={caption} />
           </div>
         ) : (
