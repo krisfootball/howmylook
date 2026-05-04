@@ -12,6 +12,7 @@ type PostViewProps = {
   isOwnPost?: boolean;
   postId?: string;
   ownerId?: string | null;
+  isKeptForever?: boolean;
   backHref?: string;
   backLabel?: string;
 };
@@ -26,6 +27,7 @@ export function PostView({
   isOwnPost = false,
   postId,
   ownerId,
+  isKeptForever = false,
   backHref,
   backLabel,
 }: PostViewProps) {
@@ -58,7 +60,16 @@ export function PostView({
               <div />
             )}
 
-            {authorId ? (
+            {isOwnPost && postId && backHref ? (
+              <OwnPostActions
+                postId={postId}
+                initialCaption={caption}
+                backHref={backHref}
+                ownerId={ownerId}
+                isKeptForever={isKeptForever}
+                compact
+              />
+            ) : authorId ? (
               <Link
                 href={`/people/${authorId}`}
                 className="pointer-events-auto rounded-full bg-black/35 px-4 py-2 text-sm font-medium text-white shadow-[0_10px_30px_rgba(0,0,0,0.18)] backdrop-blur-sm"
@@ -95,9 +106,6 @@ export function PostView({
                 <span className="drop-shadow-[0_4px_18px_rgba(0,0,0,0.35)]">{noCount} no</span>
               </div>
 
-              {isOwnPost && postId && backHref ? (
-                <OwnPostActions postId={postId} initialCaption={caption} backHref={backHref} ownerId={ownerId} />
-              ) : null}
             </div>
           </div>
         </div>
