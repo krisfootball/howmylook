@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { MobileShell } from "@/components/mobile-shell";
+import { ProfileFollowButton } from "@/components/profile-follow-button";
 import { supabase } from "@/lib/supabase";
 
 type PeopleProfilePageProps = {
@@ -67,6 +68,7 @@ export default async function PeopleProfilePage({ params }: PeopleProfilePagePro
               <p className="text-lg font-semibold tracking-tight text-slate-900">{profile.display_name || "HowMyLook user"}</p>
               <p className="text-sm text-slate-500">{profile.username ? `@${profile.username}` : "@username"}</p>
               <p className="mt-3 text-sm leading-6 text-slate-700">{profile.bio || "Posting looks and getting quick feedback."}</p>
+              <ProfileFollowButton profileId={profileId} />
             </div>
           </div>
 
