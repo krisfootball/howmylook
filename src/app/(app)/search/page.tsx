@@ -4,7 +4,7 @@ import { SearchExploreClient } from "@/components/search-explore-client";
 
 export default function SearchPage() {
   return (
-    <MobileShell title="Search">
+    <MobileShell title="Search" hideHeader>
       <AccessGateCard areaLabel="Search">
         <SearchExploreClient />
       </AccessGateCard>

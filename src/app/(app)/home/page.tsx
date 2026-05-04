@@ -1,12 +1,12 @@
 import { AccessGateCard } from "@/components/access-gate-card";
-import { HomeFeedClient } from "@/components/home-feed-client";
+import { FollowingFeedClient } from "@/components/following-feed-client";
 import { MobileShell } from "@/components/mobile-shell";
 
 export default function HomePage() {
   return (
-    <MobileShell title="Home">
+    <MobileShell title="Home" hideHeader>
       <AccessGateCard areaLabel="Home feed">
-        <HomeFeedClient />
+        <FollowingFeedClient />
       </AccessGateCard>
     </MobileShell>
   );

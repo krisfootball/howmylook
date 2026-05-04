@@ -62,8 +62,6 @@ export default async function PostDetailPage({ params, searchParams }: PostDetai
       noCount={post.no_count}
       authorId={author?.id}
       authorName={author?.display_name || author?.username || "HowMyLook user"}
-      authorUsername={author?.username ? `@${author.username}` : null}
-      authorAvatarUrl={author?.avatar_url || null}
       backHref={backHref}
       backLabel="Back"
     />
