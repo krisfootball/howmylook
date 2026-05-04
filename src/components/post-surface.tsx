@@ -47,16 +47,7 @@ export function PostSurface({
             <PostGallery images={images} altBase={caption} fullBleed />
           </div>
         ) : (
-          <div className="flex h-full min-h-[calc(100vh-8.5rem)] items-end bg-[linear-gradient(180deg,_#f6d6df_0%,_#dfc8ff_48%,_#a78bfa_100%)] p-5">
-            <div className="w-full rounded-[1.6rem] border border-white/25 bg-white/12 p-4 text-white/92 backdrop-blur-sm">
-              <p className="text-sm font-semibold">{authorName}</p>
-              {authorUsername ? <p className="mt-1 text-xs text-white/72">{authorUsername}</p> : null}
-              <p className="mt-3 text-xs font-semibold uppercase tracking-[0.16em] text-white/70">Preview only</p>
-              <p className="mt-2 text-sm leading-6 text-white/84">
-                This seeded post has no real photo file yet, but it can still be rated.
-              </p>
-            </div>
-          </div>
+          <div className="h-full bg-[linear-gradient(180deg,_#f6d6df_0%,_#dfc8ff_100%)]" />
         )}
 
         <div className="absolute inset-0 bg-gradient-to-t from-black/88 via-black/10 to-black/18" />
