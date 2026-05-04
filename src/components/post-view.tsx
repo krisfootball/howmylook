@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { OwnPostActions } from "@/components/own-post-actions";
 import { PostGallery } from "@/components/post-gallery";
 
 type PostViewProps = {
@@ -8,6 +9,9 @@ type PostViewProps = {
   noCount: number;
   authorId?: string | null;
   authorName: string;
+  isOwnPost?: boolean;
+  postId?: string;
+  ownerId?: string | null;
   backHref?: string;
   backLabel?: string;
 };
@@ -19,6 +23,9 @@ export function PostView({
   noCount,
   authorId,
   authorName,
+  isOwnPost = false,
+  postId,
+  ownerId,
   backHref,
   backLabel,
 }: PostViewProps) {
@@ -87,6 +94,10 @@ export function PostView({
                 <span className="drop-shadow-[0_4px_18px_rgba(0,0,0,0.35)]">{yesCount} yes</span>
                 <span className="drop-shadow-[0_4px_18px_rgba(0,0,0,0.35)]">{noCount} no</span>
               </div>
+
+              {isOwnPost && postId && backHref ? (
+                <OwnPostActions postId={postId} initialCaption={caption} backHref={backHref} ownerId={ownerId} />
+              ) : null}
             </div>
           </div>
         </div>

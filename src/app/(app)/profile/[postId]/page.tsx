@@ -62,6 +62,9 @@ export default async function PostDetailPage({ params, searchParams }: PostDetai
       noCount={post.no_count}
       authorId={author?.id}
       authorName={author?.display_name || author?.username || "HowMyLook user"}
+      isOwnPost
+      postId={post.id}
+      ownerId={post.user_id}
       backHref={backHref}
       backLabel="Back"
     />
