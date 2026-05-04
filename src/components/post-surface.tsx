@@ -48,7 +48,7 @@ export function PostSurface({
           </div>
         ) : (
           <div className="flex h-full min-h-[calc(100vh-8.5rem)] items-end bg-[linear-gradient(180deg,_#f6d6df_0%,_#dfc8ff_48%,_#a78bfa_100%)] p-5">
-            <div className="w-full rounded-[1.6rem] border border-white/20 bg-black/18 p-4 text-white/92">
+            <div className="w-full rounded-[1.6rem] border border-white/25 bg-white/12 p-4 text-white/92 backdrop-blur-sm">
               <p className="text-sm font-semibold">{authorName}</p>
               {authorUsername ? <p className="mt-1 text-xs text-white/72">{authorUsername}</p> : null}
               <p className="mt-3 text-xs font-semibold uppercase tracking-[0.16em] text-white/70">Preview only</p>
@@ -65,7 +65,7 @@ export function PostSurface({
           {backHref && backLabel ? (
             <Link
               href={backHref}
-              className="rounded-full border border-white/20 bg-black/35 px-3 py-2 text-xs font-semibold text-white"
+              className="rounded-full border border-white/25 bg-black/20 px-3 py-2 text-xs font-semibold text-white backdrop-blur-sm"
             >
               {backLabel}
             </Link>
@@ -98,7 +98,7 @@ export function PostSurface({
                 <button
                   onClick={onYes}
                   disabled={votingDisabled}
-                  className="flex-1 rounded-[1.8rem] border border-white/20 bg-black/35 px-4 py-4 text-white transition hover:bg-black/45 disabled:opacity-60"
+                  className="flex-1 rounded-[1.8rem] border border-white/28 bg-white/10 px-4 py-4 text-white shadow-[0_12px_32px_rgba(0,0,0,0.16)] backdrop-blur-md transition hover:bg-white/14 disabled:opacity-60"
                 >
                   <span className="block text-[1.15rem] font-semibold leading-none tracking-tight">{yesLabel}</span>
                   <span className="mt-2 block text-[12px] font-medium leading-none text-white/72">{yesCount}</span>
@@ -106,7 +106,7 @@ export function PostSurface({
                 <button
                   onClick={onNo}
                   disabled={votingDisabled}
-                  className="flex-1 rounded-[1.8rem] border border-white/20 bg-black/35 px-4 py-4 text-white transition hover:bg-black/45 disabled:opacity-60"
+                  className="flex-1 rounded-[1.8rem] border border-white/28 bg-white/10 px-4 py-4 text-white shadow-[0_12px_32px_rgba(0,0,0,0.16)] backdrop-blur-md transition hover:bg-white/14 disabled:opacity-60"
                 >
                   <span className="block text-[1.15rem] font-semibold leading-none tracking-tight">{noLabel}</span>
                   <span className="mt-2 block text-[12px] font-medium leading-none text-white/72">{noCount}</span>
@@ -114,7 +114,7 @@ export function PostSurface({
               </>
             ) : (
               <>
-                <div className="rounded-full border border-white/20 bg-black/35 px-3 py-2 text-white">
+                <div className="rounded-full border border-white/25 bg-black/20 px-3 py-2 text-white backdrop-blur-sm">
                   <p className="text-sm font-semibold">{authorName}</p>
                   {authorUsername ? <p className="text-xs text-white/80">{authorUsername}</p> : null}
                 </div>
@@ -122,7 +122,7 @@ export function PostSurface({
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={authorAvatarUrl} alt={authorName} className="h-10 w-10 rounded-full object-cover ring-1 ring-white/20" />
                 ) : (
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/35 text-sm ring-1 ring-white/20">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-sm ring-1 ring-white/20 backdrop-blur-sm">
                     ✨
                   </div>
                 )}
