@@ -159,7 +159,7 @@ export function AuthForm() {
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-3 rounded-[1.5rem] border border-pink-100 bg-pink-50/70 p-4">
+      <form onSubmit={handleSubmit} className="space-y-3 rounded-[1.7rem] border border-pink-100 bg-pink-50/70 p-4 shadow-sm">
         <div>
           <label className="text-sm font-semibold text-slate-900">Email</label>
           <input
@@ -188,7 +188,7 @@ export function AuthForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white disabled:opacity-60"
+          className="w-full rounded-full bg-slate-950 px-5 py-3.5 text-sm font-semibold text-white shadow-[0_16px_40px_rgba(15,23,42,0.18)] disabled:opacity-60"
         >
           {loading ? "Please wait..." : mode === "signup" ? "Continue with email" : "Sign in"}
         </button>
