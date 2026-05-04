@@ -8,8 +8,6 @@ type PostViewProps = {
   noCount: number;
   authorId?: string | null;
   authorName: string;
-  authorUsername?: string | null;
-  authorAvatarUrl?: string | null;
   backHref?: string;
   backLabel?: string;
 };
@@ -21,8 +19,6 @@ export function PostView({
   noCount,
   authorId,
   authorName,
-  authorUsername,
-  authorAvatarUrl,
   backHref,
   backLabel,
 }: PostViewProps) {
@@ -67,7 +63,16 @@ export function PostView({
 
           <div className="max-w-sm space-y-4 pb-2">
             <div className="min-w-0">
-              <p className="truncate text-base font-semibold tracking-tight text-white drop-shadow-[0_2px_14px_rgba(0,0,0,0.45)]">{authorName}</p>
+              {authorId ? (
+                <Link
+                  href={`/people/${authorId}`}
+                  className="truncate text-base font-semibold tracking-tight text-white drop-shadow-[0_2px_14px_rgba(0,0,0,0.45)] underline-offset-4 hover:underline"
+                >
+                  {authorName}
+                </Link>
+              ) : (
+                <p className="truncate text-base font-semibold tracking-tight text-white drop-shadow-[0_2px_14px_rgba(0,0,0,0.45)]">{authorName}</p>
+              )}
             </div>
 
             <div className="space-y-3.5">
