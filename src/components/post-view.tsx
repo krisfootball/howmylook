@@ -54,7 +54,7 @@ export function PostView({
             {backHref && backLabel ? (
               <Link
                 href={backHref}
-                className="pointer-events-auto rounded-full bg-white/85 px-4 py-2 text-sm font-semibold text-slate-900 shadow-[0_10px_30px_rgba(0,0,0,0.12)] backdrop-blur-sm"
+                className="pointer-events-auto rounded-full bg-black/35 px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(0,0,0,0.18)] backdrop-blur-sm"
               >
                 {backLabel}
               </Link>
@@ -74,7 +74,7 @@ export function PostView({
             ) : authorId ? (
               <Link
                 href={`/people/${authorId}`}
-                className="pointer-events-auto rounded-full bg-white/85 px-4 py-2 text-sm font-medium text-slate-900 shadow-[0_10px_30px_rgba(0,0,0,0.12)] backdrop-blur-sm"
+                className="pointer-events-auto rounded-full bg-black/35 px-4 py-2 text-sm font-medium text-white shadow-[0_10px_30px_rgba(0,0,0,0.18)] backdrop-blur-sm"
               >
                 Profile
               </Link>
@@ -86,24 +86,24 @@ export function PostView({
               {authorId ? (
                 <Link
                   href={`/people/${authorId}`}
-                  className="pointer-events-auto truncate text-base font-semibold tracking-tight text-slate-900 underline-offset-4 hover:underline"
+                  className="pointer-events-auto truncate text-base font-semibold tracking-tight text-white underline-offset-4 hover:underline"
                 >
                   {authorName}
                 </Link>
               ) : (
-                <p className="truncate text-base font-semibold tracking-tight text-slate-900">{authorName}</p>
+                <p className="truncate text-base font-semibold tracking-tight text-white">{authorName}</p>
               )}
             </div>
 
             <div className="space-y-3.5">
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-700">Occasion</p>
-                <p className="mt-1.5 max-w-[18rem] text-[15px] font-medium leading-6 text-slate-900">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/75">Occasion</p>
+                <p className="mt-1.5 max-w-[18rem] text-[15px] font-medium leading-6 text-white">
                   {caption}
                 </p>
               </div>
 
-              <div className="flex items-center gap-4 pt-0.5 text-[11px] font-medium text-slate-700">
+              <div className="flex items-center gap-4 pt-0.5 text-[11px] font-medium text-white/85">
                 <span className="drop-shadow-[0_4px_18px_rgba(0,0,0,0.35)]">{yesCount} yes</span>
                 <span className="drop-shadow-[0_4px_18px_rgba(0,0,0,0.35)]">{noCount} no</span>
               </div>

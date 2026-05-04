@@ -72,20 +72,20 @@ export function PostSurface({
         <div className="pointer-events-none absolute inset-x-0 bottom-0 p-4 pb-5 text-white">
           {showVoting ? (
             authorId ? (
-              <Link href={`/people/${authorId}`} className="pointer-events-auto text-sm font-semibold text-slate-900 underline-offset-4 hover:underline">
+              <Link href={`/people/${authorId}`} className="pointer-events-auto text-sm font-semibold text-white underline-offset-4 hover:underline">
                 {authorName}
               </Link>
             ) : (
-              <p className="text-sm font-semibold text-slate-900">{authorName}</p>
+              <p className="text-sm font-semibold text-white">{authorName}</p>
             )
           ) : null}
 
-          <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-700">Occasion</p>
+          <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/75">Occasion</p>
 
-          <p className="mt-2 text-[15px] font-medium leading-6 text-slate-900">{caption}</p>
+          <p className="mt-2 text-[15px] font-medium leading-6 text-white">{caption}</p>
 
           {!showVoting ? (
-            <div className="mt-3 flex items-center justify-between text-xs text-slate-700">
+            <div className="mt-3 flex items-center justify-between text-xs text-white/85">
               <span>{yesCount} yes</span>
               <span>{noCount} no</span>
             </div>
