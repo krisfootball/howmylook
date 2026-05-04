@@ -40,17 +40,17 @@ export function PostSurface({
   const showVoting = Boolean(onYes && onNo);
 
   return (
-    <article className="relative min-h-full overflow-hidden bg-slate-950 text-white">
-      <div className="relative min-h-full">
+    <article className="overflow-hidden rounded-[1.8rem] bg-slate-950 text-white shadow-[0_20px_60px_rgba(15,23,42,0.25)]">
+      <div className="relative">
         {showImage ? (
-          <div className="min-h-full bg-slate-950">
-            <PostGallery images={images} altBase={caption} fullBleed />
+          <div className="aspect-[9/16] w-full bg-slate-950">
+            <PostGallery images={images} altBase={caption} />
           </div>
         ) : (
-          <div className="min-h-full bg-[linear-gradient(180deg,_#f6d6df_0%,_#dfc8ff_100%)]" />
+          <div className="aspect-[9/16] bg-[linear-gradient(180deg,_#f6d6df_0%,_#dfc8ff_100%)]" />
         )}
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/88 via-black/10 to-black/18" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/18 to-black/20" />
 
         <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-3 p-4">
           {backHref && backLabel ? (
@@ -70,7 +70,7 @@ export function PostSurface({
         </div>
 
         <div className="absolute inset-x-0 bottom-0 p-4 pb-5 text-white">
-          {showVoting ? null : <p className="text-sm font-semibold text-white">{authorName}</p>}
+          {showVoting ? <p className="text-sm font-semibold text-white">{authorName}</p> : null}
 
           <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/75">Occasion</p>
 

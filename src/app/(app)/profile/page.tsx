@@ -12,7 +12,7 @@ export default function ProfilePage() {
   const [refreshKey, setRefreshKey] = useState(0);
 
   return (
-    <MobileShell title="Profile" hideHeader>
+    <MobileShell title="Profile">
       <div className="space-y-5">
         <ProfileClient
           refreshKey={refreshKey}

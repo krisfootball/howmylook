@@ -237,7 +237,7 @@ export function FollowingFeedClient() {
 
   if (loading) {
     return (
-      <section className="flex min-h-full items-center justify-center px-5 text-sm text-slate-600">
+      <section className="rounded-[1.6rem] border border-pink-100 bg-white p-5 text-sm text-slate-600 shadow-sm">
         Loading home feed...
       </section>
     );
@@ -245,7 +245,7 @@ export function FollowingFeedClient() {
 
   if (error) {
     return (
-      <section className="m-4 rounded-[1.6rem] border border-rose-100 bg-rose-50 p-5 text-sm text-rose-700 shadow-sm">
+      <section className="rounded-[1.6rem] border border-rose-100 bg-rose-50 p-5 text-sm text-rose-700 shadow-sm">
         {error}
       </section>
     );
@@ -253,14 +253,14 @@ export function FollowingFeedClient() {
 
   if (!currentPost) {
     return (
-      <section className="m-4 rounded-[1.6rem] border border-pink-100 bg-white p-5 text-sm text-slate-600 shadow-sm">
+      <section className="rounded-[1.6rem] border border-pink-100 bg-white p-5 text-sm text-slate-600 shadow-sm">
         No unrated looks are ready right now.
       </section>
     );
   }
 
   return (
-    <div className="min-h-full">
+    <div className="space-y-4">
       <PostSurface
         images={currentPost.imageUrl.startsWith("http") ? [currentPost.imageUrl] : []}
         caption={currentPost.caption}
@@ -278,7 +278,7 @@ export function FollowingFeedClient() {
       />
 
       {message ? (
-        <div className="pointer-events-none fixed inset-x-6 bottom-28 z-40 rounded-[1.2rem] bg-white/92 px-4 py-3 text-sm leading-6 text-slate-600 shadow-lg backdrop-blur-sm">
+        <div className="rounded-[1.2rem] bg-white px-4 py-3 text-sm leading-6 text-slate-600 shadow-sm">
           {message}
         </div>
       ) : null}

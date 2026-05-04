@@ -8,6 +8,8 @@ type PostViewProps = {
   noCount: number;
   authorId?: string | null;
   authorName: string;
+  authorUsername?: string | null;
+  authorAvatarUrl?: string | null;
   backHref?: string;
   backLabel?: string;
 };
@@ -19,6 +21,8 @@ export function PostView({
   noCount,
   authorId,
   authorName,
+  authorUsername,
+  authorAvatarUrl,
   backHref,
   backLabel,
 }: PostViewProps) {

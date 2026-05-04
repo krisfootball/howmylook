@@ -83,7 +83,7 @@ export function AccessGateCard({ areaLabel, children }: AccessGateCardProps) {
       <div className="mt-5 flex flex-col gap-3 sm:flex-row">
         {nextStep === "auth" ? (
           <Link href="/auth" className="rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white text-center">
-            Sign in
+            Go to auth
           </Link>
         ) : null}
         {nextStep === "username" ? (
@@ -93,7 +93,7 @@ export function AccessGateCard({ areaLabel, children }: AccessGateCardProps) {
         ) : null}
         {nextStep === "rating" ? (
           <Link href="/rate" className="rounded-full bg-pink-500 px-5 py-3 text-sm font-semibold text-white text-center">
-            Start rating
+            Continue rating
           </Link>
         ) : null}
       </div>
