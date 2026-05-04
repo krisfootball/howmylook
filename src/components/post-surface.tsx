@@ -50,7 +50,7 @@ export function PostSurface({
           <div className="aspect-[9/16] bg-[linear-gradient(180deg,_#f6d6df_0%,_#dfc8ff_100%)]" />
         )}
 
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/18 to-black/20" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-black/10" />
 
         <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-3 p-4">
           {backHref && backLabel ? (
@@ -72,20 +72,20 @@ export function PostSurface({
         <div className="pointer-events-none absolute inset-x-0 bottom-0 p-4 pb-5 text-white">
           {showVoting ? (
             authorId ? (
-              <Link href={`/people/${authorId}`} className="pointer-events-auto text-sm font-semibold text-white underline-offset-4 hover:underline">
+              <Link href={`/people/${authorId}`} className="pointer-events-auto text-sm font-semibold text-slate-900 underline-offset-4 hover:underline">
                 {authorName}
               </Link>
             ) : (
-              <p className="text-sm font-semibold text-white">{authorName}</p>
+              <p className="text-sm font-semibold text-slate-900">{authorName}</p>
             )
           ) : null}
 
-          <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/75">Occasion</p>
+          <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-700">Occasion</p>
 
-          <p className="mt-2 text-[15px] font-medium leading-6 text-white">{caption}</p>
+          <p className="mt-2 text-[15px] font-medium leading-6 text-slate-900">{caption}</p>
 
           {!showVoting ? (
-            <div className="mt-3 flex items-center justify-between text-xs text-white/85">
+            <div className="mt-3 flex items-center justify-between text-xs text-slate-700">
               <span>{yesCount} yes</span>
               <span>{noCount} no</span>
             </div>

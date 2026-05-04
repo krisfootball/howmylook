@@ -46,15 +46,15 @@ export function PostView({
           <div className="aspect-[9/16] bg-[linear-gradient(180deg,_#f6d6df_0%,_#dfc8ff_100%)]" />
         )}
 
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/35 via-transparent to-black/85" />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/10" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-black/10" />
 
         <div className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-between px-4 pb-5 pt-4 sm:px-5">
           <div className="flex items-start justify-between gap-3">
             {backHref && backLabel ? (
               <Link
                 href={backHref}
-                className="pointer-events-auto rounded-full bg-black/35 px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(0,0,0,0.18)] backdrop-blur-sm"
+                className="pointer-events-auto rounded-full bg-white/85 px-4 py-2 text-sm font-semibold text-slate-900 shadow-[0_10px_30px_rgba(0,0,0,0.12)] backdrop-blur-sm"
               >
                 {backLabel}
               </Link>
@@ -74,7 +74,7 @@ export function PostView({
             ) : authorId ? (
               <Link
                 href={`/people/${authorId}`}
-                className="pointer-events-auto rounded-full bg-black/35 px-4 py-2 text-sm font-medium text-white shadow-[0_10px_30px_rgba(0,0,0,0.18)] backdrop-blur-sm"
+                className="pointer-events-auto rounded-full bg-white/85 px-4 py-2 text-sm font-medium text-slate-900 shadow-[0_10px_30px_rgba(0,0,0,0.12)] backdrop-blur-sm"
               >
                 Profile
               </Link>
@@ -86,24 +86,24 @@ export function PostView({
               {authorId ? (
                 <Link
                   href={`/people/${authorId}`}
-                  className="pointer-events-auto truncate text-base font-semibold tracking-tight text-white drop-shadow-[0_2px_14px_rgba(0,0,0,0.45)] underline-offset-4 hover:underline"
+                  className="pointer-events-auto truncate text-base font-semibold tracking-tight text-slate-900 underline-offset-4 hover:underline"
                 >
                   {authorName}
                 </Link>
               ) : (
-                <p className="truncate text-base font-semibold tracking-tight text-white drop-shadow-[0_2px_14px_rgba(0,0,0,0.45)]">{authorName}</p>
+                <p className="truncate text-base font-semibold tracking-tight text-slate-900">{authorName}</p>
               )}
             </div>
 
             <div className="space-y-3.5">
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/72">Occasion</p>
-                <p className="mt-1.5 max-w-[18rem] text-[15px] font-medium leading-6 text-white/90 drop-shadow-[0_4px_18px_rgba(0,0,0,0.4)]">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-700">Occasion</p>
+                <p className="mt-1.5 max-w-[18rem] text-[15px] font-medium leading-6 text-slate-900">
                   {caption}
                 </p>
               </div>
 
-              <div className="flex items-center gap-4 pt-0.5 text-[11px] font-medium text-white/76">
+              <div className="flex items-center gap-4 pt-0.5 text-[11px] font-medium text-slate-700">
                 <span className="drop-shadow-[0_4px_18px_rgba(0,0,0,0.35)]">{yesCount} yes</span>
                 <span className="drop-shadow-[0_4px_18px_rgba(0,0,0,0.35)]">{noCount} no</span>
               </div>
