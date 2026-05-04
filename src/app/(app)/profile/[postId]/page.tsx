@@ -52,7 +52,9 @@ export default async function PostDetailPage({ params, searchParams }: PostDetai
         ? "/search"
         : resolvedSearchParams?.from === "home"
           ? "/home"
-          : "/profile";
+          : resolvedSearchParams?.from === "activity"
+            ? "/activity"
+            : "/profile";
 
   return (
     <PostView

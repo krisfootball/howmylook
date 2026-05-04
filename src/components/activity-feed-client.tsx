@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
@@ -11,6 +12,7 @@ type ActivityItem = {
   createdAt: string;
   title: string;
   subtitle: string;
+  href?: string;
 };
 
 type JoinedProfile = {
@@ -115,6 +117,7 @@ export function ActivityFeedClient() {
             createdAt: row.created_at,
             title: `${profile?.display_name || profile?.username || "Someone"} followed you`,
             subtitle: profile?.username ? `@${profile.username}` : "New follower",
+            href: `/people/${row.follower_id}`,
           };
         });
 
@@ -127,6 +130,7 @@ export function ActivityFeedClient() {
             createdAt: row.created_at,
             title: `${profile?.display_name || profile?.username || "Someone"} voted ${row.value} on your post`,
             subtitle: ownPostMap.get(row.post_id) || "One of your looks",
+            href: `/profile/${row.post_id}?from=activity`,
           };
         });
 
@@ -177,19 +181,32 @@ export function ActivityFeedClient() {
 
   return (
     <div className="space-y-3">
-      {items.map((item) => (
-        <section key={item.id} className="rounded-[1.4rem] border border-pink-100 bg-white px-4 py-4 shadow-sm">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <p className="font-semibold text-slate-900">{item.title}</p>
-              <p className="mt-1 text-sm leading-6 text-slate-500">{item.subtitle}</p>
+      {items.map((item) => {
+        const content = (
+          <>
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="font-semibold text-slate-900">{item.title}</p>
+                <p className="mt-1 text-sm leading-6 text-slate-500">{item.subtitle}</p>
+              </div>
+              <span className="rounded-full bg-pink-50 px-3 py-1 text-xs font-semibold text-pink-600">
+                {item.kind === "follow" ? "Follow" : "Vote"}
+              </span>
             </div>
-            <span className="rounded-full bg-pink-50 px-3 py-1 text-xs font-semibold text-pink-600">
-              {item.kind === "follow" ? "Follow" : "Vote"}
-            </span>
-          </div>
-        </section>
-      ))}
+            {item.href ? <p className="mt-3 text-xs font-medium text-pink-600">Open</p> : null}
+          </>
+        );
+
+        return item.href ? (
+          <Link key={item.id} href={item.href} className="block rounded-[1.4rem] border border-pink-100 bg-white px-4 py-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+            {content}
+          </Link>
+        ) : (
+          <section key={item.id} className="rounded-[1.4rem] border border-pink-100 bg-white px-4 py-4 shadow-sm">
+            {content}
+          </section>
+        );
+      })}
     </div>
   );
 }
