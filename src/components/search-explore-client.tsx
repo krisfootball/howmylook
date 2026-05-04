@@ -68,9 +68,9 @@ export function SearchExploreClient() {
   );
 
   return (
-    <div className="space-y-5">
-      <section className="rounded-[1.7rem] border border-pink-100 bg-white p-4 shadow-sm">
-        <div className="mt-4 flex items-center gap-2 rounded-[1.3rem] border border-slate-200 bg-slate-50 px-3 py-3">
+    <div className="space-y-3">
+      <section className="rounded-[1.7rem] border border-pink-100 bg-white p-3 shadow-sm">
+        <div className="flex items-center gap-2 rounded-[1.3rem] border border-slate-200 bg-slate-50 px-3 py-3">
           <span className="text-sm text-slate-400">⌕</span>
           <input
             type="text"
@@ -109,7 +109,7 @@ export function SearchExploreClient() {
             No looks match that search yet.
           </section>
         ) : (
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-1.5">
             {filteredPosts.map((post, index) => {
               const showImage = post.imageUrl.startsWith("http");
 

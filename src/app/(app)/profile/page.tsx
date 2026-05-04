@@ -51,9 +51,6 @@ export default function ProfilePage() {
 
         <AccessGateCard areaLabel="Your posts">
           <section key={refreshKey}>
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-lg font-semibold tracking-tight text-slate-900">Your posts</h2>
-            </div>
             <ProfilePostsClient />
           </section>
         </AccessGateCard>
