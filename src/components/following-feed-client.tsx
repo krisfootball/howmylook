@@ -260,7 +260,7 @@ export function FollowingFeedClient() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-0">
       <PostSurface
         images={currentPost.imageUrl.startsWith("http") ? [currentPost.imageUrl] : []}
         caption={currentPost.caption}
@@ -278,7 +278,7 @@ export function FollowingFeedClient() {
       />
 
       {message ? (
-        <div className="rounded-[1.2rem] bg-white px-4 py-3 text-sm leading-6 text-slate-600 shadow-sm">
+        <div className="mx-4 mt-3 rounded-[1.2rem] bg-white px-4 py-3 text-sm leading-6 text-slate-600 shadow-sm">
           {message}
         </div>
       ) : null}

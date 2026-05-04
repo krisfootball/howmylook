@@ -40,7 +40,7 @@ export function PostSurface({
   const showVoting = Boolean(onYes && onNo);
 
   return (
-    <article className="overflow-hidden rounded-[1.8rem] bg-slate-950 text-white shadow-[0_20px_60px_rgba(15,23,42,0.25)]">
+    <article className="overflow-hidden rounded-none bg-slate-950 text-white shadow-none">
       <div className="relative">
         {showImage ? (
           <div className="aspect-[9/16] w-full bg-slate-950">
