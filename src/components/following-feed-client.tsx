@@ -278,7 +278,7 @@ export function FollowingFeedClient() {
       />
 
       {message ? (
-        <div className="pointer-events-none fixed inset-x-6 bottom-28 z-40 rounded-[1.2rem] bg-white/92 px-4 py-3 text-sm leading-6 text-slate-600 shadow-lg backdrop-blur-sm">
+        <div className="pointer-events-none fixed inset-x-6 bottom-28 z-40 rounded-[1.2rem] bg-white px-4 py-3 text-sm leading-6 text-slate-600 shadow-md">
           {message}
         </div>
       ) : null}
