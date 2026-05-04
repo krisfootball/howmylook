@@ -89,7 +89,7 @@ export function PostSurface({
                 <button
                   onClick={onYes}
                   disabled={votingDisabled}
-                  className="flex-1 rounded-[1.8rem] border border-white/28 bg-white/10 px-4 py-4 text-white shadow-[0_12px_32px_rgba(0,0,0,0.16)] backdrop-blur-md transition hover:bg-white/14 disabled:opacity-60"
+                  className="flex-1 rounded-[1.8rem] border border-white/28 bg-white/10 px-4 py-3 text-white shadow-[0_12px_32px_rgba(0,0,0,0.16)] backdrop-blur-md transition hover:bg-white/14 disabled:opacity-60"
                 >
                   <span className="block text-[1.15rem] font-semibold leading-none tracking-tight">{yesLabel}</span>
                   <span className="mt-2 block text-[12px] font-medium leading-none text-white/72">{yesCount}</span>
@@ -97,7 +97,7 @@ export function PostSurface({
                 <button
                   onClick={onNo}
                   disabled={votingDisabled}
-                  className="flex-1 rounded-[1.8rem] border border-white/28 bg-white/10 px-4 py-4 text-white shadow-[0_12px_32px_rgba(0,0,0,0.16)] backdrop-blur-md transition hover:bg-white/14 disabled:opacity-60"
+                  className="flex-1 rounded-[1.8rem] border border-white/28 bg-white/10 px-4 py-3 text-white shadow-[0_12px_32px_rgba(0,0,0,0.16)] backdrop-blur-md transition hover:bg-white/14 disabled:opacity-60"
                 >
                   <span className="block text-[1.15rem] font-semibold leading-none tracking-tight">{noLabel}</span>
                   <span className="mt-2 block text-[12px] font-medium leading-none text-white/72">{noCount}</span>
