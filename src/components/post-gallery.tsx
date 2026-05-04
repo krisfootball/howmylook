@@ -13,9 +13,9 @@ export function PostGallery({ images, altBase, fullBleed = false }: PostGalleryP
 
   return (
     <div className={fullBleed ? "h-full w-full" : "p-2"}>
-      <div className="relative h-full min-h-[calc(100vh-8.5rem)]">
+      <div className="relative h-full">
         <div
-          className={`hide-scrollbar flex h-full min-h-[calc(100vh-8.5rem)] snap-x snap-mandatory overflow-x-auto scroll-smooth ${fullBleed ? "" : "rounded-[1.1rem]"}`}
+          className={`hide-scrollbar flex h-full snap-x snap-mandatory overflow-x-auto scroll-smooth ${fullBleed ? "" : "rounded-[1.1rem]"}`}
           onScroll={(event) => {
             const target = event.currentTarget;
             const nextIndex = Math.round(target.scrollLeft / Math.max(target.clientWidth, 1));
@@ -30,7 +30,7 @@ export function PostGallery({ images, altBase, fullBleed = false }: PostGalleryP
               <img
                 src={imageUrl}
                 alt={`${altBase} ${index + 1}`}
-                className={fullBleed ? "h-full min-h-[calc(100vh-8.5rem)] w-full object-cover" : "aspect-[4/5] w-full rounded-[1.1rem] object-cover"}
+                className={fullBleed ? "h-screen w-full object-cover" : "aspect-[4/5] w-full rounded-[1.1rem] object-cover"}
               />
             </div>
           ))}
