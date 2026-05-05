@@ -14,8 +14,38 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://howmylook.com"),
   title: "HowMyLook",
   description: "Quick outfit feedback with yes or no voting.",
+  applicationName: "HowMyLook",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "HowMyLook",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  openGraph: {
+    title: "HowMyLook",
+    description: "Quick outfit feedback with yes or no voting.",
+    url: "https://howmylook.com",
+    siteName: "HowMyLook",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "HowMyLook",
+    description: "Quick outfit feedback with yes or no voting.",
+  },
+};
+
+export const viewport = {
+  themeColor: "#fff8fc",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
