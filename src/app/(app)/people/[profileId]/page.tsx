@@ -78,35 +78,31 @@ export default async function PeopleProfilePage({ params }: PeopleProfilePagePro
           <div className="mt-5 grid grid-cols-2 gap-3">
             <Link
               href={`/people/${profileId}/followers`}
-              className="block rounded-2xl border border-pink-100 bg-pink-50/70 px-4 py-3 transition hover:-translate-y-0.5 hover:bg-pink-100 active:scale-[0.99]"
+              className="flex min-h-28 flex-col items-center justify-center rounded-2xl border border-pink-100 bg-pink-50/70 px-4 py-4 text-center transition hover:-translate-y-0.5 hover:bg-pink-100 active:scale-[0.99]"
             >
               <p className="text-xs font-medium uppercase tracking-[0.18em] text-pink-500">Followers</p>
-              <p className="mt-2 text-xl font-semibold tracking-tight text-slate-900">{followersCount ?? 0}</p>
-              <p className="mt-2 text-xs font-medium text-pink-600">Open</p>
+              <p className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">{followersCount ?? 0}</p>
             </Link>
             <Link
               href={`/people/${profileId}/following`}
-              className="block rounded-2xl border border-pink-100 bg-pink-50/70 px-4 py-3 transition hover:-translate-y-0.5 hover:bg-pink-100 active:scale-[0.99]"
+              className="flex min-h-28 flex-col items-center justify-center rounded-2xl border border-pink-100 bg-pink-50/70 px-4 py-4 text-center transition hover:-translate-y-0.5 hover:bg-pink-100 active:scale-[0.99]"
             >
               <p className="text-xs font-medium uppercase tracking-[0.18em] text-pink-500">Following</p>
-              <p className="mt-2 text-xl font-semibold tracking-tight text-slate-900">{followingCount ?? 0}</p>
-              <p className="mt-2 text-xs font-medium text-pink-600">Open</p>
+              <p className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">{followingCount ?? 0}</p>
             </Link>
             <Link
               href={`/people/${profileId}/yes`}
-              className="block rounded-2xl border border-pink-100 bg-pink-50/70 px-4 py-3 transition hover:-translate-y-0.5 hover:bg-pink-100 active:scale-[0.99]"
+              className="flex min-h-28 flex-col items-center justify-center rounded-2xl border border-pink-100 bg-pink-50/70 px-4 py-4 text-center transition hover:-translate-y-0.5 hover:bg-pink-100 active:scale-[0.99]"
             >
               <p className="text-xs font-medium uppercase tracking-[0.18em] text-pink-500">Yes given</p>
-              <p className="mt-2 text-xl font-semibold tracking-tight text-slate-900">{profile.total_yes_given ?? 0}</p>
-              <p className="mt-2 text-xs font-medium text-pink-600">Open</p>
+              <p className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">{profile.total_yes_given ?? 0}</p>
             </Link>
             <Link
               href={`/people/${profileId}/no`}
-              className="block rounded-2xl border border-pink-100 bg-pink-50/70 px-4 py-3 transition hover:-translate-y-0.5 hover:bg-pink-100 active:scale-[0.99]"
+              className="flex min-h-28 flex-col items-center justify-center rounded-2xl border border-pink-100 bg-pink-50/70 px-4 py-4 text-center transition hover:-translate-y-0.5 hover:bg-pink-100 active:scale-[0.99]"
             >
               <p className="text-xs font-medium uppercase tracking-[0.18em] text-pink-500">No given</p>
-              <p className="mt-2 text-xl font-semibold tracking-tight text-slate-900">{profile.total_no_given ?? 0}</p>
-              <p className="mt-2 text-xs font-medium text-pink-600">Open</p>
+              <p className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">{profile.total_no_given ?? 0}</p>
             </Link>
           </div>
         </section>
