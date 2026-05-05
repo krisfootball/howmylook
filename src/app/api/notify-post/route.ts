@@ -65,9 +65,15 @@ export async function POST(request: NextRequest) {
 
     const authorName = author?.display_name || author?.username || "Someone you follow";
     const trimmedCaption = caption?.trim();
+    const shortCaption = trimmedCaption
+      ? trimmedCaption.length > 72
+        ? `${trimmedCaption.slice(0, 69).trimEnd()}...`
+        : trimmedCaption
+      : null;
+
     const payload = JSON.stringify({
-      title: `${authorName} just posted ✨`,
-      body: trimmedCaption ? `Occasion: ${trimmedCaption}` : `See ${authorName}'s newest look in HowMyLook.`,
+      title: `${authorName} posted a new look ✨`,
+      body: shortCaption ? shortCaption : "Tap to see the fit.",
       url: `/profile/${postId}?from=home`,
     });
 
