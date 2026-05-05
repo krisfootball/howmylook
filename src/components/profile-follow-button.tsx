@@ -135,8 +135,8 @@ export function ProfileFollowButton({ profileId }: { profileId: string }) {
   }
 
   return (
-    <div className="mt-4 flex flex-col gap-2">
-      <div className="flex flex-wrap gap-2">
+    <div className="mt-4 flex flex-col items-start gap-2 text-left">
+      <div className="flex w-full flex-wrap justify-start gap-2">
         <button
           type="button"
           onClick={() => void handleToggleFollow()}
