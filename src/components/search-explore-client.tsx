@@ -116,7 +116,7 @@ export function SearchExploreClient() {
               return (
                 <Link
                   key={post.id}
-                  href={`/profile/${post.id}?from=people&profileId=${post.authorId}`}
+                  href={`/profile/${post.id}?from=search`}
                   className="group overflow-hidden rounded-none bg-white shadow-sm ring-1 ring-pink-100 transition hover:-translate-y-0.5 hover:shadow-md"
                 >
                   <div className="relative">

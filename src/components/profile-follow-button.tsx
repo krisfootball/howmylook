@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { PushNotificationToggle } from "@/components/push-notification-toggle";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
 export function ProfileFollowButton({ profileId }: { profileId: string }) {
@@ -10,6 +11,7 @@ export function ProfileFollowButton({ profileId }: { profileId: string }) {
   const [isOwnProfile, setIsOwnProfile] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -41,7 +43,7 @@ export function ProfileFollowButton({ profileId }: { profileId: string }) {
 
         const { data: existingFollow, error: followError } = await supabase
           .from("follows")
-          .select("follower_id")
+          .select("follower_id,notifications_enabled")
           .eq("follower_id", user.id)
           .eq("following_id", profileId)
           .maybeSingle();
@@ -52,6 +54,7 @@ export function ProfileFollowButton({ profileId }: { profileId: string }) {
 
         if (!active) return;
         setIsFollowing(Boolean(existingFollow));
+        setNotificationsEnabled(Boolean(existingFollow?.notifications_enabled));
         setError(null);
       } catch (loadError) {
         if (!active) return;
@@ -101,6 +104,7 @@ export function ProfileFollowButton({ profileId }: { profileId: string }) {
         }
 
         setIsFollowing(false);
+        setNotificationsEnabled(false);
       } else {
         const { error: insertError } = await supabase.from("follows").insert({
           follower_id: user.id,
@@ -112,6 +116,7 @@ export function ProfileFollowButton({ profileId }: { profileId: string }) {
         }
 
         setIsFollowing(true);
+        setNotificationsEnabled(false);
       }
     } catch (toggleError) {
       const message = toggleError instanceof Error ? toggleError.message : "Unable to update following.";
@@ -131,16 +136,26 @@ export function ProfileFollowButton({ profileId }: { profileId: string }) {
 
   return (
     <div className="mt-4 flex flex-col gap-2">
-      <button
-        type="button"
-        onClick={() => void handleToggleFollow()}
-        disabled={saving}
-        className={`rounded-full px-4 py-2 text-sm font-semibold ${
-          isFollowing ? "bg-white text-slate-700 ring-1 ring-slate-200" : "bg-pink-500 text-white shadow-lg shadow-pink-500/20"
-        } disabled:opacity-60`}
-      >
-        {saving ? "Saving..." : isFollowing ? "Following" : "Follow"}
-      </button>
+      <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => void handleToggleFollow()}
+          disabled={saving}
+          className={`rounded-full px-4 py-2 text-sm font-semibold ${
+            isFollowing ? "bg-white text-slate-700 ring-1 ring-slate-200" : "bg-pink-500 text-white shadow-lg shadow-pink-500/20"
+          } disabled:opacity-60`}
+        >
+          {saving ? "Saving..." : isFollowing ? "Following" : "Follow"}
+        </button>
+
+        {isFollowing ? (
+          <PushNotificationToggle
+            followingId={profileId}
+            initialEnabled={notificationsEnabled}
+            onChanged={setNotificationsEnabled}
+          />
+        ) : null}
+      </div>
 
       {error ? <p className="text-sm leading-6 text-rose-700">{error}</p> : null}
     </div>

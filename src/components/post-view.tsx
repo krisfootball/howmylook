@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { MobileShell } from "@/components/mobile-shell";
 import { OwnPostActions } from "@/components/own-post-actions";
 import { PostGallery } from "@/components/post-gallery";
 import { PostOpenRatingActions } from "@/components/post-open-rating-actions";
@@ -35,9 +36,9 @@ export function PostView({
   const showImage = images.length > 0;
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top,_#fff_0%,_#fff6fb_40%,_#f5edf8_100%)] px-4 py-4 text-slate-900">
-      <article className="mx-auto w-full max-w-sm overflow-hidden rounded-none bg-slate-950 text-white shadow-none">
-        <div className="relative">
+    <MobileShell title={authorName} hideHeader>
+      <article className="-mx-4 -my-4 overflow-hidden rounded-none bg-slate-950 text-white shadow-none">
+        <div className="relative min-h-[calc(100vh-7.5rem)]">
         {showImage ? (
           <div className="aspect-[9/16] w-full bg-white">
             <PostGallery images={images} altBase={caption} />
@@ -114,6 +115,6 @@ export function PostView({
         </div>
         </div>
       </article>
-    </main>
+    </MobileShell>
   );
 }

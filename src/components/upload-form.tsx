@@ -112,6 +112,22 @@ export function UploadForm() {
         }
       }
 
+      try {
+        await fetch("/api/notify-post", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            postId: insertedPosts.id,
+            userId: user.id,
+            caption: caption.trim(),
+          }),
+        });
+      } catch {
+        // Do not block posting if notification delivery fails.
+      }
+
       setCaption("");
       setFiles([]);
       if (galleryInputRef.current) {

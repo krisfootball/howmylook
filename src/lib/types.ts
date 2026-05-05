@@ -11,6 +11,24 @@ export type Profile = {
   unlock_votes_completed?: number;
 };
 
+export type Follow = {
+  follower_id: string;
+  following_id: string;
+  created_at?: string;
+  notifications_enabled?: boolean;
+  notifications_enabled_at?: string | null;
+};
+
+export type PushSubscriptionRecord = {
+  endpoint: string;
+  user_id: string;
+  p256dh: string;
+  auth: string;
+  user_agent?: string | null;
+  last_seen_at?: string;
+  created_at?: string;
+};
+
 export type DatabasePost = {
   id: string;
   user_id: string;
