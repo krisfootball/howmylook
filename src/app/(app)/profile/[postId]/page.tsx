@@ -1,4 +1,4 @@
-import { PostView } from "@/components/post-view";
+import PostDetailClient from "./post-detail-client";
 import { supabase } from "@/lib/supabase";
 
 type PostDetailPageProps = {
@@ -57,14 +57,13 @@ export default async function PostDetailPage({ params, searchParams }: PostDetai
             : "/profile";
 
   return (
-    <PostView
+    <PostDetailClient
       images={galleryImages}
       caption={post.caption ?? "No occasion added yet"}
       yesCount={post.yes_count}
       noCount={post.no_count}
       authorId={author?.id}
       authorName={author?.display_name || author?.username || "HowMyLook user"}
-      isOwnPost
       postId={post.id}
       ownerId={post.user_id}
       isKeptForever={Boolean(post.keep_forever)}

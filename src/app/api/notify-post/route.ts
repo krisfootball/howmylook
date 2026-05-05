@@ -64,10 +64,11 @@ export async function POST(request: NextRequest) {
     }
 
     const authorName = author?.display_name || author?.username || "Someone you follow";
+    const trimmedCaption = caption?.trim();
     const payload = JSON.stringify({
-      title: `${authorName} posted a new look`,
-      body: caption?.trim() ? caption.trim() : "Tap to open it in HowMyLook.",
-      url: `/profile/${postId}`,
+      title: `${authorName} just posted ✨`,
+      body: trimmedCaption ? `Occasion: ${trimmedCaption}` : `See ${authorName}'s newest look in HowMyLook.`,
+      url: `/profile/${postId}?from=home`,
     });
 
     let delivered = 0;
