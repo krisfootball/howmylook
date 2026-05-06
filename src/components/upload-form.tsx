@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
+import { notifyAdminOfPost, notifyFollowersOfPost } from "@/lib/post-notifications";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
 const MAX_FILES = 5;
@@ -88,6 +89,7 @@ export function UploadForm() {
           yes_count: 0,
           no_count: 0,
           is_active: true,
+          moderation_status: "approved",
           keep_forever: false,
           expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
         })
@@ -113,17 +115,19 @@ export function UploadForm() {
       }
 
       try {
-        await fetch("/api/notify-post", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
+        await Promise.allSettled([
+          notifyFollowersOfPost({
             postId: insertedPosts.id,
             userId: user.id,
             caption: caption.trim(),
           }),
-        });
+          notifyAdminOfPost({
+            postId: insertedPosts.id,
+            userId: user.id,
+            caption: caption.trim(),
+            imageUrl: fallbackImageUrl,
+          }),
+        ]);
       } catch {
         // Do not block posting if notification delivery fails.
       }

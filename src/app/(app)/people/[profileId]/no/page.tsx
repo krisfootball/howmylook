@@ -55,7 +55,8 @@ export default async function PublicNoPage({ params }: PublicNoPageProps) {
       .from("posts")
       .select("id,caption,image_url,yes_count,no_count")
       .in("id", postIds)
-      .eq("is_active", true);
+      .eq("is_active", true)
+      .eq("moderation_status", "approved");
 
     if (postsError) {
       return (

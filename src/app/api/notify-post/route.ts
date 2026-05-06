@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
     const payload = JSON.stringify({
       title: `${authorName} posted a new look ✨`,
       body: shortCaption ? shortCaption : "Tap to see the fit.",
-      url: `/profile/${postId}?from=home`,
+      url: `/post/${postId}?from=home`, 
     });
 
     let delivered = 0;

@@ -60,7 +60,9 @@ export function VoteHistoryClient({ value }: VoteHistoryClientProps) {
         const { data: posts, error: postsError } = await supabase
           .from("posts")
           .select("id,caption,image_url,user_id,yes_count,no_count")
-          .in("id", postIds);
+          .in("id", postIds)
+          .eq("is_active", true)
+          .eq("moderation_status", "approved");
 
         if (postsError) {
           throw postsError;

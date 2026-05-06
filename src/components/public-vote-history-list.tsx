@@ -33,7 +33,7 @@ export function PublicVoteHistoryList({
         return (
           <Link
             key={item.id}
-            href={`/profile/${item.id}?from=people&profileId=${profileId}`}
+            href={`/post/${item.id}?from=people&profileId=${profileId}`}
             className="group overflow-hidden rounded-none bg-white shadow-sm ring-1 ring-pink-100 transition hover:-translate-y-0.5 hover:shadow-md"
           >
             <div className="relative">

@@ -130,7 +130,7 @@ export function ActivityFeedClient() {
             createdAt: row.created_at,
             title: `${profile?.display_name || profile?.username || "Someone"} voted ${row.value} on your post`,
             subtitle: ownPostMap.get(row.post_id) || "One of your looks",
-            href: `/profile/${row.post_id}?from=activity`,
+            href: `/post/${row.post_id}?from=activity`, 
           };
         });
 

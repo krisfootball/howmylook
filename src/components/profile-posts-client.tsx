@@ -120,7 +120,7 @@ export function ProfilePostsClient() {
         return (
           <Link
             key={post.id}
-            href={`/profile/${post.id}`}
+            href={`/post/${post.id}?from=profile`}
             className="group overflow-hidden rounded-none bg-white shadow-sm ring-1 ring-pink-100 transition hover:-translate-y-0.5 hover:shadow-md"
           >
             <div className="relative">

@@ -92,6 +92,7 @@ export function FollowingFeedClient() {
             )
             .in("user_id", followingIds)
             .eq("is_active", true)
+            .eq("moderation_status", "approved")
             .or(`keep_forever.eq.true,expires_at.gt.${new Date().toISOString()}`)
             .order("created_at", { ascending: false })
             .limit(TARGET_FEED_COUNT);
@@ -135,6 +136,7 @@ export function FollowingFeedClient() {
               "id,caption,image_url,yes_count,no_count,user_id,profiles!posts_user_id_fkey(display_name,username,avatar_url),post_images(id,image_url,sort_order)",
             )
             .eq("is_active", true)
+            .eq("moderation_status", "approved")
             .neq("user_id", user.id)
             .or(`keep_forever.eq.true,expires_at.gt.${new Date().toISOString()}`)
             .order("created_at", { ascending: false })

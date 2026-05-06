@@ -17,9 +17,10 @@ export default async function PostDetailPage({ params, searchParams }: PostDetai
 
   const { data: post, error } = await supabase
     .from("posts")
-    .select("id,caption,image_url,yes_count,no_count,user_id,is_active,keep_forever,post_images(id,image_url,sort_order)")
+    .select("id,caption,image_url,yes_count,no_count,user_id,is_active,moderation_status,keep_forever,post_images(id,image_url,sort_order)")
     .eq("id", postId)
     .eq("is_active", true)
+    .eq("moderation_status", "approved")
     .maybeSingle();
 
   if (error || !post) {

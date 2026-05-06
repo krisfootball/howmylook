@@ -26,8 +26,9 @@ export function SearchExploreClient() {
       try {
         const { data: rows, error: postsError } = await supabase
           .from("posts")
-          .select("id,caption,image_url,yes_count,no_count,user_id,keep_forever,expires_at,post_images(id)")
+          .select("id,caption,image_url,yes_count,no_count,user_id,moderation_status,keep_forever,expires_at,post_images(id)")
           .eq("is_active", true)
+          .eq("moderation_status", "approved")
           .or(`keep_forever.eq.true,expires_at.gt.${new Date().toISOString()}`)
           .order("yes_count", { ascending: false })
           .order("created_at", { ascending: false })
@@ -116,7 +117,7 @@ export function SearchExploreClient() {
               return (
                 <Link
                   key={post.id}
-                  href={`/profile/${post.id}?from=search`}
+                  href={`/post/${post.id}?from=search`}
                   className="group overflow-hidden rounded-none bg-white shadow-sm ring-1 ring-pink-100 transition hover:-translate-y-0.5 hover:shadow-md"
                 >
                   <div className="relative">

@@ -29,6 +29,8 @@ export type PushSubscriptionRecord = {
   created_at?: string;
 };
 
+export type ModerationStatus = "approved" | "hidden" | "deleted" | "pending";
+
 export type DatabasePost = {
   id: string;
   user_id: string;
@@ -37,6 +39,11 @@ export type DatabasePost = {
   yes_count: number;
   no_count: number;
   is_active: boolean;
+  moderation_status?: ModerationStatus;
+  moderation_reason?: string | null;
+  moderated_at?: string | null;
+  moderated_by?: string | null;
+  admin_alert_sent_at?: string | null;
   expires_at?: string;
   keep_forever?: boolean;
   post_images?: {

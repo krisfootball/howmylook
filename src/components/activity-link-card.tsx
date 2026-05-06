@@ -41,6 +41,7 @@ export function ActivityLinkCard() {
           .from("posts")
           .select("id")
           .eq("user_id", user.id)
+          .neq("moderation_status", "deleted")
           .limit(100);
 
         const ownPostIds = (ownPosts ?? []).map((post) => post.id);

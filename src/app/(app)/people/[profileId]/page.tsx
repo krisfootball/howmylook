@@ -37,6 +37,7 @@ export default async function PeopleProfilePage({ params }: PeopleProfilePagePro
       .select("id,caption,image_url,yes_count,no_count,keep_forever,expires_at,post_images(id)")
       .eq("user_id", profileId)
       .eq("is_active", true)
+      .eq("moderation_status", "approved")
       .or(`keep_forever.eq.true,expires_at.gt.${new Date().toISOString()}`)
       .order("created_at", { ascending: false })
       .limit(24),
@@ -120,7 +121,7 @@ export default async function PeopleProfilePage({ params }: PeopleProfilePagePro
                 return (
                   <Link
                     key={post.id}
-                    href={`/profile/${post.id}?from=people&profileId=${profileId}`}
+                    href={`/post/${post.id}?from=people&profileId=${profileId}`}
                     className="group overflow-hidden rounded-none bg-white shadow-sm ring-1 ring-pink-100 transition hover:-translate-y-0.5 hover:shadow-md"
                   >
                     <div className="relative">
