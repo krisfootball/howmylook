@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { appConfig } from "@/lib/app-config";
@@ -160,6 +161,11 @@ export function AuthForm() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-3 rounded-[1.7rem] border border-pink-100 bg-pink-50/70 p-4 shadow-sm">
+        {mode === "signup" ? (
+          <p className="text-xs leading-5 text-slate-600">
+            By creating an account, you agree to our <Link href="/terms" className="font-semibold text-slate-900 underline">Terms</Link>, <Link href="/privacy" className="font-semibold text-slate-900 underline">Privacy Policy</Link>, and <Link href="/guidelines" className="font-semibold text-slate-900 underline">Community Guidelines</Link>.
+          </p>
+        ) : null}
         <div>
           <label className="text-sm font-semibold text-slate-900">Email</label>
           <input
@@ -199,6 +205,10 @@ export function AuthForm() {
           {message}
         </div>
       ) : null}
+
+      <p className="text-xs leading-5 text-slate-500">
+        Need the legal docs? <Link href="/terms" className="underline">Terms</Link> · <Link href="/privacy" className="underline">Privacy</Link> · <Link href="/guidelines" className="underline">Guidelines</Link>
+      </p>
     </div>
   );
 }
