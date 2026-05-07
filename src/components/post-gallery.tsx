@@ -13,7 +13,7 @@ export function PostGallery({ images, altBase, fullBleed = false }: PostGalleryP
 
   return (
     <div className={fullBleed ? "h-full w-full" : "p-2"}>
-      <div className="relative h-full">
+      <div className="relative h-full w-full">
         <div
           className={`hide-scrollbar flex h-full snap-x snap-mandatory overflow-x-auto scroll-smooth ${fullBleed ? "" : "rounded-[1.1rem]"}`}
           onScroll={(event) => {
@@ -25,7 +25,7 @@ export function PostGallery({ images, altBase, fullBleed = false }: PostGalleryP
           }}
         >
           {images.map((imageUrl, index) => (
-            <div key={`${imageUrl}-${index}`} className="min-w-full snap-center">
+            <div key={`${imageUrl}-${index}`} className="min-w-full h-full snap-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={imageUrl}
