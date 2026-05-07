@@ -40,11 +40,11 @@ export function PostView({
       <article className="-mx-4 -my-4 overflow-hidden rounded-none bg-slate-950 text-white shadow-none">
         <div className="relative min-h-[calc(100vh-7.5rem)]">
         {showImage ? (
-          <div className="aspect-[9/16] w-full bg-white">
-            <PostGallery images={images} altBase={caption} />
+          <div className="h-full min-h-[calc(100vh-7.5rem)] w-full overflow-hidden bg-slate-950">
+            <PostGallery images={images} altBase={caption} fullBleed />
           </div>
         ) : (
-          <div className="aspect-[9/16] bg-[linear-gradient(180deg,_#f6d6df_0%,_#dfc8ff_100%)]" />
+          <div className="min-h-[calc(100vh-7.5rem)] bg-[linear-gradient(180deg,_#f6d6df_0%,_#dfc8ff_100%)]" />
         )}
 
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/10" />

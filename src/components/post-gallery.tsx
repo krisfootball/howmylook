@@ -30,7 +30,7 @@ export function PostGallery({ images, altBase, fullBleed = false }: PostGalleryP
               <img
                 src={imageUrl}
                 alt={`${altBase} ${index + 1}`}
-                className={fullBleed ? "h-screen w-full object-contain bg-white" : "aspect-[9/16] w-full object-cover"}
+                className={fullBleed ? "h-full w-full object-cover" : "aspect-[9/16] w-full object-cover"}
               />
             </div>
           ))}
