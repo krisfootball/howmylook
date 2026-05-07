@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
+import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
 type NavItem = {
   href: string;
@@ -10,12 +11,19 @@ type NavItem = {
   icon: string;
 };
 
-const navItems: NavItem[] = [
+const baseNavItems: NavItem[] = [
   { href: "/home", label: "Home", icon: "⌂" },
   { href: "/search", label: "Search", icon: "⌕" },
   { href: "/upload", label: "Post", icon: "+" },
   { href: "/profile", label: "Profile", icon: "○" },
 ];
+
+function parseAdminEmails(value: string | undefined) {
+  return (value ?? "")
+    .split(",")
+    .map((item) => item.trim().toLowerCase())
+    .filter(Boolean);
+}
 
 export function MobileShell({
   title,
@@ -29,6 +37,41 @@ export function MobileShell({
   hideHeader?: boolean;
 }) {
   const pathname = usePathname();
+  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
+  const [showAdmin, setShowAdmin] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadAdminState() {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
+        const allowed = parseAdminEmails(process.env.NEXT_PUBLIC_ADMIN_EMAILS);
+        const isAdmin = Boolean(user?.email && allowed.includes(user.email.trim().toLowerCase()));
+
+        if (active) {
+          setShowAdmin(isAdmin);
+        }
+      } catch {
+        if (active) {
+          setShowAdmin(false);
+        }
+      }
+    }
+
+    void loadAdminState();
+
+    return () => {
+      active = false;
+    };
+  }, [supabase]);
+
+  const navItems = showAdmin
+    ? [...baseNavItems.slice(0, 3), { href: "/admin", label: "Admin", icon: "✦" }, baseNavItems[3]]
+    : baseNavItems;
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_#fff_0%,_#fff6fb_40%,_#f5edf8_100%)] px-4 py-6 text-slate-900">
@@ -42,7 +85,7 @@ export function MobileShell({
 
         <section className={`flex-1 overflow-y-auto ${hideHeader ? "px-4 py-4" : "px-4 py-4"}`}>{children}</section>
 
-        <nav className="grid grid-cols-4 border-t border-pink-100 bg-white/95 px-2 py-2">
+        <nav className={`grid ${showAdmin ? "grid-cols-5" : "grid-cols-4"} border-t border-pink-100 bg-white/95 px-2 py-2`}>
           {navItems.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
 
