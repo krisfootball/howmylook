@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { createBrowserClient } from "@supabase/ssr";
 
 export function createSupabaseBrowserClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -12,5 +12,5 @@ export function createSupabaseBrowserClient() {
     throw new Error("Missing NEXT_PUBLIC_SUPABASE_ANON_KEY");
   }
 
-  return createClient(supabaseUrl, supabaseAnonKey);
+  return createBrowserClient(supabaseUrl, supabaseAnonKey);
 }
