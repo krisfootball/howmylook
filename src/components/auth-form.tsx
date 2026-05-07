@@ -17,6 +17,7 @@ export function AuthForm() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [acceptedPolicies, setAcceptedPolicies] = useState(false);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -162,9 +163,18 @@ export function AuthForm() {
 
       <form onSubmit={handleSubmit} className="space-y-3 rounded-[1.7rem] border border-pink-100 bg-pink-50/70 p-4 shadow-sm">
         {mode === "signup" ? (
-          <p className="text-xs leading-5 text-slate-600">
-            By creating an account, you agree to our <Link href="/terms" className="font-semibold text-slate-900 underline">Terms</Link>, <Link href="/privacy" className="font-semibold text-slate-900 underline">Privacy Policy</Link>, and <Link href="/guidelines" className="font-semibold text-slate-900 underline">Community Guidelines</Link>.
-          </p>
+          <label className="flex items-start gap-3 rounded-[1.2rem] bg-white px-3 py-3 text-xs leading-5 text-slate-600 shadow-sm">
+            <input
+              type="checkbox"
+              checked={acceptedPolicies}
+              onChange={(event) => setAcceptedPolicies(event.target.checked)}
+              className="mt-0.5 h-4 w-4 rounded border-slate-300 text-slate-900"
+              required
+            />
+            <span>
+              I agree to the <Link href="/terms" className="font-semibold text-slate-900 underline">Terms</Link>, <Link href="/privacy" className="font-semibold text-slate-900 underline">Privacy Policy</Link>, and <Link href="/guidelines" className="font-semibold text-slate-900 underline">Community Guidelines</Link>.
+            </span>
+          </label>
         ) : null}
         <div>
           <label className="text-sm font-semibold text-slate-900">Email</label>
