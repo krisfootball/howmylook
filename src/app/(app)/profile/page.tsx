@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { AccessGateCard } from "@/components/access-gate-card";
 import { ActivityLinkCard } from "@/components/activity-link-card";
+import { AdminLinkCard } from "@/components/admin-link-card";
 import { EditProfileForm } from "@/components/edit-profile-form";
 import { MobileShell } from "@/components/mobile-shell";
 import { ProfileClient } from "@/components/profile-client";
@@ -23,6 +24,7 @@ export default function ProfilePage() {
         />
 
         <ActivityLinkCard />
+        <AdminLinkCard />
 
         {showEditor ? (
           <div className="fixed inset-0 z-50 flex items-end bg-slate-950/45 p-3 sm:items-center sm:justify-center" onClick={() => setShowEditor(false)}>
