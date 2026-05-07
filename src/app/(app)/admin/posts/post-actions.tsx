@@ -39,21 +39,21 @@ export function AdminPostActions({
         throw new Error("You need to be signed in as admin.");
       }
 
-      const nextActive = nextStatus === "deleted" ? false : true;
+      const response = await fetch(`/api/admin/posts/${postId}/moderate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          status: nextStatus,
+          reason,
+        }),
+      });
 
-      const { error } = await supabase
-        .from("posts")
-        .update({
-          moderation_status: nextStatus,
-          moderation_reason: reason,
-          moderated_at: new Date().toISOString(),
-          moderated_by: user.id,
-          is_active: nextActive,
-        })
-        .eq("id", postId);
+      const payload = await response.json().catch(() => null);
 
-      if (error) {
-        throw error;
+      if (!response.ok) {
+        throw new Error(payload?.error || "Unable to update moderation status.");
       }
 
       setStatus(nextStatus);
