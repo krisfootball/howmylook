@@ -22,12 +22,11 @@ export default function ContactPage() {
 
           <h2>Support contact</h2>
           <p>
-            Before launch, replace this placeholder with your real support contact details.
+            Email: <strong>support@howmylook.com</strong>
           </p>
-          <ul>
-            <li>Email: <strong>support@howmylook.com</strong></li>
-            <li>Privacy requests: <strong>privacy@howmylook.com</strong></li>
-          </ul>
+          <p>
+            Use this same inbox for support, privacy requests, and account deletion requests.
+          </p>
 
           <h2>What you can contact us about</h2>
           <ul>

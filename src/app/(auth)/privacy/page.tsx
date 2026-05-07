@@ -99,7 +99,7 @@ export default function PrivacyPage() {
 
           <h2>12. Contact</h2>
           <p>
-            Visit our <Link href="/contact" className="font-semibold text-slate-900 underline">Contact & Support</Link> page before launch and replace the placeholder contact details with real support and privacy contact information.
+            Visit our <Link href="/contact" className="font-semibold text-slate-900 underline">Contact & Support</Link> page for support, privacy questions, and account deletion requests.
           </p>
         </div>
       </div>
