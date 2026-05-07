@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { requireAdminUser } from "@/lib/admin";
+import { getAdminAccessDebug, requireAdminUser } from "@/lib/admin";
 import { supabase } from "@/lib/supabase";
 import { AdminPostActions } from "./post-actions";
 
@@ -7,6 +7,8 @@ export default async function AdminPostsPage() {
   const adminUser = await requireAdminUser();
 
   if (!adminUser) {
+    const debug = await getAdminAccessDebug();
+
     return (
       <main className="min-h-screen bg-[radial-gradient(circle_at_top,_#fff_0%,_#fff6fb_40%,_#f5edf8_100%)] px-4 py-6 text-slate-900">
         <div className="mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-xl flex-col gap-4 rounded-[2rem] border border-white/70 bg-white/90 p-6 shadow-[0_25px_80px_rgba(76,29,149,0.18)] backdrop-blur">
@@ -21,6 +23,11 @@ export default async function AdminPostsPage() {
           <section className="rounded-[1.4rem] border border-amber-100 bg-amber-50 px-4 py-4 text-sm leading-6 text-amber-900">
             Add your signed-in email address to the <span className="font-semibold">ADMIN_EMAILS</span> environment variable in Vercel,
             then redeploy.
+          </section>
+
+          <section className="rounded-[1.4rem] border border-slate-200 bg-slate-50 px-4 py-4 text-sm leading-6 text-slate-700">
+            <p><span className="font-semibold text-slate-900">Signed-in email:</span> {debug.signedInEmail ?? "not signed in"}</p>
+            <p className="mt-2"><span className="font-semibold text-slate-900">Allowed admin emails:</span> {debug.allowedEmails.length > 0 ? debug.allowedEmails.join(", ") : "none configured"}</p>
           </section>
 
           <div className="flex flex-wrap gap-2">
