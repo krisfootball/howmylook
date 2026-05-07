@@ -65,28 +65,41 @@ export default function PrivacyPage() {
           <ul>
             <li>You can choose what profile details and content to provide.</li>
             <li>You can stop using the app at any time.</li>
-            <li>You may request deletion or support help through the operator contact you publish for the app.</li>
+            <li>You may request deletion or support help through our contact and support process.</li>
           </ul>
 
-          <h2>8. Children</h2>
+          <h2>8. Account Deletion and Data Requests</h2>
+          <p>
+            You may request account deletion, access to your data, or another privacy-related request by contacting HowMyLook support.
+            For safety, we may need to verify that the request came from the account owner before taking action.
+          </p>
+          <p>
+            We may retain certain information where necessary for legal compliance, fraud prevention, dispute resolution, enforcement,
+            or legitimate operational record-keeping.
+          </p>
+          <p>
+            See our <Link href="/contact" className="font-semibold text-slate-900 underline">Contact & Support</Link> page for the support path you should publish before launch.
+          </p>
+
+          <h2>9. Children</h2>
           <p>
             HowMyLook is not intended for children below the minimum age required to use the service where they live. If you believe a child has
             provided personal information in violation of this policy, contact the operator so the issue can be reviewed.
           </p>
 
-          <h2>9. International Use</h2>
+          <h2>10. International Use</h2>
           <p>
             Your information may be processed in countries other than the one where you live, depending on hosting and service providers.
           </p>
 
-          <h2>10. Changes to This Policy</h2>
+          <h2>11. Changes to This Policy</h2>
           <p>
             We may update this Privacy Policy from time to time. Continued use of the app after changes means the updated policy applies.
           </p>
 
-          <h2>11. Contact</h2>
+          <h2>12. Contact</h2>
           <p>
-            Before public launch, add a real support or privacy contact for HowMyLook here so users know where to send requests and questions.
+            Visit our <Link href="/contact" className="font-semibold text-slate-900 underline">Contact & Support</Link> page before launch and replace the placeholder contact details with real support and privacy contact information.
           </p>
         </div>
       </div>

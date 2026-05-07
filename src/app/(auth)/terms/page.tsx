@@ -108,8 +108,7 @@ export default function TermsPage() {
 
           <h2>14. Contact</h2>
           <p>
-            If you need to contact the operator of HowMyLook about these Terms, you should add your support or business contact information here
-            before launch.
+            If you need to contact the operator of HowMyLook about these Terms, see the <Link href="/contact" className="font-semibold text-slate-900 underline">Contact & Support</Link> page and replace the placeholder contact details there before launch.
           </p>
         </div>
       </div>

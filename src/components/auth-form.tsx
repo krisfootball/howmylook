@@ -217,7 +217,7 @@ export function AuthForm() {
       ) : null}
 
       <p className="text-xs leading-5 text-slate-500">
-        Need the legal docs? <Link href="/terms" className="underline">Terms</Link> · <Link href="/privacy" className="underline">Privacy</Link> · <Link href="/guidelines" className="underline">Guidelines</Link>
+        Need the legal docs? <Link href="/terms" className="underline">Terms</Link> · <Link href="/privacy" className="underline">Privacy</Link> · <Link href="/guidelines" className="underline">Guidelines</Link> · <Link href="/contact" className="underline">Contact</Link>
       </p>
     </div>
   );

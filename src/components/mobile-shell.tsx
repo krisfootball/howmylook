@@ -91,6 +91,8 @@ export function MobileShell({
           <Link href="/privacy" className="underline underline-offset-2">Privacy</Link>
           <span className="px-2 text-slate-300">·</span>
           <Link href="/guidelines" className="underline underline-offset-2">Guidelines</Link>
+          <span className="px-2 text-slate-300">·</span>
+          <Link href="/contact" className="underline underline-offset-2">Contact</Link>
         </div>
 
         <nav className={`grid ${showAdmin ? "grid-cols-5" : "grid-cols-4"} border-t border-pink-100 bg-white/95 px-2 py-2`}>
