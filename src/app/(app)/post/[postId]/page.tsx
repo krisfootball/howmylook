@@ -1,5 +1,5 @@
 import PostDetailClient from "./post-detail-client";
-import { supabase } from "@/lib/supabase";
+import { createSupabaseServerClient } from "@/lib/supabase-server";
 
 type PostDetailPageProps = {
   params: Promise<{
@@ -14,6 +14,7 @@ type PostDetailPageProps = {
 export default async function PostDetailPage({ params, searchParams }: PostDetailPageProps) {
   const { postId } = await params;
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  const supabase = await createSupabaseServerClient();
 
   const { data: post, error } = await supabase
     .from("posts")
