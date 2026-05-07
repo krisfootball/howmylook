@@ -75,42 +75,57 @@ export function AdminPostActions({
     }
   }
 
+  if (compact) {
+    if (status === "deleted") {
+      return message ? <p className="text-xs leading-5 text-slate-600">{message}</p> : null;
+    }
+
+    return (
+      <div className="space-y-2">
+        <button
+          type="button"
+          onClick={() => void updateStatus("deleted", "Deleted by admin review")}
+          disabled={saving}
+          className="w-full rounded-full bg-rose-500 px-3 py-2 text-xs font-semibold text-white disabled:opacity-50"
+        >
+          {saving ? "Deleting..." : "Delete"}
+        </button>
+
+        {message ? <p className="text-xs leading-5 text-slate-600">{message}</p> : null}
+      </div>
+    );
+  }
+
   return (
-    <div className={compact ? "space-y-2" : "space-y-3"}>
-      <div className={`flex ${compact ? "gap-1.5" : "flex-wrap gap-2"}`}>
+    <div className="space-y-3">
+      <div className="flex flex-wrap gap-2">
         <button
           type="button"
           onClick={() => void updateStatus("approved", null)}
           disabled={saving || status === "approved"}
-          className={compact
-            ? "flex-1 rounded-full bg-emerald-500 px-3 py-2 text-xs font-semibold text-white disabled:opacity-50"
-            : "rounded-full bg-emerald-500 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"}
+          className="rounded-full bg-emerald-500 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
         >
-          {saving && status !== "approved" ? "Saving..." : compact ? "Green" : "Keep approved"}
+          {saving && status !== "approved" ? "Saving..." : "Keep approved"}
         </button>
-        {!compact ? (
-          <button
-            type="button"
-            onClick={() => void updateStatus("hidden", "Hidden by admin review")}
-            disabled={saving || status === "hidden"}
-            className="rounded-full bg-amber-400 px-4 py-2 text-sm font-semibold text-slate-900 disabled:opacity-50"
-          >
-            Hide
-          </button>
-        ) : null}
+        <button
+          type="button"
+          onClick={() => void updateStatus("hidden", "Hidden by admin review")}
+          disabled={saving || status === "hidden"}
+          className="rounded-full bg-amber-400 px-4 py-2 text-sm font-semibold text-slate-900 disabled:opacity-50"
+        >
+          Hide
+        </button>
         <button
           type="button"
           onClick={() => void updateStatus("deleted", "Deleted by admin review")}
           disabled={saving || status === "deleted"}
-          className={compact
-            ? "flex-1 rounded-full bg-rose-500 px-3 py-2 text-xs font-semibold text-white disabled:opacity-50"
-            : "rounded-full bg-rose-500 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"}
+          className="rounded-full bg-rose-500 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
         >
-          {compact ? "Red" : "Delete"}
+          Delete
         </button>
       </div>
 
-      {message ? <p className={compact ? "text-xs leading-5 text-slate-600" : "text-sm leading-6 text-slate-600"}>{message}</p> : null}
+      {message ? <p className="text-sm leading-6 text-slate-600">{message}</p> : null}
     </div>
   );
 }
