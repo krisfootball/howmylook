@@ -39,7 +39,7 @@ export function ActivityLinkCard() {
 
         const { data: ownPosts } = await supabase
           .from("posts")
-          .select("id,moderated_at,moderation_status")
+          .select("id")
           .eq("user_id", user.id)
           .limit(100);
 
@@ -58,9 +58,16 @@ export function ActivityLinkCard() {
           voteRows = votes ?? [];
         }
 
-        const moderationTimestamps = (ownPosts ?? [])
-          .filter((post) => post.moderation_status === "deleted" && post.moderated_at)
-          .map((post) => post.moderated_at)
+        const { data: notificationRows } = await supabase
+          .from("user_notifications")
+          .select("created_at,kind")
+          .eq("user_id", user.id)
+          .eq("kind", "moderation_removed")
+          .order("created_at", { ascending: false })
+          .limit(100);
+
+        const moderationTimestamps = (notificationRows ?? [])
+          .map((notification) => notification.created_at)
           .filter(Boolean);
 
         const allTimestamps = [

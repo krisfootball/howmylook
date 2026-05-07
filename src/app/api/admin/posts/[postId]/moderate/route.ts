@@ -42,12 +42,24 @@ export async function POST(
     const supabaseAdmin = createSupabaseAdminClient();
     const nextActive = status === "deleted" ? false : true;
 
+    const moderatedAt = new Date().toISOString();
+
+    const { data: post, error: postLookupError } = await supabaseAdmin
+      .from("posts")
+      .select("id,user_id,caption")
+      .eq("id", postId)
+      .maybeSingle();
+
+    if (postLookupError || !post) {
+      return NextResponse.json({ error: postLookupError?.message || "Post not found." }, { status: 404 });
+    }
+
     const { error } = await supabaseAdmin
       .from("posts")
       .update({
         moderation_status: status,
         moderation_reason: getReason(status),
-        moderated_at: new Date().toISOString(),
+        moderated_at: moderatedAt,
         moderated_by: adminUser.id,
         is_active: nextActive,
       })
@@ -55,6 +67,23 @@ export async function POST(
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    if (status === "deleted") {
+      const { error: notificationError } = await supabaseAdmin
+        .from("user_notifications")
+        .insert({
+          user_id: post.user_id,
+          kind: "moderation_removed",
+          title: "Your post was removed because it didn’t fit HowMyLook guidelines.",
+          body: post.caption?.trim() || null,
+          post_id: post.id,
+          created_at: moderatedAt,
+        });
+
+      if (notificationError) {
+        return NextResponse.json({ error: notificationError.message }, { status: 500 });
+      }
     }
 
     return NextResponse.json({ ok: true });

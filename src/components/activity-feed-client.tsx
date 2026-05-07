@@ -15,6 +15,15 @@ type ActivityItem = {
   href?: string;
 };
 
+type NotificationRow = {
+  id: string;
+  kind: string;
+  title: string;
+  body?: string | null;
+  post_id?: string | null;
+  created_at: string;
+};
+
 type JoinedProfile = {
   display_name?: string | null;
   username?: string | null;
@@ -33,13 +42,6 @@ type VoteRow = {
   profiles?: JoinedProfile[] | JoinedProfile | null;
 };
 
-type ModeratedPostRow = {
-  id: string;
-  caption?: string | null;
-  moderated_at?: string | null;
-  moderation_status?: "approved" | "hidden" | "deleted" | "pending" | null;
-  moderation_reason?: string | null;
-};
 
 function getJoinedProfile(profile: JoinedProfile[] | JoinedProfile | null | undefined): JoinedProfile | null {
   if (!profile) {
@@ -88,7 +90,7 @@ export function ActivityFeedClient() {
 
         const { data: ownPosts, error: ownPostsError } = await supabase
           .from("posts")
-          .select("id,caption,moderated_at,moderation_status,moderation_reason")
+          .select("id,caption")
           .eq("user_id", user.id)
           .limit(100);
 
@@ -98,6 +100,17 @@ export function ActivityFeedClient() {
 
         const ownPostIds = (ownPosts ?? []).map((post) => post.id);
         const ownPostMap = new Map((ownPosts ?? []).map((post) => [post.id, post.caption]));
+
+        const { data: notificationRows, error: notificationsError } = await supabase
+          .from("user_notifications")
+          .select("id,kind,title,body,post_id,created_at")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false })
+          .limit(100);
+
+        if (notificationsError) {
+          throw notificationsError;
+        }
 
         let voteRows: VoteRow[] = [];
         if (ownPostIds.length > 0) {
@@ -142,14 +155,14 @@ export function ActivityFeedClient() {
           };
         });
 
-        const moderationItems: ActivityItem[] = ((ownPosts ?? []) as ModeratedPostRow[])
-          .filter((post) => post.moderation_status === "deleted" && post.moderated_at)
-          .map((post) => ({
-            id: `moderation-${post.id}-${post.moderated_at}`,
+        const moderationItems: ActivityItem[] = ((notificationRows ?? []) as NotificationRow[])
+          .filter((notification) => notification.kind === "moderation_removed")
+          .map((notification) => ({
+            id: `moderation-${notification.id}`,
             kind: "moderation",
-            createdAt: post.moderated_at as string,
-            title: "Your post was removed because it didn’t fit HowMyLook guidelines.",
-            subtitle: post.caption?.trim() || "One of your looks",
+            createdAt: notification.created_at,
+            title: notification.title,
+            subtitle: notification.body?.trim() || "One of your looks",
           }));
 
         const nextItems = [...followItems, ...voteItems, ...moderationItems].sort(
