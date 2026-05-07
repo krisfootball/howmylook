@@ -39,9 +39,8 @@ export function ActivityLinkCard() {
 
         const { data: ownPosts } = await supabase
           .from("posts")
-          .select("id")
+          .select("id,moderated_at,moderation_status")
           .eq("user_id", user.id)
-          .neq("moderation_status", "deleted")
           .limit(100);
 
         const ownPostIds = (ownPosts ?? []).map((post) => post.id);
@@ -59,9 +58,15 @@ export function ActivityLinkCard() {
           voteRows = votes ?? [];
         }
 
+        const moderationTimestamps = (ownPosts ?? [])
+          .filter((post) => post.moderation_status === "deleted" && post.moderated_at)
+          .map((post) => post.moderated_at)
+          .filter(Boolean);
+
         const allTimestamps = [
           ...(followRows ?? []).map((row) => row.created_at).filter(Boolean),
           ...voteRows.map((row) => row.created_at).filter(Boolean),
+          ...moderationTimestamps,
         ] as string[];
 
         const unread = lastSeenAt
@@ -94,7 +99,7 @@ export function ActivityLinkCard() {
     >
       <div>
         <p className="text-sm font-semibold text-slate-900">Activity</p>
-        <p className="mt-1 text-sm text-slate-500">Followers and votes on your posts.</p>
+        <p className="mt-1 text-sm text-slate-500">Followers, votes, and post updates.</p>
       </div>
       <div className="flex items-center gap-2">
         {counts.unread > 0 ? (

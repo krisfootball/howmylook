@@ -8,7 +8,7 @@ const STORAGE_KEY = "howmylook:lastSeenActivityAt";
 
 type ActivityItem = {
   id: string;
-  kind: "follow" | "vote";
+  kind: "follow" | "vote" | "moderation";
   createdAt: string;
   title: string;
   subtitle: string;
@@ -31,6 +31,14 @@ type VoteRow = {
   value: "yes" | "no";
   created_at: string;
   profiles?: JoinedProfile[] | JoinedProfile | null;
+};
+
+type ModeratedPostRow = {
+  id: string;
+  caption?: string | null;
+  moderated_at?: string | null;
+  moderation_status?: "approved" | "hidden" | "deleted" | "pending" | null;
+  moderation_reason?: string | null;
 };
 
 function getJoinedProfile(profile: JoinedProfile[] | JoinedProfile | null | undefined): JoinedProfile | null {
@@ -80,7 +88,7 @@ export function ActivityFeedClient() {
 
         const { data: ownPosts, error: ownPostsError } = await supabase
           .from("posts")
-          .select("id,caption")
+          .select("id,caption,moderated_at,moderation_status,moderation_reason")
           .eq("user_id", user.id)
           .limit(100);
 
@@ -134,7 +142,17 @@ export function ActivityFeedClient() {
           };
         });
 
-        const nextItems = [...followItems, ...voteItems].sort(
+        const moderationItems: ActivityItem[] = ((ownPosts ?? []) as ModeratedPostRow[])
+          .filter((post) => post.moderation_status === "deleted" && post.moderated_at)
+          .map((post) => ({
+            id: `moderation-${post.id}-${post.moderated_at}`,
+            kind: "moderation",
+            createdAt: post.moderated_at as string,
+            title: "Your post was removed because it didn’t fit HowMyLook guidelines.",
+            subtitle: post.caption?.trim() || "One of your looks",
+          }));
+
+        const nextItems = [...followItems, ...voteItems, ...moderationItems].sort(
           (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
         );
 
@@ -189,8 +207,14 @@ export function ActivityFeedClient() {
                 <p className="font-semibold text-slate-900">{item.title}</p>
                 <p className="mt-1 text-sm leading-6 text-slate-500">{item.subtitle}</p>
               </div>
-              <span className="rounded-full bg-pink-50 px-3 py-1 text-xs font-semibold text-pink-600">
-                {item.kind === "follow" ? "Follow" : "Vote"}
+              <span className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                item.kind === "follow"
+                  ? "bg-pink-50 text-pink-600"
+                  : item.kind === "vote"
+                    ? "bg-pink-50 text-pink-600"
+                    : "bg-rose-50 text-rose-600"
+              }`}>
+                {item.kind === "follow" ? "Follow" : item.kind === "vote" ? "Vote" : "Removed"}
               </span>
             </div>
             {item.href ? <p className="mt-3 text-xs font-medium text-pink-600">Open</p> : null}
