@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { requireAdminUser } from "@/lib/admin";
 import { supabase } from "@/lib/supabase";
 import { AdminPostActions } from "./post-actions";
@@ -8,7 +7,30 @@ export default async function AdminPostsPage() {
   const adminUser = await requireAdminUser();
 
   if (!adminUser) {
-    redirect("/home");
+    return (
+      <main className="min-h-screen bg-[radial-gradient(circle_at_top,_#fff_0%,_#fff6fb_40%,_#f5edf8_100%)] px-4 py-6 text-slate-900">
+        <div className="mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-xl flex-col gap-4 rounded-[2rem] border border-white/70 bg-white/90 p-6 shadow-[0_25px_80px_rgba(76,29,149,0.18)] backdrop-blur">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-pink-500">Admin</p>
+            <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">Access needed</h1>
+            <p className="mt-3 text-sm leading-6 text-slate-600">
+              This account is not currently allowed to open the admin queue.
+            </p>
+          </div>
+
+          <section className="rounded-[1.4rem] border border-amber-100 bg-amber-50 px-4 py-4 text-sm leading-6 text-amber-900">
+            Add your signed-in email address to the <span className="font-semibold">ADMIN_EMAILS</span> environment variable in Vercel,
+            then redeploy.
+          </section>
+
+          <div className="flex flex-wrap gap-2">
+            <Link href="/home" className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm">
+              Back to Home
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
   }
 
   const { data: posts, error } = await supabase
