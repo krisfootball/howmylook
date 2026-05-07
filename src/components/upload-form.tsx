@@ -7,6 +7,8 @@ import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 const MAX_FILES = 5;
 const MAX_KEPT_POSTS = 10;
 const POST_LIFETIME_DAYS = 30;
+const MAX_UPLOAD_DIMENSION = 1600;
+const UPLOAD_QUALITY = 0.82;
 
 export function UploadForm() {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
@@ -19,6 +21,59 @@ export function UploadForm() {
 
   function applyFiles(nextFiles: File[]) {
     setFiles(nextFiles.slice(0, MAX_FILES));
+  }
+
+  async function compressImage(file: File) {
+    if (typeof window === "undefined") {
+      return file;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      return file;
+    }
+
+    const objectUrl = URL.createObjectURL(file);
+
+    try {
+      const image = await new Promise<HTMLImageElement>((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error("Could not load image for compression."));
+        img.src = objectUrl;
+      });
+
+      const longestSide = Math.max(image.width, image.height);
+      const scale = longestSide > MAX_UPLOAD_DIMENSION ? MAX_UPLOAD_DIMENSION / longestSide : 1;
+      const targetWidth = Math.max(1, Math.round(image.width * scale));
+      const targetHeight = Math.max(1, Math.round(image.height * scale));
+
+      const canvas = document.createElement("canvas");
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+
+      const context = canvas.getContext("2d");
+      if (!context) {
+        return file;
+      }
+
+      context.drawImage(image, 0, 0, targetWidth, targetHeight);
+
+      const blob = await new Promise<Blob | null>((resolve) => {
+        canvas.toBlob(resolve, "image/jpeg", UPLOAD_QUALITY);
+      });
+
+      if (!blob) {
+        return file;
+      }
+
+      const baseName = file.name.replace(/\.[^.]+$/, "") || "photo";
+      return new File([blob], `${baseName}.jpg`, {
+        type: "image/jpeg",
+        lastModified: Date.now(),
+      });
+    } finally {
+      URL.revokeObjectURL(objectUrl);
+    }
   }
 
   function moveFile(fromIndex: number, toIndex: number) {
@@ -60,7 +115,11 @@ export function UploadForm() {
       const uploadedImageUrls: string[] = [];
       let fallbackImageUrl = `seed://user-post-${Date.now()}`;
 
-      for (const [index, file] of files.entries()) {
+      setMessage(files.length > 1 ? "Optimizing photos..." : "Optimizing photo...");
+      const preparedFiles = await Promise.all(files.map((file) => compressImage(file)));
+      setMessage(preparedFiles.length > 1 ? "Uploading optimized photos..." : "Uploading optimized photo...");
+
+      for (const [index, file] of preparedFiles.entries()) {
         const fileExt = file.name.split(".").pop() || "jpg";
         const filePath = `${user.id}/${Date.now()}-${index}.${fileExt}`;
 
@@ -200,7 +259,7 @@ export function UploadForm() {
             const nextFiles = Array.from(event.target.files ?? []);
             if (nextFiles.length > 0) {
               applyFiles(nextFiles);
-              setMessage(`Camera photo ready: ${nextFiles[0].name}`);
+              setMessage(`Camera photo ready: ${nextFiles[0].name}. It will be optimized before upload.`);
             }
           }}
         />
@@ -217,8 +276,8 @@ export function UploadForm() {
               applyFiles(nextFiles);
               setMessage(
                 nextFiles.length > 1
-                  ? `${Math.min(nextFiles.length, MAX_FILES)} photos selected.`
-                  : `${nextFiles[0].name} selected.`,
+                  ? `${Math.min(nextFiles.length, MAX_FILES)} photos selected. They will be optimized before upload.`
+                  : `${nextFiles[0].name} selected. It will be optimized before upload.`,
               );
             }
           }}
@@ -227,7 +286,7 @@ export function UploadForm() {
         {files.length > 0 ? (
           <div className="mt-4 rounded-[1.2rem] bg-white p-3 text-left text-xs text-slate-500 shadow-sm">
             <p className="font-semibold text-slate-900">Ready to upload</p>
-            <p className="mt-1 text-xs text-slate-500">Reorder photos before publishing.</p>
+            <p className="mt-1 text-xs text-slate-500">Reorder photos before publishing. Photos will be resized for faster upload.</p>
             <div className="mt-3 space-y-2">
               {files.map((file, index) => (
                 <div key={`${file.name}-${file.size}`} className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-3 py-2">
