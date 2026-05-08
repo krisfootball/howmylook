@@ -82,7 +82,13 @@ export default async function PublicYesPage({ params }: PublicYesPageProps) {
 
   return (
     <MobileShell title="Yes given" hideHeader>
-      <PublicVoteHistoryList items={items} value="yes" profileId={profileId} />
+      <div className="space-y-4">
+        <Link href={`/people/${profileId}`} className="inline-flex rounded-full bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm">
+          ← Back
+        </Link>
+
+        <PublicVoteHistoryList items={items} value="yes" profileId={profileId} />
+      </div>
     </MobileShell>
   );
 }
