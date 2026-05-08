@@ -18,4 +18,6 @@ Add these environment variables in Vercel:
 - The server route sends pushes only to followers where `notifications_enabled = true` for that specific account.
 - If a browser subscription is expired, the route removes it from `push_subscriptions` automatically.
 - Admin moderation now uses `/admin/posts` and `/admin/posts/[postId]`.
-- New post uploads also call an admin alert placeholder route now so Telegram delivery can be connected later without changing upload flow again.
+- New post uploads call a real admin alert route.
+- `admin_alert_sent_at` is only written after successful Telegram delivery.
+- If Telegram env vars are missing, uploads still succeed and the response reports `pendingDelivery: true` so the UI can show that admin alerts are not configured yet.

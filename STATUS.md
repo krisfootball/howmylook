@@ -20,7 +20,7 @@
 - follow/unfollow actions added through real Supabase writes
 - rating queue now excludes already-rated posts and the current user's own posts
 - rating queue now has a real exhausted/empty state
-- unlocked routing now lands on following instead of profile
+- unlocked routing now lands on Home instead of profile
 - rating flow now calls a DB-side `cast_vote` RPC for safer vote + counter updates
 - post detail route has been cleaned up to `/post/[postId]`
 - admin moderation foundation added with moderation statuses, admin queue route, and single-post review page
@@ -33,6 +33,9 @@
 ## Important known issue
 Vercel deploy is showing stale/default content because the local workspace code has not yet been pushed to GitHub.
 
+## Latest cleanup
+- root route `/` now resolves to the real next app step server-side: `/auth`, `/welcome`, `/rate`, or `/home`
+
 ## Next engineering priorities
 1. Apply the latest Supabase SQL files, especially `SUPABASE_RPC_CAST_VOTE.sql`, storage setup, and `SUPABASE_MIGRATION_ADMIN_MODERATION.sql`
 2. Set `ADMIN_EMAILS` and verify `/admin/posts` access with a real admin account
@@ -40,3 +43,5 @@ Vercel deploy is showing stale/default content because the local workspace code 
 4. Verify live image uploads through storage bucket
 5. Sync workspace code to GitHub somehow (export or authenticated push)
 6. Make deployed preview reflect current app
+7. Remove or refresh older planning docs that still describe `/following` as the primary unlocked destination
+8. Finish removing or consolidating leftover legacy `/following` code paths now that the route is only an alias to `/home`

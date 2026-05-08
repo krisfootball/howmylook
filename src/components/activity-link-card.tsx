@@ -102,19 +102,19 @@ export function ActivityLinkCard() {
   return (
     <Link
       href="/activity"
-      className="flex items-center justify-between rounded-[1.4rem] border border-pink-100 bg-white px-4 py-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+      className="flex items-center justify-between rounded-[1.4rem] border border-pink-100 bg-white px-4 py-3.5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
     >
-      <div>
+      <div className="min-w-0">
         <p className="text-sm font-semibold text-slate-900">Activity</p>
-        <p className="mt-1 text-sm text-slate-500">Followers, votes, and post updates.</p>
+        <p className="mt-1 text-xs leading-5 text-slate-500">Followers, votes, and post updates.</p>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="ml-4 flex items-center gap-2">
         {counts.unread > 0 ? (
           <span className="rounded-full bg-pink-500 px-2.5 py-1 text-xs font-semibold text-white">
             {counts.unread > 99 ? "99+" : counts.unread}
           </span>
         ) : null}
-        <span className="text-xs font-medium text-pink-600">Open</span>
+        <span className="text-sm text-slate-300" aria-hidden="true">›</span>
       </div>
     </Link>
   );

@@ -1,7 +1,7 @@
 # Next build target
 
 ## Goal
-Move HowMyLook from mock screens to a real gated app flow.
+Polish HowMyLook’s real gated app flow and keep docs aligned with the current product.
 
 ## Completed recently
 - Added Supabase auth forms
@@ -26,4 +26,7 @@ Move HowMyLook from mock screens to a real gated app flow.
 - choose username
 - enter rating queue
 - complete 5 ratings
-- unlock rest of app
+- unlock Home, Search, Post, and Profile
+
+## Recent cleanup
+- root route `/` now sends users to the correct next step instead of always forcing `/auth`

@@ -1,3 +1,26 @@
+async function postJson(url: string, payload: Record<string, unknown>) {
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    const message =
+      data && typeof data === "object" && "error" in data && typeof data.error === "string"
+        ? data.error
+        : `Request failed: ${response.status}`;
+
+    throw new Error(message);
+  }
+
+  return data;
+}
+
 export async function notifyFollowersOfPost({
   postId,
   userId,
@@ -7,13 +30,7 @@ export async function notifyFollowersOfPost({
   userId: string;
   caption: string;
 }) {
-  await fetch("/api/notify-post", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ postId, userId, caption }),
-  });
+  return postJson("/api/notify-post", { postId, userId, caption });
 }
 
 export async function notifyAdminOfPost({
@@ -27,11 +44,5 @@ export async function notifyAdminOfPost({
   caption: string;
   imageUrl: string;
 }) {
-  await fetch("/api/admin/new-post-alert", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ postId, userId, caption, imageUrl }),
-  });
+  return postJson("/api/admin/new-post-alert", { postId, userId, caption, imageUrl });
 }

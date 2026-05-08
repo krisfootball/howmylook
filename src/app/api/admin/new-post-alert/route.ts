@@ -29,7 +29,9 @@ export async function POST(request: NextRequest) {
     const telegramBotToken = process.env.TELEGRAM_BOT_TOKEN;
     const telegramAdminChatId = process.env.TELEGRAM_ADMIN_CHAT_ID;
 
-    if (telegramBotToken && telegramAdminChatId) {
+    const hasTelegramDelivery = Boolean(telegramBotToken && telegramAdminChatId);
+
+    if (hasTelegramDelivery) {
       const captionLines = [
         "<b>New HowMyLook post</b>",
         authorUsername ? `${authorName} (${authorUsername})` : authorName,
@@ -39,29 +41,34 @@ export async function POST(request: NextRequest) {
 
       if (imageUrl.startsWith("http")) {
         await sendTelegramPhoto({
-          botToken: telegramBotToken,
-          chatId: telegramAdminChatId,
+          botToken: telegramBotToken!,
+          chatId: telegramAdminChatId!,
           photoUrl: imageUrl,
           caption: captionLines.join("\n"),
         });
       } else {
         await sendTelegramMessage({
-          botToken: telegramBotToken,
-          chatId: telegramAdminChatId,
+          botToken: telegramBotToken!,
+          chatId: telegramAdminChatId!,
           text: captionLines.join("\n"),
         });
       }
-    }
 
-    await supabaseAdmin
-      .from("posts")
-      .update({ admin_alert_sent_at: new Date().toISOString() })
-      .eq("id", postId);
+      const { error: updateError } = await supabaseAdmin
+        .from("posts")
+        .update({ admin_alert_sent_at: new Date().toISOString() })
+        .eq("id", postId);
+
+      if (updateError) {
+        throw updateError;
+      }
+    }
 
     return NextResponse.json({
       ok: true,
-      pendingDelivery: !(telegramBotToken && telegramAdminChatId),
-      message: telegramBotToken && telegramAdminChatId ? "Admin alert sent." : "Admin alert placeholder recorded.",
+      delivered: hasTelegramDelivery,
+      pendingDelivery: !hasTelegramDelivery,
+      message: hasTelegramDelivery ? "Admin alert sent." : "Admin alert not configured yet.",
       adminAlert: {
         title: "New HowMyLook post",
         authorName,

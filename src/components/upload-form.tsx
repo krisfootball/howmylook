@@ -173,22 +173,41 @@ export function UploadForm() {
         }
       }
 
-      try {
-        await Promise.allSettled([
-          notifyFollowersOfPost({
-            postId: insertedPosts.id,
-            userId: user.id,
-            caption: caption.trim(),
-          }),
-          notifyAdminOfPost({
-            postId: insertedPosts.id,
-            userId: user.id,
-            caption: caption.trim(),
-            imageUrl: fallbackImageUrl,
-          }),
-        ]);
-      } catch {
-        // Do not block posting if notification delivery fails.
+      let notificationNote = "";
+
+      const [followersResult, adminResult] = await Promise.allSettled([
+        notifyFollowersOfPost({
+          postId: insertedPosts.id,
+          userId: user.id,
+          caption: caption.trim(),
+        }),
+        notifyAdminOfPost({
+          postId: insertedPosts.id,
+          userId: user.id,
+          caption: caption.trim(),
+          imageUrl: fallbackImageUrl,
+        }),
+      ]);
+
+      const notificationWarnings: string[] = [];
+
+      if (followersResult.status === "rejected") {
+        notificationWarnings.push("Follower notifications need more setup.");
+      }
+
+      if (adminResult.status === "rejected") {
+        notificationWarnings.push("Admin alert delivery failed.");
+      } else if (
+        adminResult.value &&
+        typeof adminResult.value === "object" &&
+        "pendingDelivery" in adminResult.value &&
+        adminResult.value.pendingDelivery
+      ) {
+        notificationWarnings.push("Admin Telegram alert is not configured yet.");
+      }
+
+      if (notificationWarnings.length > 0) {
+        notificationNote = ` ${notificationWarnings.join(" ")}`;
       }
 
       setCaption("");
@@ -201,8 +220,8 @@ export function UploadForm() {
       }
       setMessage(
         uploadedImageUrls.length > 1
-          ? `Post created with ${uploadedImageUrls.length} photos.`
-          : "Post created with 1 photo.",
+          ? `Post created with ${uploadedImageUrls.length} photos.${notificationNote}`
+          : `Post created with 1 photo.${notificationNote}`,
       );
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unable to create post.";

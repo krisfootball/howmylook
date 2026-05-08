@@ -10,23 +10,26 @@ This adds an app-level option for: a follower can follow an account, tap **Notif
 - Supabase table for push subscriptions
 - Extra columns on `follows` to track notification preference
 
-## Still required for real delivery
+## Delivery status
 
-The app also needs a **server-side push sender** that runs when a new post is created.
+The app now includes a **Next.js server route** at `/api/notify-post` and triggers it after successful post creation.
 
-Recommended production path:
+Production path in use:
 
 1. Generate VAPID keys
 2. Set `NEXT_PUBLIC_VAPID_PUBLIC_KEY` in the app env
-3. Create a Supabase Edge Function or Next.js server route that:
-   - receives a new post event
+3. Set server env vars:
+   - `VAPID_PRIVATE_KEY`
+   - `VAPID_SUBJECT`
+   - `SUPABASE_SERVICE_ROLE_KEY`
+4. After a successful post create, the app calls `/api/notify-post`
+5. The server route:
    - finds `follows` where `following_id = new post user_id` and `notifications_enabled = true`
    - loads each follower's `push_subscriptions`
-   - sends a Web Push payload like:
-     - title: `<display_name> posted a new look`
-     - body: `Tap to open it in HowMyLook`
-     - url: `/people/<profileId>` or the post route
-4. Trigger that sender after successful post creation
+   - sends a Web Push payload
+   - removes expired subscriptions when the push service returns 404/410
+
+If these env vars are missing, follower notification delivery will fail even though posting still succeeds.
 
 ## SQL to run
 
