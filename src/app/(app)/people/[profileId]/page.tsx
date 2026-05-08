@@ -65,10 +65,6 @@ export default async function PeopleProfilePage({ params }: PeopleProfilePagePro
       hideHeader
     >
       <div className="space-y-4">
-        <Link href="/home" className="inline-flex rounded-full bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm">
-          ← Back to Home
-        </Link>
-
         <section className="rounded-[1.6rem] border border-pink-100 bg-gradient-to-br from-pink-50 to-white p-5">
           <div className="flex items-start gap-4">
             {profile.avatar_url ? (
