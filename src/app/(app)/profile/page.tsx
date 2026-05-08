@@ -23,8 +23,6 @@ export default function ProfilePage() {
           }}
         />
 
-        <ActivityLinkCard />
-
         <LegalLinksCard />
 
         {showEditor ? (
@@ -60,6 +58,8 @@ export default function ProfilePage() {
             <ProfilePostsClient />
           </section>
         </AccessGateCard>
+
+        <ActivityLinkCard />
       </div>
     </MobileShell>
   );
