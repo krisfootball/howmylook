@@ -14,7 +14,7 @@ export default async function PeopleProfilePage({ params }: PeopleProfilePagePro
 
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
-    .select("id,username,display_name,bio,avatar_url,total_yes_given,total_no_given")
+    .select("id,username,display_name,bio,avatar_url")
     .eq("id", profileId)
     .maybeSingle();
 
@@ -31,7 +31,7 @@ export default async function PeopleProfilePage({ params }: PeopleProfilePagePro
     );
   }
 
-  const [{ data: posts }, { count: followersCount }, { count: followingCount }] = await Promise.all([
+  const [{ data: posts }, { count: followersCount }, { count: followingCount }, { data: yesVotes }, { data: noVotes }] = await Promise.all([
     supabase
       .from("posts")
       .select("id,caption,image_url,yes_count,no_count,keep_forever,expires_at,post_images(id)")
@@ -43,6 +43,20 @@ export default async function PeopleProfilePage({ params }: PeopleProfilePagePro
       .limit(24),
     supabase.from("follows").select("*", { count: "exact", head: true }).eq("following_id", profileId),
     supabase.from("follows").select("*", { count: "exact", head: true }).eq("follower_id", profileId),
+    supabase
+      .from("votes")
+      .select("post_id,posts!inner(id)")
+      .eq("user_id", profileId)
+      .eq("value", "yes")
+      .eq("posts.is_active", true)
+      .eq("posts.moderation_status", "approved"),
+    supabase
+      .from("votes")
+      .select("post_id,posts!inner(id)")
+      .eq("user_id", profileId)
+      .eq("value", "no")
+      .eq("posts.is_active", true)
+      .eq("posts.moderation_status", "approved"),
   ]);
 
   return (
@@ -96,14 +110,14 @@ export default async function PeopleProfilePage({ params }: PeopleProfilePagePro
               className="flex min-h-22 flex-col items-center justify-center rounded-2xl border border-pink-100 bg-pink-50/70 px-4 py-3 text-center transition hover:-translate-y-0.5 hover:bg-pink-100 active:scale-[0.99]"
             >
               <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-pink-500">Yes given</p>
-              <p className="mt-2 text-xl font-semibold tracking-tight text-slate-900">{profile.total_yes_given ?? 0}</p>
+              <p className="mt-2 text-xl font-semibold tracking-tight text-slate-900">{yesVotes?.length ?? 0}</p>
             </Link>
             <Link
               href={`/people/${profileId}/no`}
               className="flex min-h-22 flex-col items-center justify-center rounded-2xl border border-pink-100 bg-pink-50/70 px-4 py-3 text-center transition hover:-translate-y-0.5 hover:bg-pink-100 active:scale-[0.99]"
             >
               <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-pink-500">No given</p>
-              <p className="mt-2 text-xl font-semibold tracking-tight text-slate-900">{profile.total_no_given ?? 0}</p>
+              <p className="mt-2 text-xl font-semibold tracking-tight text-slate-900">{noVotes?.length ?? 0}</p>
             </Link>
           </div>
         </section>

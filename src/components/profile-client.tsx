@@ -62,7 +62,7 @@ export function ProfileClient({
 
         const { data: profile, error: profileError } = await supabase
           .from("profiles")
-          .select("username,display_name,bio,avatar_url,total_yes_given,total_no_given")
+          .select("username,display_name,bio,avatar_url")
           .eq("id", user.id)
           .maybeSingle();
 
@@ -70,15 +70,30 @@ export function ProfileClient({
           throw profileError;
         }
 
-        const { count: followersCount } = await supabase
-          .from("follows")
-          .select("*", { count: "exact", head: true })
-          .eq("following_id", user.id);
-
-        const { count: followingCount } = await supabase
-          .from("follows")
-          .select("*", { count: "exact", head: true })
-          .eq("follower_id", user.id);
+        const [{ count: followersCount }, { count: followingCount }, { data: yesVotes }, { data: noVotes }] = await Promise.all([
+          supabase
+            .from("follows")
+            .select("*", { count: "exact", head: true })
+            .eq("following_id", user.id),
+          supabase
+            .from("follows")
+            .select("*", { count: "exact", head: true })
+            .eq("follower_id", user.id),
+          supabase
+            .from("votes")
+            .select("post_id,posts!inner(id)")
+            .eq("user_id", user.id)
+            .eq("value", "yes")
+            .eq("posts.is_active", true)
+            .eq("posts.moderation_status", "approved"),
+          supabase
+            .from("votes")
+            .select("post_id,posts!inner(id)")
+            .eq("user_id", user.id)
+            .eq("value", "no")
+            .eq("posts.is_active", true)
+            .eq("posts.moderation_status", "approved"),
+        ]);
 
         if (!active) return;
 
@@ -88,8 +103,8 @@ export function ProfileClient({
           displayName: profile?.display_name || "Your profile",
           bio: profile?.bio || "No bio yet.",
           avatarUrl: profile?.avatar_url || null,
-          yesGiven: profile?.total_yes_given ?? 0,
-          noGiven: profile?.total_no_given ?? 0,
+          yesGiven: yesVotes?.length ?? 0,
+          noGiven: noVotes?.length ?? 0,
           followers: followersCount ?? 0,
           following: followingCount ?? 0,
           error: null,
