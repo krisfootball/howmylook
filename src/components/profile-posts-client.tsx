@@ -6,7 +6,6 @@ import { ProfileRetentionNote } from "@/components/profile-retention-note";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
 const MAX_KEPT_POSTS = 10;
-const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 
 type ProfilePost = {
   id: string;
@@ -155,9 +154,6 @@ export function ProfilePostsClient() {
         })}
       </div>
 
-      <section className="rounded-[1.4rem] border border-white/70 bg-white px-4 py-3 text-xs leading-5 text-slate-500 shadow-sm">
-        Posts start with a {Math.round(THIRTY_DAYS_MS / (24 * 60 * 60 * 1000))}-day life. Keep saves a look on your profile beyond that limit, up to {MAX_KEPT_POSTS} looks.
-      </section>
     </div>
   );
 }
