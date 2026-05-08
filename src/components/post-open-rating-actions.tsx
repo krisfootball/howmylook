@@ -125,7 +125,7 @@ export function PostOpenRatingActions({
             disabled={saving}
             className="rounded-[1.8rem] border border-white/28 bg-white/10 px-4 py-3 text-white shadow-[0_12px_32px_rgba(0,0,0,0.16)] backdrop-blur-md transition hover:bg-white/14 disabled:opacity-60"
           >
-            <span className="block text-[1.15rem] font-semibold leading-none tracking-tight">{saving ? "Saving..." : appConfig.yesLabel}</span>
+            <span className="photo-text-outline-strong block text-[1.15rem] font-semibold leading-none tracking-tight">{saving ? "Saving..." : appConfig.yesLabel}</span>
           </button>
           <button
             type="button"
@@ -133,12 +133,12 @@ export function PostOpenRatingActions({
             disabled={saving}
             className="rounded-[1.8rem] border border-white/28 bg-white/10 px-4 py-3 text-white shadow-[0_12px_32px_rgba(0,0,0,0.16)] backdrop-blur-md transition hover:bg-white/14 disabled:opacity-60"
           >
-            <span className="block text-[1.15rem] font-semibold leading-none tracking-tight">{saving ? "Saving..." : appConfig.noLabel}</span>
+            <span className="photo-text-outline-strong block text-[1.15rem] font-semibold leading-none tracking-tight">{saving ? "Saving..." : appConfig.noLabel}</span>
           </button>
         </div>
       ) : null}
 
-      {message ? <p className="text-sm leading-6 text-white/80">{message}</p> : null}
+      {message ? <p className="photo-text-outline-soft text-sm leading-6 text-white/80">{message}</p> : null}
     </div>
   );
 }

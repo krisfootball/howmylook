@@ -63,7 +63,7 @@ export function PostSurface({
           ) : <div />}
 
           {!showVoting && authorId ? (
-            <Link href={`/people/${authorId}`} className="pointer-events-auto text-[11px] font-medium text-white/80">
+            <Link href={`/people/${authorId}`} className="photo-text-outline-soft pointer-events-auto text-[11px] font-medium text-white/80">
               Profile
             </Link>
           ) : <div />}
@@ -72,20 +72,20 @@ export function PostSurface({
         <div className="pointer-events-none absolute inset-x-0 bottom-0 p-4 pb-5 text-white">
           {showVoting ? (
             authorId ? (
-              <Link href={`/people/${authorId}`} className="pointer-events-auto text-sm font-semibold text-white underline-offset-4 hover:underline">
+              <Link href={`/people/${authorId}`} className="photo-text-outline-strong pointer-events-auto text-sm font-semibold text-white underline-offset-4 hover:underline">
                 {authorName}
               </Link>
             ) : (
-              <p className="text-sm font-semibold text-white">{authorName}</p>
+              <p className="photo-text-outline-strong text-sm font-semibold text-white">{authorName}</p>
             )
           ) : null}
 
-          <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/75">Occasion</p>
+          <p className="photo-text-outline-soft mt-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/75">Occasion</p>
 
-          <p className="mt-2 text-[15px] font-medium leading-6 text-white">{caption}</p>
+          <p className="photo-text-outline-strong mt-2 text-[15px] font-medium leading-6 text-white">{caption}</p>
 
           {!showVoting ? (
-            <div className="mt-3 flex items-center justify-between text-xs text-white/85">
+            <div className="photo-text-outline-soft mt-3 flex items-center justify-between text-xs text-white/85">
               <span>{yesCount} yes</span>
               <span>{noCount} no</span>
             </div>
@@ -99,23 +99,23 @@ export function PostSurface({
                   disabled={votingDisabled}
                   className="pointer-events-auto flex-1 rounded-[1.8rem] border border-white/28 bg-white/10 px-4 py-3 text-white shadow-[0_12px_32px_rgba(0,0,0,0.16)] backdrop-blur-md transition hover:bg-white/14 disabled:opacity-60"
                 >
-                  <span className="block text-[1.15rem] font-semibold leading-none tracking-tight">{yesLabel}</span>
-                  <span className="mt-2 block text-[12px] font-medium leading-none text-white/72">{yesCount}</span>
+                  <span className="photo-text-outline-strong block text-[1.15rem] font-semibold leading-none tracking-tight">{yesLabel}</span>
+                  <span className="photo-text-outline-soft mt-2 block text-[12px] font-medium leading-none text-white/72">{yesCount}</span>
                 </button>
                 <button
                   onClick={onNo}
                   disabled={votingDisabled}
                   className="pointer-events-auto flex-1 rounded-[1.8rem] border border-white/28 bg-white/10 px-4 py-3 text-white shadow-[0_12px_32px_rgba(0,0,0,0.16)] backdrop-blur-md transition hover:bg-white/14 disabled:opacity-60"
                 >
-                  <span className="block text-[1.15rem] font-semibold leading-none tracking-tight">{noLabel}</span>
-                  <span className="mt-2 block text-[12px] font-medium leading-none text-white/72">{noCount}</span>
+                  <span className="photo-text-outline-strong block text-[1.15rem] font-semibold leading-none tracking-tight">{noLabel}</span>
+                  <span className="photo-text-outline-soft mt-2 block text-[12px] font-medium leading-none text-white/72">{noCount}</span>
                 </button>
               </>
             ) : (
               <>
                 <div className="rounded-full border border-white/25 bg-black/20 px-3 py-2 text-white backdrop-blur-sm">
-                  <p className="text-sm font-semibold">{authorName}</p>
-                  {authorUsername ? <p className="text-xs text-white/80">{authorUsername}</p> : null}
+                  <p className="photo-text-outline-strong text-sm font-semibold">{authorName}</p>
+                  {authorUsername ? <p className="photo-text-outline-soft text-xs text-white/80">{authorUsername}</p> : null}
                 </div>
                 {authorAvatarUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
