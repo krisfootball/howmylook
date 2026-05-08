@@ -163,7 +163,7 @@ export function ProfileClient({
           </div>
 
           <div className="pointer-events-auto shrink-0">
-            <LegalLinksCard />
+            <LegalLinksCard onLogout={() => void handleLogout()} />
           </div>
         </div>
 
@@ -174,13 +174,6 @@ export function ProfileClient({
             className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white"
           >
             Edit profile
-          </button>
-          <button
-            type="button"
-            onClick={() => void handleLogout()}
-            className="rounded-full bg-slate-200 px-4 py-2 text-sm font-semibold text-slate-700"
-          >
-            Log out
           </button>
         </div>
 

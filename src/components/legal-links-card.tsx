@@ -10,7 +10,11 @@ const legalLinks = [
   { href: "/contact", label: "Contact" },
 ];
 
-export function LegalLinksCard() {
+export function LegalLinksCard({
+  onLogout,
+}: {
+  onLogout?: () => void;
+}) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -38,6 +42,20 @@ export function LegalLinksCard() {
                 <span className="text-sm text-slate-300" aria-hidden="true">›</span>
               </Link>
             ))}
+
+            {onLogout ? (
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  onLogout();
+                }}
+                className="flex items-center justify-between rounded-[0.9rem] px-3 py-3 text-left text-sm font-medium text-slate-700 transition hover:bg-pink-50 hover:text-pink-700"
+              >
+                <span>Log out</span>
+                <span className="text-sm text-slate-300" aria-hidden="true">›</span>
+              </button>
+            ) : null}
           </div>
         </div>
       ) : null}
