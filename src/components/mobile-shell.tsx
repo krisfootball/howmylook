@@ -71,7 +71,7 @@ export function MobileShell({
   }, [supabase]);
 
   const navItems = showAdmin
-    ? [...baseNavItems.slice(0, 3), { href: "/admin", label: "Admin", icon: "✦" }, ...baseNavItems.slice(3)]
+    ? [...baseNavItems.slice(0, 3), { href: "/admin", label: "Admin", icon: "◌" }, ...baseNavItems.slice(3)]
     : baseNavItems;
 
   return (
