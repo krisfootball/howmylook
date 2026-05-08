@@ -17,6 +17,7 @@ type PostViewProps = {
   isKeptForever?: boolean;
   backHref?: string;
   backLabel?: string;
+  showPostedBadge?: boolean;
 };
 
 export function PostView({
@@ -32,6 +33,7 @@ export function PostView({
   isKeptForever = false,
   backHref,
   backLabel,
+  showPostedBadge = false,
 }: PostViewProps) {
   const showImage = images.length > 0;
 
@@ -83,7 +85,13 @@ export function PostView({
           </div>
 
           <div className="max-w-sm space-y-4 pb-2">
-            <div className="min-w-0">
+            <div className="min-w-0 space-y-2">
+              {showPostedBadge ? (
+                <div className="inline-flex items-center rounded-full bg-emerald-400/18 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-100 backdrop-blur-sm">
+                  Posted
+                </div>
+              ) : null}
+
               {authorId ? (
                 <Link
                   href={`/people/${authorId}`}

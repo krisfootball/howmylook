@@ -16,6 +16,7 @@ type PostDetailClientProps = {
   isKeptForever?: boolean;
   backHref?: string;
   backLabel?: string;
+  showPostedBadge?: boolean;
 };
 
 export default function PostDetailClient(props: PostDetailClientProps) {
@@ -44,5 +45,5 @@ export default function PostDetailClient(props: PostDetailClientProps) {
     };
   }, [props.ownerId, supabase]);
 
-  return <PostView {...props} isOwnPost={isOwnPost} />;
+  return <PostView {...props} isOwnPost={isOwnPost} showPostedBadge={props.showPostedBadge} />;
 }

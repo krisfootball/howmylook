@@ -8,6 +8,7 @@ type PostDetailPageProps = {
   searchParams?: Promise<{
     from?: string;
     profileId?: string;
+    posted?: string;
   }>;
 };
 
@@ -71,6 +72,7 @@ export default async function PostDetailPage({ params, searchParams }: PostDetai
       isKeptForever={Boolean(post.keep_forever)}
       backHref={backHref}
       backLabel="Back"
+      showPostedBadge={resolvedSearchParams?.posted === "1"}
     />
   );
 }
