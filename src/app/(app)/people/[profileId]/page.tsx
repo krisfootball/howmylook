@@ -62,7 +62,7 @@ export default async function PeopleProfilePage({ params }: PeopleProfilePagePro
   return (
     <MobileShell
       title={profile.display_name || profile.username || "Profile"}
-      subtitle="Public creator profile with the same core stats and taste signals as your own profile."
+      hideHeader
     >
       <div className="space-y-4">
         <Link href="/home" className="inline-flex rounded-full bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm">
