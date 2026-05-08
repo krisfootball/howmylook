@@ -150,9 +150,9 @@ export function ProfileClient({
         <div className="flex items-start justify-between gap-4">
           {state.avatarUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={state.avatarUrl} alt={state.displayName} className="h-16 w-16 rounded-full object-cover shadow-sm" />
+            <img src={state.avatarUrl} alt={state.displayName} className="h-[4.8rem] w-[4.8rem] rounded-full object-cover shadow-sm" />
           ) : (
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[linear-gradient(180deg,_#f6c4d5_0%,_#ddb7ff_100%)] text-2xl shadow-sm">
+            <div className="flex h-[4.8rem] w-[4.8rem] items-center justify-center rounded-full bg-[linear-gradient(180deg,_#f6c4d5_0%,_#ddb7ff_100%)] text-2xl shadow-sm">
               ✨
             </div>
           )}
