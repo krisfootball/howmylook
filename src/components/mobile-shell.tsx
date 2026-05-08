@@ -15,6 +15,7 @@ const baseNavItems: NavItem[] = [
   { href: "/home", label: "Home", icon: "⌂" },
   { href: "/search", label: "Search", icon: "⌕" },
   { href: "/upload", label: "Post", icon: "+" },
+  { href: "/activity", label: "Activity", icon: "♡" },
   { href: "/profile", label: "Profile", icon: "○" },
 ];
 
@@ -70,7 +71,7 @@ export function MobileShell({
   }, [supabase]);
 
   const navItems = showAdmin
-    ? [...baseNavItems.slice(0, 3), { href: "/admin", label: "Admin", icon: "✦" }, baseNavItems[3]]
+    ? [...baseNavItems.slice(0, 3), { href: "/admin", label: "Admin", icon: "✦" }, ...baseNavItems.slice(3)]
     : baseNavItems;
 
   return (
@@ -85,7 +86,7 @@ export function MobileShell({
 
         <section className={`flex-1 overflow-y-auto ${hideHeader ? "px-4 py-4" : "px-4 py-4"}`}>{children}</section>
 
-        <nav className={`grid ${showAdmin ? "grid-cols-5" : "grid-cols-4"} border-t border-pink-100 bg-white/95 px-2 py-2`}>
+        <nav className={`grid ${showAdmin ? "grid-cols-6" : "grid-cols-5"} border-t border-pink-100 bg-white/95 px-2 py-2`}>
           {navItems.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
 
