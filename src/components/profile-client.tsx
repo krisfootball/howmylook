@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
+import { LegalLinksCard } from "@/components/legal-links-card";
 import { StatPill } from "@/components/stat-pill";
 
 type ProfileState = {
@@ -146,7 +147,7 @@ export function ProfileClient({
   return (
     <div className="space-y-5">
       <section className="rounded-[1.6rem] border border-pink-100 bg-gradient-to-br from-pink-50 to-white p-5">
-        <div className="flex items-start gap-4">
+        <div className="flex items-start justify-between gap-4">
           {state.avatarUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={state.avatarUrl} alt={state.displayName} className="h-16 w-16 rounded-full object-cover shadow-sm" />
@@ -159,6 +160,10 @@ export function ProfileClient({
             <p className="text-lg font-semibold tracking-tight text-slate-900">{state.displayName}</p>
             <p className="text-sm text-slate-500">{state.username}</p>
             <p className="mt-3 text-sm leading-6 text-slate-700">{state.bio}</p>
+          </div>
+
+          <div className="pointer-events-auto shrink-0">
+            <LegalLinksCard />
           </div>
         </div>
 

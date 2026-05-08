@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { AccessGateCard } from "@/components/access-gate-card";
 import { EditProfileForm } from "@/components/edit-profile-form";
-import { LegalLinksCard } from "@/components/legal-links-card";
 import { MobileShell } from "@/components/mobile-shell";
 import { ProfileClient } from "@/components/profile-client";
 import { ProfilePostsClient } from "@/components/profile-posts-client";
@@ -21,8 +20,6 @@ export default function ProfilePage() {
             setShowEditor((current) => !current);
           }}
         />
-
-        <LegalLinksCard />
 
         {showEditor ? (
           <div className="fixed inset-0 z-50 flex items-end bg-slate-950/45 p-3 sm:items-center sm:justify-center" onClick={() => setShowEditor(false)}>
