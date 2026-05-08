@@ -137,7 +137,7 @@ export function MobileShell({
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_#fff_0%,_#fff6fb_40%,_#f5edf8_100%)] px-4 py-6 text-slate-900">
-      <div className="mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-sm flex-col overflow-hidden rounded-[2rem] border border-white/70 bg-white/85 shadow-[0_25px_80px_rgba(76,29,149,0.18)] backdrop-blur">
+      <div className="mx-auto flex h-[calc(100vh-3rem)] w-full max-w-sm flex-col overflow-hidden rounded-[2rem] border border-white/70 bg-white/85 shadow-[0_25px_80px_rgba(76,29,149,0.18)] backdrop-blur">
         {hideHeader ? null : (
           <header className="border-b border-pink-100 px-5 pb-4 pt-5">
             <h1 className="text-2xl font-semibold tracking-tight text-slate-900">{title}</h1>
@@ -147,7 +147,7 @@ export function MobileShell({
 
         <section className={`flex-1 overflow-y-auto ${hideHeader ? "px-4 py-4" : "px-4 py-4"}`}>{children}</section>
 
-        <nav className={`grid ${showAdmin ? "grid-cols-6" : "grid-cols-5"} border-t border-pink-100 bg-white/95 px-2 py-2`}>
+        <nav className={`sticky bottom-0 z-20 grid ${showAdmin ? "grid-cols-6" : "grid-cols-5"} border-t border-pink-100 bg-white/95 px-2 py-2 backdrop-blur`}>
           {navItems.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
             const Icon = item.icon;
