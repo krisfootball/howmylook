@@ -5,8 +5,6 @@ import { notifyAdminOfPost, notifyFollowersOfPost } from "@/lib/post-notificatio
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
 const MAX_FILES = 5;
-const MAX_KEPT_POSTS = 10;
-const POST_LIFETIME_DAYS = 30;
 const MAX_UPLOAD_DIMENSION = 1600;
 const UPLOAD_QUALITY = 0.82;
 
@@ -247,9 +245,6 @@ export function UploadForm() {
           📷
         </div>
         <h2 className="mt-4 text-lg font-semibold tracking-tight text-slate-900">Upload outfit photos</h2>
-        <p className="mt-2 text-sm leading-6 text-slate-600">
-          Take a photo directly with your camera or choose up to 5 images from your gallery.
-        </p>
 
         <div className="mt-4 grid grid-cols-2 gap-3">
           <button
@@ -346,10 +341,6 @@ export function UploadForm() {
           placeholder="Where will you wear this?"
           className="mt-3 min-h-28 w-full rounded-[1.2rem] bg-slate-50 p-4 text-sm leading-6 text-slate-900 outline-none placeholder:text-slate-400"
         />
-      </section>
-
-      <section className="rounded-[1.4rem] border border-pink-100 bg-pink-50/70 p-4 text-sm leading-6 text-slate-700">
-        Posts auto-delete after {POST_LIFETIME_DAYS} days by default. You can keep up to {MAX_KEPT_POSTS} looks on your profile for longer.
       </section>
 
       <button
