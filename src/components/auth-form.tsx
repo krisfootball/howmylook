@@ -8,6 +8,7 @@ import { getNextRequiredStep, hasCompletedUsername } from "@/lib/app-state";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
 type AuthMode = "signin" | "signup";
+type MessageTone = "neutral" | "success" | "error";
 
 export function AuthForm() {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
@@ -16,6 +17,7 @@ export function AuthForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [messageTone, setMessageTone] = useState<MessageTone>("neutral");
   const [loading, setLoading] = useState(false);
   const [acceptedPolicies, setAcceptedPolicies] = useState(false);
 
@@ -23,6 +25,7 @@ export function AuthForm() {
     event.preventDefault();
     setLoading(true);
     setMessage("");
+    setMessageTone("neutral");
 
     try {
       if (mode === "signup") {
@@ -55,9 +58,10 @@ export function AuthForm() {
 
         setMessage(
           needsEmailConfirmation
-            ? "Account created. Check your email and confirm your signup, then come back and sign in."
+            ? "Check your email\nWe sent you a confirmation link. Confirm your signup, then come back and sign in."
             : "Account created. You can now continue into the app.",
         );
+        setMessageTone(needsEmailConfirmation ? "success" : "neutral");
 
         if (needsEmailConfirmation) {
           setMode("signin");
@@ -127,12 +131,14 @@ export function AuthForm() {
               ? "Signed in. Continue rating to unlock the app."
               : "Signed in. Welcome back."
         );
+        setMessageTone("neutral");
         router.replace(nextPath);
         router.refresh();
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Something went wrong.";
       setMessage(errorMessage);
+      setMessageTone("error");
     } finally {
       setLoading(false);
     }
@@ -211,9 +217,20 @@ export function AuthForm() {
       </form>
 
       {message ? (
-        <div className="rounded-[1.2rem] bg-white px-4 py-3 text-sm leading-6 text-slate-600 shadow-sm">
-          {message}
-        </div>
+        messageTone === "success" ? (
+          <div className="rounded-[1.4rem] border border-emerald-100 bg-emerald-50 px-4 py-4 text-sm leading-6 text-emerald-900 shadow-sm">
+            <p className="text-base font-semibold tracking-tight">Check your email</p>
+            <p className="mt-2 text-sm leading-6 text-emerald-900/80">We sent you a confirmation link. Confirm your signup, then come back and sign in.</p>
+          </div>
+        ) : (
+          <div className={`rounded-[1.2rem] px-4 py-3 text-sm leading-6 shadow-sm ${
+            messageTone === "error"
+              ? "bg-rose-50 text-rose-700"
+              : "bg-white text-slate-600"
+          }`}>
+            {message}
+          </div>
+        )
       ) : null}
 
       <p className="text-xs leading-5 text-slate-500">
