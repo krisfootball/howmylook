@@ -80,20 +80,9 @@ export default async function PublicNoPage({ params }: PublicNoPageProps) {
       }));
   }
 
-  const name = profile.display_name || profile.username || "This account";
-
   return (
-    <MobileShell
-      title="No given"
-      subtitle={`${name}’s public no votes. This helps people see the styles and outfit patterns they usually reject.`}
-    >
-      <div className="space-y-4">
-        <Link href={`/people/${profileId}`} className="inline-flex rounded-full bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm">
-          ← Back to profile
-        </Link>
-
-        <PublicVoteHistoryList items={items} value="no" profileId={profileId} />
-      </div>
+    <MobileShell title="No given" hideHeader>
+      <PublicVoteHistoryList items={items} value="no" profileId={profileId} />
     </MobileShell>
   );
 }

@@ -80,20 +80,9 @@ export default async function PublicYesPage({ params }: PublicYesPageProps) {
       }));
   }
 
-  const name = profile.display_name || profile.username || "This account";
-
   return (
-    <MobileShell
-      title="Yes given"
-      subtitle={`${name}’s public yes votes. This helps people quickly understand the fashion looks and styling choices they naturally like.`}
-    >
-      <div className="space-y-4">
-        <Link href={`/people/${profileId}`} className="inline-flex rounded-full bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm">
-          ← Back to profile
-        </Link>
-
-        <PublicVoteHistoryList items={items} value="yes" profileId={profileId} />
-      </div>
+    <MobileShell title="Yes given" hideHeader>
+      <PublicVoteHistoryList items={items} value="yes" profileId={profileId} />
     </MobileShell>
   );
 }
