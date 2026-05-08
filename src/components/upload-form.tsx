@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
 import { notifyAdminOfPost, notifyFollowersOfPost } from "@/lib/post-notifications";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
@@ -10,6 +11,7 @@ const UPLOAD_QUALITY = 0.82;
 
 export function UploadForm() {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
+  const router = useRouter();
   const galleryInputRef = useRef<HTMLInputElement | null>(null);
   const cameraInputRef = useRef<HTMLInputElement | null>(null);
   const [caption, setCaption] = useState("");
@@ -216,11 +218,13 @@ export function UploadForm() {
       if (cameraInputRef.current) {
         cameraInputRef.current.value = "";
       }
-      setMessage(
+      const successMessage =
         uploadedImageUrls.length > 1
           ? `Post created with ${uploadedImageUrls.length} photos.${notificationNote}`
-          : `Post created with 1 photo.${notificationNote}`,
-      );
+          : `Post created with 1 photo.${notificationNote}`;
+
+      setMessage(successMessage);
+      router.push(`/post/${insertedPosts.id}?from=profile&posted=1`);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unable to create post.";
       const lower = errorMessage.toLowerCase();
