@@ -49,11 +49,21 @@ function ActivityIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-function PersonIcon(props: SVGProps<SVGSVGElement>) {
+function ProfileIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...props}>
-      <circle cx="12" cy="8" r="3.2" />
-      <path d="M5.5 18.5c1.7-3 4-4.5 6.5-4.5s4.8 1.5 6.5 4.5" />
+      <circle cx="12" cy="8" r="3" />
+      <path d="M6.5 18c1.6-2.5 3.6-3.8 5.5-3.8 1.9 0 3.9 1.3 5.5 3.8" />
+    </svg>
+  );
+}
+
+function AdminIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="M12 4.5 18 7v4.2c0 3.8-2.2 6.8-6 8.3-3.8-1.5-6-4.5-6-8.3V7l6-2.5Z" />
+      <circle cx="12" cy="10" r="1.8" />
+      <path d="M9.6 14.2c.8-1.2 1.6-1.8 2.4-1.8s1.6.6 2.4 1.8" />
     </svg>
   );
 }
@@ -63,7 +73,7 @@ const baseNavItems: NavItem[] = [
   { href: "/search", label: "Search", icon: SearchIcon },
   { href: "/upload", label: "Post", icon: PlusIcon },
   { href: "/activity", label: "Activity", icon: ActivityIcon },
-  { href: "/profile", label: "Profile", icon: PersonIcon },
+  { href: "/profile", label: "Profile", icon: ProfileIcon },
 ];
 
 function parseAdminEmails(value: string | undefined) {
@@ -118,7 +128,7 @@ export function MobileShell({
   }, [supabase]);
 
   const navItems = showAdmin
-    ? [...baseNavItems.slice(0, 3), { href: "/admin", label: "Admin", icon: PersonIcon }, ...baseNavItems.slice(3)]
+    ? [...baseNavItems.slice(0, 3), { href: "/admin", label: "Admin", icon: AdminIcon }, ...baseNavItems.slice(3)]
     : baseNavItems;
 
   return (
