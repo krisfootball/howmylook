@@ -52,8 +52,12 @@ function ActivityIcon(props: SVGProps<SVGSVGElement>) {
 function ProfileIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...props}>
-      <circle cx="12" cy="8" r="3" />
-      <path d="M6.5 18c1.6-2.5 3.6-3.8 5.5-3.8 1.9 0 3.9 1.3 5.5 3.8" />
+      <rect x="4.5" y="5.5" width="15" height="13" rx="3" />
+      <circle cx="9" cy="10" r="1.8" />
+      <path d="M6.8 14.2c.7-1 1.4-1.5 2.2-1.5.8 0 1.5.5 2.2 1.5" />
+      <path d="M13.8 9.2h2.8" />
+      <path d="M13.8 12h2.8" />
+      <path d="M13.8 14.8h2.2" />
     </svg>
   );
 }
