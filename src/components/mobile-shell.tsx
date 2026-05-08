@@ -15,7 +15,7 @@ const baseNavItems: NavItem[] = [
   { href: "/home", label: "Home", icon: "⌂" },
   { href: "/search", label: "Search", icon: "⌕" },
   { href: "/upload", label: "Post", icon: "+" },
-  { href: "/activity", label: "Activity", icon: "♡" },
+  { href: "/activity", label: "Activity", icon: "◉" },
   { href: "/profile", label: "Profile", icon: "○" },
 ];
 
