@@ -91,7 +91,7 @@ export function PostSurface({
             </div>
           ) : null}
 
-          <div className="mt-4 flex items-center gap-3">
+          <div className="mt-3.5 flex items-center gap-3">
             {showVoting ? (
               <>
                 <button
