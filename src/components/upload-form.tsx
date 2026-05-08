@@ -113,28 +113,30 @@ export function UploadForm() {
         throw new Error("Add at least 1 photo before publishing.");
       }
 
-      const uploadedImageUrls: string[] = [];
       let fallbackImageUrl = `seed://user-post-${Date.now()}`;
 
       setMessage(files.length > 1 ? "Optimizing photos..." : "Optimizing photo...");
       const preparedFiles = await Promise.all(files.map((file) => compressImage(file)));
       setMessage(preparedFiles.length > 1 ? "Uploading optimized photos..." : "Uploading optimized photo...");
 
-      for (const [index, file] of preparedFiles.entries()) {
-        const fileExt = file.name.split(".").pop() || "jpg";
-        const filePath = `${user.id}/${Date.now()}-${index}.${fileExt}`;
+      const uploadBatchId = Date.now();
+      const uploadedImageUrls = await Promise.all(
+        preparedFiles.map(async (file, index) => {
+          const fileExt = file.name.split(".").pop() || "jpg";
+          const filePath = `${user.id}/${uploadBatchId}-${index}.${fileExt}`;
 
-        const { error: uploadError } = await supabase.storage
-          .from("post-images")
-          .upload(filePath, file, { upsert: false });
+          const { error: uploadError } = await supabase.storage
+            .from("post-images")
+            .upload(filePath, file, { upsert: false });
 
-        if (uploadError) {
-          throw new Error(`Photo upload failed: ${uploadError.message}`);
-        }
+          if (uploadError) {
+            throw new Error(`Photo upload failed: ${uploadError.message}`);
+          }
 
-        const { data } = supabase.storage.from("post-images").getPublicUrl(filePath);
-        uploadedImageUrls.push(data.publicUrl);
-      }
+          const { data } = supabase.storage.from("post-images").getPublicUrl(filePath);
+          return data.publicUrl;
+        }),
+      );
 
       if (uploadedImageUrls.length > 0) {
         fallbackImageUrl = uploadedImageUrls[0];
@@ -174,9 +176,7 @@ export function UploadForm() {
         }
       }
 
-      let notificationNote = "";
-
-      const [followersResult, adminResult] = await Promise.allSettled([
+      void Promise.allSettled([
         notifyFollowersOfPost({
           postId: insertedPosts.id,
           userId: user.id,
@@ -190,27 +190,6 @@ export function UploadForm() {
         }),
       ]);
 
-      const notificationWarnings: string[] = [];
-
-      if (followersResult.status === "rejected") {
-        notificationWarnings.push("Follower notifications need more setup.");
-      }
-
-      if (adminResult.status === "rejected") {
-        notificationWarnings.push("Admin alert delivery failed.");
-      } else if (
-        adminResult.value &&
-        typeof adminResult.value === "object" &&
-        "pendingDelivery" in adminResult.value &&
-        adminResult.value.pendingDelivery
-      ) {
-        notificationWarnings.push("Admin Telegram alert is not configured yet.");
-      }
-
-      if (notificationWarnings.length > 0) {
-        notificationNote = ` ${notificationWarnings.join(" ")}`;
-      }
-
       setCaption("");
       setFiles([]);
       if (galleryInputRef.current) {
@@ -219,12 +198,6 @@ export function UploadForm() {
       if (cameraInputRef.current) {
         cameraInputRef.current.value = "";
       }
-      const successMessage =
-        uploadedImageUrls.length > 1
-          ? `Post created with ${uploadedImageUrls.length} photos.${notificationNote}`
-          : `Post created with 1 photo.${notificationNote}`;
-
-      setMessage(successMessage);
       router.push(`/post/${insertedPosts.id}?from=profile&posted=1`);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unable to create post.";
