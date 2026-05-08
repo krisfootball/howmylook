@@ -18,13 +18,11 @@ export default async function PublicFollowersPage({ params }: PublicFollowersPag
     .eq("id", profileId)
     .maybeSingle();
 
-  const name = profile?.display_name || profile?.username || "This account";
-
   return (
-    <MobileShell title="Followers" subtitle={`People following ${name}.`}>
+    <MobileShell title="Followers" hideHeader>
       <div className="space-y-4">
         <Link href={`/people/${profileId}`} className="inline-flex rounded-full bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm">
-          ← Back to profile
+          ← Back
         </Link>
 
         <ProfileFollowListClient mode="followers" profileId={profileId} />

@@ -4,10 +4,10 @@ import { ProfileFollowListClient } from "@/components/profile-follow-list-client
 
 export default function FollowersListPage() {
   return (
-    <MobileShell title="Followers" subtitle="People following your profile.">
+    <MobileShell title="Followers" hideHeader>
       <div className="space-y-4">
         <Link href="/profile" className="inline-flex rounded-full bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm">
-          ← Back to profile
+          ← Back
         </Link>
 
         <ProfileFollowListClient mode="followers" />
