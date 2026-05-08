@@ -25,6 +25,8 @@ export default function ProfilePage() {
 
         <LegalLinksCard />
 
+        <ActivityLinkCard />
+
         {showEditor ? (
           <div className="fixed inset-0 z-50 flex items-end bg-slate-950/45 p-3 sm:items-center sm:justify-center" onClick={() => setShowEditor(false)}>
             <div
@@ -58,8 +60,6 @@ export default function ProfilePage() {
             <ProfilePostsClient />
           </section>
         </AccessGateCard>
-
-        <ActivityLinkCard />
       </div>
     </MobileShell>
   );
