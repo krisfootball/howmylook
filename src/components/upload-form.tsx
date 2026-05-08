@@ -6,6 +6,7 @@ import { notifyAdminOfPost, notifyFollowersOfPost } from "@/lib/post-notificatio
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
 const MAX_FILES = 5;
+const MAX_OCCASION_LENGTH = 100;
 const MAX_UPLOAD_DIMENSION = 1600;
 const UPLOAD_QUALITY = 0.82;
 
@@ -341,10 +342,14 @@ export function UploadForm() {
         <p className="mt-2 text-xs leading-5 text-slate-500">Help people understand where you plan to wear this outfit.</p>
         <textarea
           value={caption}
-          onChange={(event) => setCaption(event.target.value)}
+          onChange={(event) => setCaption(event.target.value.slice(0, MAX_OCCASION_LENGTH))}
           placeholder="Where will you wear this?"
+          maxLength={MAX_OCCASION_LENGTH}
           className="mt-3 min-h-28 w-full rounded-[1.2rem] bg-slate-50 p-4 text-sm leading-6 text-slate-900 outline-none placeholder:text-slate-400"
         />
+        <div className="mt-2 text-right text-xs text-slate-400">
+          {caption.length}/{MAX_OCCASION_LENGTH}
+        </div>
       </section>
 
       <button
