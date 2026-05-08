@@ -18,10 +18,10 @@ export function LegalLinksCard() {
       <button
         type="button"
         onClick={() => setOpen((current) => !current)}
-        className="flex h-10 w-10 items-center justify-center rounded-full bg-white/85 text-slate-500 shadow-sm ring-1 ring-pink-100 transition hover:bg-pink-50 hover:text-pink-700"
+        className="flex h-10 items-center justify-center px-1 text-slate-400 transition hover:text-pink-700"
         aria-label="Open more options"
       >
-        <span className="text-sm" aria-hidden="true">△</span>
+        <span className="text-lg leading-none" aria-hidden="true">⋯</span>
       </button>
 
       {open ? (
