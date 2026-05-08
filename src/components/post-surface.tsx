@@ -69,7 +69,7 @@ export function PostSurface({
           ) : <div />}
         </div>
 
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 p-4 pb-5 text-white">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 p-4 pb-8 text-white">
           {showVoting ? (
             authorId ? (
               <Link href={`/people/${authorId}`} className="photo-text-outline-strong pointer-events-auto text-sm font-semibold text-white underline-offset-4 hover:underline">
