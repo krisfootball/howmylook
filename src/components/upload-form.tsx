@@ -7,8 +7,8 @@ import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
 const MAX_FILES = 5;
 const MAX_OCCASION_LENGTH = 100;
-const MAX_UPLOAD_DIMENSION = 1600;
-const UPLOAD_QUALITY = 0.82;
+const MAX_UPLOAD_DIMENSION = 1400;
+const UPLOAD_QUALITY = 0.78;
 
 export function UploadForm() {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
