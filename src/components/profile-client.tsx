@@ -171,7 +171,7 @@ export function ProfileClient({
           <button
             type="button"
             onClick={onEdit}
-            className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white"
+            className="rounded-full bg-slate-900 px-3.5 py-1.5 text-xs font-semibold text-white"
           >
             Edit profile
           </button>
