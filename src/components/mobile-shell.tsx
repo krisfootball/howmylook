@@ -2,21 +2,68 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import { ReactNode, SVGProps, useEffect, useMemo, useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
+
+type IconComponent = (props: SVGProps<SVGSVGElement>) => ReactNode;
 
 type NavItem = {
   href: string;
   label: string;
-  icon: string;
+  icon: IconComponent;
 };
 
+function HomeIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="M4 10.5 12 4l8 6.5" />
+      <path d="M6.5 9.5V20h11V9.5" />
+    </svg>
+  );
+}
+
+function SearchIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <circle cx="11" cy="11" r="5.5" />
+      <path d="m16 16 4 4" />
+    </svg>
+  );
+}
+
+function PlusIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M12 8.5v7" />
+      <path d="M8.5 12h7" />
+    </svg>
+  );
+}
+
+function ActivityIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="M4.5 12h3l1.7-3.5 3.2 7 2.3-4h4.8" />
+    </svg>
+  );
+}
+
+function PersonIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <circle cx="12" cy="8" r="3.2" />
+      <path d="M5.5 18.5c1.7-3 4-4.5 6.5-4.5s4.8 1.5 6.5 4.5" />
+    </svg>
+  );
+}
+
 const baseNavItems: NavItem[] = [
-  { href: "/home", label: "Home", icon: "⌂" },
-  { href: "/search", label: "Search", icon: "⌕" },
-  { href: "/upload", label: "Post", icon: "+" },
-  { href: "/activity", label: "Activity", icon: "◉" },
-  { href: "/profile", label: "Profile", icon: "○" },
+  { href: "/home", label: "Home", icon: HomeIcon },
+  { href: "/search", label: "Search", icon: SearchIcon },
+  { href: "/upload", label: "Post", icon: PlusIcon },
+  { href: "/activity", label: "Activity", icon: ActivityIcon },
+  { href: "/profile", label: "Profile", icon: PersonIcon },
 ];
 
 function parseAdminEmails(value: string | undefined) {
@@ -71,7 +118,7 @@ export function MobileShell({
   }, [supabase]);
 
   const navItems = showAdmin
-    ? [...baseNavItems.slice(0, 3), { href: "/admin", label: "Admin", icon: "◌" }, ...baseNavItems.slice(3)]
+    ? [...baseNavItems.slice(0, 3), { href: "/admin", label: "Admin", icon: PersonIcon }, ...baseNavItems.slice(3)]
     : baseNavItems;
 
   return (
@@ -89,6 +136,7 @@ export function MobileShell({
         <nav className={`grid ${showAdmin ? "grid-cols-6" : "grid-cols-5"} border-t border-pink-100 bg-white/95 px-2 py-2`}>
           {navItems.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+            const Icon = item.icon;
 
             return (
               <Link
@@ -99,13 +147,13 @@ export function MobileShell({
                 }`}
               >
                 <span
-                  className={`flex h-8 w-8 items-center justify-center rounded-full border text-base leading-none ${
+                  className={`flex h-8 w-8 items-center justify-center rounded-full border ${
                     isActive
                       ? "border-pink-300 bg-pink-100 text-pink-700"
                       : "border-slate-200 bg-white text-slate-700"
                   }`}
                 >
-                  {item.icon}
+                  <Icon className="h-4.5 w-4.5" aria-hidden="true" />
                 </span>
                 <span>{item.label}</span>
               </Link>
