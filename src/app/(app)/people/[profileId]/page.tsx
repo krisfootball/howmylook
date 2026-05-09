@@ -173,8 +173,10 @@ export default async function PeopleProfilePage({ params }: PeopleProfilePagePro
                         />
                       )}
                       {post.keep_forever ? (
-                        <div className="pointer-events-none absolute right-2 top-2 text-sm text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.7)]" aria-label="Pinned kept post">
-                          📌
+                        <div className="pointer-events-none absolute right-2 top-2 text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.7)]" aria-label="Pinned kept post">
+                          <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 fill-current">
+                            <path d="M15.9 3.2a1 1 0 0 1 .6 1.28l-1.1 3.02 2.03 2.04a1 1 0 0 1-.7 1.7H13.9l-1.08 6.14a.75.75 0 0 1-1.42.18l-1.12-2.44-2.44-1.12a.75.75 0 0 1 .18-1.42l6.14-1.08V7.27a1 1 0 0 1 1.7-.7l2.04 2.03 3.02-1.1a1 1 0 0 1 1.28.6l.1.28a1 1 0 0 1-.6 1.28l-3.77 1.37-1.9-1.9v3.1a1 1 0 0 1-.82.98l-3.78.67.98.45a1 1 0 0 1 .48.48l.45.98.67-3.78a1 1 0 0 1 .98-.82h3.1l-1.9-1.9 1.37-3.77a1 1 0 0 1 1.28-.6z" />
+                          </svg>
                         </div>
                       ) : null}
                       {imageCount > 1 ? (
