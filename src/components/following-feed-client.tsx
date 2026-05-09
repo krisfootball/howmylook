@@ -16,7 +16,7 @@ type FeedPost = {
   authorName: string;
   authorUsername: string;
   authorAvatarUrl: string | null;
-  source: "following" | "latest";
+  source: "following" | "latest" | "rated";
 };
 
 type JoinedAuthor = {
@@ -178,6 +178,46 @@ export function FollowingFeedClient() {
           }
         }
 
+        if (combinedPosts.length === 0 && ratedPostIds.size > 0) {
+          const { data: ratedPostRows, error: ratedPostsError } = await supabase
+            .from("posts")
+            .select(
+              "id,caption,image_url,yes_count,no_count,user_id,profiles!posts_user_id_fkey(display_name,username,avatar_url),post_images(id,image_url,sort_order)",
+            )
+            .in("id", Array.from(ratedPostIds))
+            .eq("is_active", true)
+            .eq("moderation_status", "approved")
+            .or(`keep_forever.eq.true,expires_at.gt.${new Date().toISOString()}`)
+            .order("created_at", { ascending: false })
+            .limit(25);
+
+          if (ratedPostsError) {
+            throw ratedPostsError;
+          }
+
+          for (const post of ratedPostRows ?? []) {
+            const author = getJoinedAuthor(post.profiles);
+            const orderedImages = post.post_images?.length
+              ? [...post.post_images].sort((a, b) => a.sort_order - b.sort_order).map((image) => image.image_url)
+              : [];
+            const imageUrl = orderedImages[0] || post.image_url;
+
+            combinedPosts.push({
+              id: post.id,
+              caption: post.caption ?? "No occasion added yet",
+              yesCount: post.yes_count,
+              noCount: post.no_count,
+              imageUrl,
+              imageCount: post.post_images?.length ?? (imageUrl.startsWith("seed://") ? 0 : 1),
+              authorId: post.user_id,
+              authorName: author?.display_name || author?.username || "HowMyLook user",
+              authorUsername: author?.username ? `@${author.username}` : "@username",
+              authorAvatarUrl: author?.avatar_url || null,
+              source: "rated",
+            });
+          }
+        }
+
         setPosts(combinedPosts);
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Unable to load home feed.";
@@ -193,7 +233,7 @@ export function FollowingFeedClient() {
   const currentPost = posts[0] ?? null;
 
   async function handleVote(value: "yes" | "no") {
-    if (!currentPost) {
+    if (!currentPost || currentPost.source === "rated") {
       return;
     }
 
@@ -256,7 +296,7 @@ export function FollowingFeedClient() {
   if (!currentPost) {
     return (
       <section className="rounded-[1.6rem] border border-pink-100 bg-white p-5 text-sm text-slate-600 shadow-sm">
-        No unrated looks are ready right now.
+        No looks are ready right now.
       </section>
     );
   }
@@ -272,12 +312,18 @@ export function FollowingFeedClient() {
         authorName={currentPost.authorName}
         authorUsername={currentPost.authorUsername}
         authorAvatarUrl={currentPost.authorAvatarUrl}
-        onYes={() => handleVote("yes")}
-        onNo={() => handleVote("no")}
+        onYes={currentPost.source === "rated" ? undefined : () => handleVote("yes")}
+        onNo={currentPost.source === "rated" ? undefined : () => handleVote("no")}
         votingDisabled={saving}
         yesLabel={saving ? "Saving..." : appConfig.yesLabel}
         noLabel={saving ? "Saving..." : appConfig.noLabel}
       />
+
+      {currentPost.source === "rated" ? (
+        <div className="mx-4 mt-3 rounded-[1.2rem] bg-white px-4 py-3 text-sm leading-6 text-slate-600 shadow-sm">
+          You already rated this look. Showing older looks because no new ones are ready right now.
+        </div>
+      ) : null}
 
       {message ? (
         <div className="mx-4 mt-3 rounded-[1.2rem] bg-white px-4 py-3 text-sm leading-6 text-slate-600 shadow-sm">
