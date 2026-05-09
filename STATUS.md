@@ -44,4 +44,4 @@ Vercel deploy is showing stale/default content because the local workspace code 
 5. Sync workspace code to GitHub somehow (export or authenticated push)
 6. Make deployed preview reflect current app
 7. Remove or refresh older planning docs that still describe `/following` as the primary unlocked destination
-8. Finish removing or consolidating leftover legacy `/following` code paths now that the route is only an alias to `/home`
+8. Verify the remaining legacy `/following` alias is only preserving backward compatibility and not leaking old UX copy

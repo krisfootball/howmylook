@@ -42,6 +42,20 @@ type VoteRow = {
   profiles?: JoinedProfile[] | JoinedProfile | null;
 };
 
+function formatActivityTimestamp(value: string) {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  return new Intl.DateTimeFormat(undefined, {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(date);
+}
 
 function getJoinedProfile(profile: JoinedProfile[] | JoinedProfile | null | undefined): JoinedProfile | null {
   if (!profile) {
@@ -219,6 +233,7 @@ export function ActivityFeedClient() {
               <div>
                 <p className="font-semibold text-slate-900">{item.title}</p>
                 <p className="mt-1 text-sm leading-6 text-slate-500">{item.subtitle}</p>
+                <p className="mt-2 text-xs font-medium text-slate-400">{formatActivityTimestamp(item.createdAt)}</p>
               </div>
               <span className={`rounded-full px-3 py-1 text-xs font-semibold ${
                 item.kind === "follow"

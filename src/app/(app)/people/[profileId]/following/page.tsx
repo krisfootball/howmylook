@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { MobileShell } from "@/components/mobile-shell";
 import { ProfileFollowListClient } from "@/components/profile-follow-list-client";
-import { supabase } from "@/lib/supabase";
 
 type PublicFollowingPageProps = {
   params: Promise<{
@@ -11,12 +10,6 @@ type PublicFollowingPageProps = {
 
 export default async function PublicFollowingPage({ params }: PublicFollowingPageProps) {
   const { profileId } = await params;
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("display_name,username")
-    .eq("id", profileId)
-    .maybeSingle();
 
   return (
     <MobileShell title="Following" hideHeader>
