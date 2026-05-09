@@ -9,6 +9,7 @@ export type Profile = {
   total_yes_given: number;
   total_no_given: number;
   unlock_votes_completed?: number;
+  login_rating_votes_completed?: number;
 };
 
 export type Follow = {

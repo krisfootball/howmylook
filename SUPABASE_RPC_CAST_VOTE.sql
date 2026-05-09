@@ -53,6 +53,7 @@ begin
   set total_yes_given = total_yes_given + case when vote_value = 'yes' then 1 else 0 end,
       total_no_given = total_no_given + case when vote_value = 'no' then 1 else 0 end,
       unlock_votes_completed = unlock_votes_completed + 1,
+      login_rating_votes_completed = coalesce(login_rating_votes_completed, 0) + 1,
       updated_at = now()
   where id = current_user_id
   returning * into updated_profile;
@@ -64,7 +65,7 @@ begin
   where id = target_post_id
   returning * into updated_post;
 
-  next_unlock_votes := updated_profile.unlock_votes_completed;
+  next_unlock_votes := coalesce(updated_profile.login_rating_votes_completed, 0);
 
   return json_build_object(
     'postId', updated_post.id,
@@ -72,7 +73,8 @@ begin
     'noCount', updated_post.no_count,
     'totalYesGiven', updated_profile.total_yes_given,
     'totalNoGiven', updated_profile.total_no_given,
-    'unlockVotesCompleted', next_unlock_votes
+    'unlockVotesCompleted', next_unlock_votes,
+    'loginRatingVotesCompleted', next_unlock_votes
   );
 end;
 $$;

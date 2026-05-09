@@ -54,7 +54,7 @@ export function SessionStatusCard() {
 
         const { data: profile, error: profileError } = await supabase
           .from("profiles")
-          .select("username,total_yes_given,total_no_given,unlock_votes_completed")
+          .select("username,login_rating_votes_completed")
           .eq("id", user.id)
           .maybeSingle();
 
@@ -62,9 +62,7 @@ export function SessionStatusCard() {
           throw profileError;
         }
 
-        const ratingsCompleted =
-          profile?.unlock_votes_completed ??
-          ((profile?.total_yes_given ?? 0) + (profile?.total_no_given ?? 0));
+        const ratingsCompleted = profile?.login_rating_votes_completed ?? 0;
         const hasUsername = hasCompletedUsername({
           id: user.id,
           username: profile?.username,

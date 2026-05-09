@@ -93,9 +93,18 @@ export function AuthForm() {
           throw new Error("Signed in, but the user session could not be loaded.");
         }
 
+        const { error: resetSessionGateError } = await supabase
+          .from("profiles")
+          .update({ login_rating_votes_completed: 0 })
+          .eq("id", user.id);
+
+        if (resetSessionGateError) {
+          throw resetSessionGateError;
+        }
+
         const { data: profile, error: profileError } = await supabase
           .from("profiles")
-          .select("username,unlock_votes_completed,total_yes_given,total_no_given")
+          .select("username,login_rating_votes_completed")
           .eq("id", user.id)
           .maybeSingle();
 
@@ -103,9 +112,7 @@ export function AuthForm() {
           throw profileError;
         }
 
-        const ratingsCompleted =
-          profile?.unlock_votes_completed ??
-          ((profile?.total_yes_given ?? 0) + (profile?.total_no_given ?? 0));
+        const ratingsCompleted = profile?.login_rating_votes_completed ?? 0;
 
         const nextStep = getNextRequiredStep({
           isAuthenticated: true,

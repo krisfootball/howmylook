@@ -35,13 +35,11 @@ export function AccessGateCard({ areaLabel, children, bare = false }: AccessGate
 
         const { data: profile } = await supabase
           .from("profiles")
-          .select("username,unlock_votes_completed,total_yes_given,total_no_given")
+          .select("username,login_rating_votes_completed")
           .eq("id", user.id)
           .maybeSingle();
 
-        const completed =
-          profile?.unlock_votes_completed ??
-          ((profile?.total_yes_given ?? 0) + (profile?.total_no_given ?? 0));
+        const completed = profile?.login_rating_votes_completed ?? 0;
 
         const step = getNextRequiredStep({
           isAuthenticated: true,

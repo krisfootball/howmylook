@@ -158,7 +158,9 @@ export function RateLookClient({ initialRatingsCompleted }: RateLookClientProps)
         throw rpcError;
       }
 
-      const nextUnlockVotes = Number(rpcResult?.unlockVotesCompleted ?? ratingsCompleted + 1);
+      const nextUnlockVotes = Number(
+        rpcResult?.loginRatingVotesCompleted ?? rpcResult?.unlockVotesCompleted ?? ratingsCompleted + 1,
+      );
 
       setQueue((current) => current.filter((post) => post.id !== currentPost.id));
       setRatingsCompleted(nextUnlockVotes);
