@@ -25,11 +25,13 @@ export function getNextRequiredStep({
   hasUsername,
   ratingsCompleted,
   unlockVoteCount,
+  bypassRatingGate = false,
 }: {
   isAuthenticated: boolean;
   hasUsername: boolean;
   ratingsCompleted: number;
   unlockVoteCount: number;
+  bypassRatingGate?: boolean;
 }): AppStep {
   if (!isAuthenticated) {
     return "auth";
@@ -39,7 +41,7 @@ export function getNextRequiredStep({
     return "username";
   }
 
-  if (ratingsCompleted < unlockVoteCount) {
+  if (!bypassRatingGate && ratingsCompleted < unlockVoteCount) {
     return "rating";
   }
 

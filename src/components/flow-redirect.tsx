@@ -4,6 +4,7 @@ import { useEffect, useMemo } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { appConfig } from "@/lib/app-config";
 import { getNextRequiredStep, hasCompletedUsername } from "@/lib/app-state";
+import { getAvailableRatingPostCount, shouldBypassLoginRatingGate } from "@/lib/rating-gate";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
 const stepToPath = {
@@ -52,6 +53,8 @@ export function FlowRedirect() {
 
       const ratingsCompleted = profile?.login_rating_votes_completed ?? 0;
 
+      const availablePostCount = await getAvailableRatingPostCount(supabase, user.id);
+
       const step = getNextRequiredStep({
         isAuthenticated: true,
         hasUsername: hasCompletedUsername({
@@ -60,6 +63,7 @@ export function FlowRedirect() {
         }),
         ratingsCompleted,
         unlockVoteCount: appConfig.unlockVoteCount,
+        bypassRatingGate: shouldBypassLoginRatingGate(availablePostCount),
       });
 
       if (!isPathAllowed(step, pathname)) {

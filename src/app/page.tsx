@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getNextRequiredStep, hasCompletedUsername } from "@/lib/app-state";
 import { appConfig } from "@/lib/app-config";
+import { getAvailableRatingPostCount, shouldBypassLoginRatingGate } from "@/lib/rating-gate";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 
 const stepToPath = {
@@ -28,6 +29,8 @@ export default async function Home() {
 
   const ratingsCompleted = profile?.login_rating_votes_completed ?? 0;
 
+  const availablePostCount = await getAvailableRatingPostCount(supabase, user.id);
+
   const step = getNextRequiredStep({
     isAuthenticated: true,
     hasUsername: hasCompletedUsername({
@@ -36,6 +39,7 @@ export default async function Home() {
     }),
     ratingsCompleted,
     unlockVoteCount: appConfig.unlockVoteCount,
+    bypassRatingGate: shouldBypassLoginRatingGate(availablePostCount),
   });
 
   redirect(stepToPath[step]);

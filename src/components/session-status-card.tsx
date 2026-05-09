@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { appConfig } from "@/lib/app-config";
 import { getNextRequiredStep, hasCompletedUsername } from "@/lib/app-state";
+import { getAvailableRatingPostCount, shouldBypassLoginRatingGate } from "@/lib/rating-gate";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
 type SessionState = {
@@ -67,11 +68,14 @@ export function SessionStatusCard() {
           id: user.id,
           username: profile?.username,
         });
+        const availablePostCount = await getAvailableRatingPostCount(supabase, user.id);
+
         const nextStep = getNextRequiredStep({
           isAuthenticated: true,
           hasUsername,
           ratingsCompleted,
           unlockVoteCount: appConfig.unlockVoteCount,
+          bypassRatingGate: shouldBypassLoginRatingGate(availablePostCount),
         });
 
         setState({

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { appConfig } from "@/lib/app-config";
 import { getNextRequiredStep, hasCompletedUsername } from "@/lib/app-state";
+import { getAvailableRatingPostCount, shouldBypassLoginRatingGate } from "@/lib/rating-gate";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
 type AccessGateCardProps = {
@@ -41,6 +42,8 @@ export function AccessGateCard({ areaLabel, children, bare = false }: AccessGate
 
         const completed = profile?.login_rating_votes_completed ?? 0;
 
+        const availablePostCount = await getAvailableRatingPostCount(supabase, user.id);
+
         const step = getNextRequiredStep({
           isAuthenticated: true,
           hasUsername: hasCompletedUsername({
@@ -49,6 +52,7 @@ export function AccessGateCard({ areaLabel, children, bare = false }: AccessGate
           }),
           ratingsCompleted: completed,
           unlockVoteCount: appConfig.unlockVoteCount,
+          bypassRatingGate: shouldBypassLoginRatingGate(availablePostCount),
         });
 
         setRatingsCompleted(completed);
