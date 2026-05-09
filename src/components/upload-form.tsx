@@ -151,7 +151,7 @@ export function UploadForm() {
           yes_count: 0,
           no_count: 0,
           is_active: true,
-          moderation_status: "approved",
+          moderation_status: "pending",
           keep_forever: false,
           expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
         })
