@@ -58,7 +58,7 @@ export default async function AdminPostsPage() {
           </section>
         ) : null}
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-4 gap-2">
           {(posts ?? []).map((post, index) => {
             const orderedImages = post.post_images?.length
               ? [...post.post_images].sort((a, b) => a.sort_order - b.sort_order).map((image) => image.image_url)
@@ -67,7 +67,7 @@ export default async function AdminPostsPage() {
             const showImage = imageUrl?.startsWith("http");
 
             return (
-              <article key={post.id} className="overflow-hidden rounded-[1.3rem] border border-pink-100 bg-white shadow-sm">
+              <article key={post.id} className="overflow-hidden rounded-[1rem] border border-pink-100 bg-white shadow-sm">
                 <Link href={`/admin/posts/${post.id}`} className="block">
                   <div className="relative bg-slate-100">
                     {showImage ? (
@@ -105,7 +105,7 @@ export default async function AdminPostsPage() {
                   </div>
                 </Link>
 
-                <div className="space-y-2 p-2.5">
+                <div className="space-y-1.5 p-1.5">
                   <AdminPostActions postId={post.id} initialStatus={post.moderation_status} compact />
                 </div>
               </article>
