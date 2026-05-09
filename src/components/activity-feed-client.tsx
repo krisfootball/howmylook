@@ -164,7 +164,7 @@ export function ActivityFeedClient() {
             kind: "vote",
             createdAt: row.created_at,
             title: `${profile?.display_name || profile?.username || "Someone"} voted ${row.value} on your post`,
-            subtitle: ownPostMap.get(row.post_id) || "One of your looks",
+            subtitle: "",
             href: `/post/${row.post_id}?from=activity`, 
           };
         });
@@ -245,7 +245,6 @@ export function ActivityFeedClient() {
                 {item.kind === "follow" ? "Follow" : item.kind === "vote" ? "Vote" : "Removed"}
               </span>
             </div>
-            {item.href ? <p className="mt-3 text-xs font-medium text-pink-600">Open</p> : null}
           </>
         );
 
