@@ -11,6 +11,7 @@ type ExplorePost = {
   imageCount: number;
   yesCount: number;
   noCount: number;
+  createdAt: string;
   authorId: string;
   authorName: string;
   authorUsername: string;
@@ -28,6 +29,26 @@ type JoinedProfile = {
   display_name?: string | null;
   username?: string | null;
 } | null;
+
+function getExploreScore(post: {
+  yesCount: number;
+  noCount: number;
+  createdAt: string;
+}) {
+  const totalVotes = post.yesCount + post.noCount;
+  const yesRatio = totalVotes > 0 ? post.yesCount / totalVotes : 0.5;
+  const qualityScore = totalVotes >= 3 ? yesRatio : 0.55;
+
+  const createdAtMs = new Date(post.createdAt).getTime();
+  const ageHours = Number.isNaN(createdAtMs)
+    ? 9999
+    : Math.max((Date.now() - createdAtMs) / (1000 * 60 * 60), 0);
+
+  const recencyBoost = Math.max(2.2 - ageHours / 18, 0);
+  const engagementBoost = Math.min(totalVotes, 12) / 12;
+
+  return qualityScore * 5 + recencyBoost + engagementBoost;
+}
 
 export function SearchExploreClient() {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
@@ -51,13 +72,12 @@ export function SearchExploreClient() {
 
         const { data: rows, error: postsError } = await supabase
           .from("posts")
-          .select("id,caption,image_url,yes_count,no_count,user_id,profiles!posts_user_id_fkey(display_name,username),moderation_status,keep_forever,expires_at,post_images(id)")
+          .select("id,caption,image_url,yes_count,no_count,created_at,user_id,profiles!posts_user_id_fkey(display_name,username),moderation_status,keep_forever,expires_at,post_images(id)")
           .eq("is_active", true)
           .eq("moderation_status", "approved")
           .or(`keep_forever.eq.true,expires_at.gt.${new Date().toISOString()}`)
-          .order("yes_count", { ascending: false })
           .order("created_at", { ascending: false })
-          .limit(60);
+          .limit(120);
 
         if (postsError) {
           throw postsError;
@@ -74,23 +94,35 @@ export function SearchExploreClient() {
         );
 
         setPosts(
-          (rows ?? []).map((post) => {
-            const joinedProfile = (Array.isArray(post.profiles)
-              ? (post.profiles[0] ?? null)
-              : post.profiles) as JoinedProfile;
+          (rows ?? [])
+            .map((post) => {
+              const joinedProfile = (Array.isArray(post.profiles)
+                ? (post.profiles[0] ?? null)
+                : post.profiles) as JoinedProfile;
 
-            return {
-              id: post.id,
-              caption: post.caption ?? "No occasion added yet",
-              imageUrl: post.image_url,
-              imageCount: post.post_images?.length ?? (post.image_url.startsWith("seed://") ? 0 : 1),
-              yesCount: post.yes_count,
-              noCount: post.no_count,
-              authorId: post.user_id,
-              authorName: joinedProfile?.display_name || joinedProfile?.username || "HowMyLook user",
-              authorUsername: joinedProfile?.username ? `@${joinedProfile.username}` : "@username",
-            };
-          }),
+              return {
+                id: post.id,
+                caption: post.caption ?? "No occasion added yet",
+                imageUrl: post.image_url,
+                imageCount: post.post_images?.length ?? (post.image_url.startsWith("seed://") ? 0 : 1),
+                yesCount: post.yes_count,
+                noCount: post.no_count,
+                createdAt: post.created_at,
+                authorId: post.user_id,
+                authorName: joinedProfile?.display_name || joinedProfile?.username || "HowMyLook user",
+                authorUsername: joinedProfile?.username ? `@${joinedProfile.username}` : "@username",
+              };
+            })
+            .sort((a, b) => {
+              const scoreDiff = getExploreScore(b) - getExploreScore(a);
+
+              if (scoreDiff !== 0) {
+                return scoreDiff;
+              }
+
+              return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+            })
+            .slice(0, 60),
         );
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Unable to load search.";

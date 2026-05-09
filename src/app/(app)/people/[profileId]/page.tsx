@@ -9,6 +9,27 @@ type PeopleProfilePageProps = {
   }>;
 };
 
+type PublicProfilePost = {
+  id: string;
+  caption: string | null;
+  image_url: string;
+  yes_count: number;
+  no_count: number;
+  keep_forever: boolean | null;
+  created_at: string;
+  post_images: { id: string }[] | null;
+};
+
+function sortProfilePosts(posts: PublicProfilePost[]) {
+  return [...posts].sort((a, b) => {
+    if (Boolean(a.keep_forever) !== Boolean(b.keep_forever)) {
+      return a.keep_forever ? -1 : 1;
+    }
+
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  });
+}
+
 export default async function PeopleProfilePage({ params }: PeopleProfilePageProps) {
   const { profileId } = await params;
 
@@ -34,13 +55,13 @@ export default async function PeopleProfilePage({ params }: PeopleProfilePagePro
   const [{ data: posts }, { count: followersCount }, { count: followingCount }, { data: yesVotes }, { data: noVotes }] = await Promise.all([
     supabase
       .from("posts")
-      .select("id,caption,image_url,yes_count,no_count,keep_forever,expires_at,post_images(id)")
+      .select("id,caption,image_url,yes_count,no_count,keep_forever,expires_at,created_at,post_images(id)")
       .eq("user_id", profileId)
       .eq("is_active", true)
       .eq("moderation_status", "approved")
       .or(`keep_forever.eq.true,expires_at.gt.${new Date().toISOString()}`)
       .order("created_at", { ascending: false })
-      .limit(24),
+      .limit(40),
     supabase.from("follows").select("*", { count: "exact", head: true }).eq("following_id", profileId),
     supabase.from("follows").select("*", { count: "exact", head: true }).eq("follower_id", profileId),
     supabase
@@ -58,6 +79,8 @@ export default async function PeopleProfilePage({ params }: PeopleProfilePagePro
       .eq("posts.is_active", true)
       .eq("posts.moderation_status", "approved"),
   ]);
+
+  const sortedPosts = sortProfilePosts((posts ?? []) as PublicProfilePost[]).slice(0, 24);
 
   return (
     <MobileShell
@@ -119,13 +142,13 @@ export default async function PeopleProfilePage({ params }: PeopleProfilePagePro
         </section>
 
         <section>
-          {!posts || posts.length === 0 ? (
+          {sortedPosts.length === 0 ? (
             <section className="rounded-[1.6rem] border border-pink-100 bg-white p-5 text-sm text-slate-600 shadow-sm">
               No posts yet.
             </section>
           ) : (
             <div className="grid grid-cols-3 gap-1.5">
-              {posts.map((post, index) => {
+              {sortedPosts.map((post, index) => {
                 const showImage = post.image_url.startsWith("http");
                 const imageCount = post.post_images?.length ?? (post.image_url.startsWith("seed://") ? 0 : 1);
                 return (
@@ -149,6 +172,13 @@ export default async function PeopleProfilePage({ params }: PeopleProfilePagePro
                           }`}
                         />
                       )}
+                      <div className="pointer-events-none absolute left-2 top-2 flex flex-col gap-1">
+                        {post.keep_forever ? (
+                          <div className="rounded-full bg-white/92 px-2 py-0.5 text-[10px] font-semibold text-slate-900 shadow-sm backdrop-blur-sm">
+                            Kept
+                          </div>
+                        ) : null}
+                      </div>
                       {imageCount > 1 ? (
                         <div className="pointer-events-none absolute right-2 top-2 rounded-full bg-black/50 px-2 py-0.5 text-[10px] font-semibold text-white backdrop-blur-sm">
                           {imageCount}

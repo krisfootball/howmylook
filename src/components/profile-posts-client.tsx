@@ -16,8 +16,18 @@ type ProfilePost = {
   noCount: number;
   keepForever: boolean;
   expiresAt: string;
+  createdAt: string;
 };
 
+function sortProfilePosts(posts: ProfilePost[]) {
+  return [...posts].sort((a, b) => {
+    if (a.keepForever !== b.keepForever) {
+      return a.keepForever ? -1 : 1;
+    }
+
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  });
+}
 
 export function ProfilePostsClient() {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
@@ -45,7 +55,7 @@ export function ProfilePostsClient() {
 
         const { data: rows, error: postsError } = await supabase
           .from("posts")
-          .select("id,caption,image_url,yes_count,no_count,keep_forever,expires_at,post_images(id)")
+          .select("id,caption,image_url,yes_count,no_count,keep_forever,expires_at,created_at,post_images(id)")
           .eq("user_id", user.id)
           .eq("is_active", true)
           .or(`keep_forever.eq.true,expires_at.gt.${new Date().toISOString()}`)
@@ -56,16 +66,19 @@ export function ProfilePostsClient() {
         }
 
         setPosts(
-          (rows ?? []).map((post) => ({
-            id: post.id,
-            caption: post.caption ?? "No occasion added yet",
-            imageUrl: post.image_url,
-            imageCount: post.post_images?.length ?? (post.image_url.startsWith("seed://") ? 0 : 1),
-            yesCount: post.yes_count,
-            noCount: post.no_count,
-            keepForever: Boolean(post.keep_forever),
-            expiresAt: post.expires_at,
-          })),
+          sortProfilePosts(
+            (rows ?? []).map((post) => ({
+              id: post.id,
+              caption: post.caption ?? "No occasion added yet",
+              imageUrl: post.image_url,
+              imageCount: post.post_images?.length ?? (post.image_url.startsWith("seed://") ? 0 : 1),
+              yesCount: post.yes_count,
+              noCount: post.no_count,
+              keepForever: Boolean(post.keep_forever),
+              expiresAt: post.expires_at,
+              createdAt: post.created_at,
+            })),
+          ),
         );
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Unable to load your posts.";
@@ -137,6 +150,13 @@ export function ProfilePostsClient() {
                   }`}
                 />
               )}
+              <div className="pointer-events-none absolute left-2 top-2 flex flex-col gap-1">
+                {post.keepForever ? (
+                  <div className="rounded-full bg-white/92 px-2 py-0.5 text-[10px] font-semibold text-slate-900 shadow-sm backdrop-blur-sm">
+                    Kept
+                  </div>
+                ) : null}
+              </div>
               {post.imageCount > 1 ? (
                 <div className="pointer-events-none absolute right-2 top-2 rounded-full bg-black/50 px-2 py-0.5 text-[10px] font-semibold text-white backdrop-blur-sm">
                   {post.imageCount}
