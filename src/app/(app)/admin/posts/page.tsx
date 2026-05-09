@@ -44,18 +44,8 @@ export default async function AdminPostsPage() {
     .limit(100);
 
   return (
-    <MobileShell title="Admin" subtitle="Post moderation queue.">
+    <MobileShell title="" hideHeader>
       <div className="space-y-4">
-        <div className="flex items-center justify-between gap-3 rounded-[1.6rem] border border-pink-100 bg-white px-4 py-4 shadow-sm">
-          <div>
-            <p className="text-sm font-semibold text-slate-900">Post moderation</p>
-            <p className="mt-1 text-sm text-slate-500">Quick keep or delete actions.</p>
-          </div>
-          <Link href="/home" className="rounded-full bg-pink-50 px-3 py-1.5 text-xs font-semibold text-pink-700 ring-1 ring-pink-100">
-            Home
-          </Link>
-        </div>
-
         {error ? (
           <section className="rounded-[1.6rem] border border-rose-100 bg-rose-50 p-5 text-sm text-rose-700 shadow-sm">
             Unable to load moderation queue right now.
