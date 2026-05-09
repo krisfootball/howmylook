@@ -113,7 +113,6 @@ export function ActivityFeedClient() {
         }
 
         const ownPostIds = (ownPosts ?? []).map((post) => post.id);
-        const ownPostMap = new Map((ownPosts ?? []).map((post) => [post.id, post.caption]));
 
         const { data: notificationRows, error: notificationsError } = await supabase
           .from("user_notifications")
