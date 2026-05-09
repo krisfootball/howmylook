@@ -173,12 +173,14 @@ export default async function PeopleProfilePage({ params }: PeopleProfilePagePro
                         />
                       )}
                       {post.keep_forever ? (
-                        <div className="pointer-events-none absolute left-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-white/92 text-sm text-slate-900 shadow-sm backdrop-blur-sm" aria-label="Pinned kept post">
+                        <div className="pointer-events-none absolute right-2 top-2 text-sm text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.7)]" aria-label="Pinned kept post">
                           📌
                         </div>
                       ) : null}
                       {imageCount > 1 ? (
-                        <div className="pointer-events-none absolute right-2 top-2 rounded-full bg-black/50 px-2 py-0.5 text-[10px] font-semibold text-white backdrop-blur-sm">
+                        <div className={`pointer-events-none absolute rounded-full bg-black/50 px-2 py-0.5 text-[10px] font-semibold text-white backdrop-blur-sm ${
+                          post.keep_forever ? "right-2 top-8" : "right-2 top-2"
+                        }`}>
                           {imageCount}
                         </div>
                       ) : null}
