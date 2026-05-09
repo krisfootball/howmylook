@@ -8,7 +8,6 @@ const STORAGE_KEY = "howmylook:lastSeenActivityAt";
 
 type ActivityItem = {
   id: string;
-  kind: "follow" | "vote" | "moderation";
   createdAt: string;
   title: string;
   subtitle: string;
@@ -55,6 +54,16 @@ function formatActivityTimestamp(value: string) {
     hour: "numeric",
     minute: "2-digit",
   }).format(date);
+}
+
+function appendTimestamp(text: string, createdAt: string) {
+  const timestamp = formatActivityTimestamp(createdAt);
+
+  if (!timestamp) {
+    return text;
+  }
+
+  return `${text}. ${timestamp}`;
 }
 
 function getJoinedProfile(profile: JoinedProfile[] | JoinedProfile | null | undefined): JoinedProfile | null {
@@ -147,9 +156,8 @@ export function ActivityFeedClient() {
 
           return {
             id: `follow-${row.follower_id}-${index}`,
-            kind: "follow",
             createdAt: row.created_at,
-            title: `${profile?.display_name || profile?.username || "Someone"} followed you`,
+            title: appendTimestamp(`${profile?.display_name || profile?.username || "Someone"} followed you`, row.created_at),
             subtitle: profile?.username ? `@${profile.username}` : "New follower",
             href: `/people/${row.follower_id}`,
           };
@@ -160,9 +168,8 @@ export function ActivityFeedClient() {
 
           return {
             id: `vote-${row.post_id}-${row.created_at}-${index}`,
-            kind: "vote",
             createdAt: row.created_at,
-            title: `${profile?.display_name || profile?.username || "Someone"} voted ${row.value} on your post`,
+            title: appendTimestamp(`${profile?.display_name || profile?.username || "Someone"} voted ${row.value} on your post`, row.created_at),
             subtitle: "",
             href: `/post/${row.post_id}?from=activity`, 
           };
@@ -172,9 +179,8 @@ export function ActivityFeedClient() {
           .filter((notification) => notification.kind === "moderation_removed")
           .map((notification) => ({
             id: `moderation-${notification.id}`,
-            kind: "moderation",
             createdAt: notification.created_at,
-            title: notification.title,
+            title: appendTimestamp(notification.title, notification.created_at),
             subtitle: notification.body?.trim() || "One of your looks",
           }));
 
@@ -228,21 +234,9 @@ export function ActivityFeedClient() {
       {items.map((item) => {
         const content = (
           <>
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="font-semibold text-slate-900">{item.title}</p>
-                <p className="mt-1 text-sm leading-6 text-slate-500">{item.subtitle}</p>
-                <p className="mt-2 text-xs font-medium text-slate-400">{formatActivityTimestamp(item.createdAt)}</p>
-              </div>
-              <span className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                item.kind === "follow"
-                  ? "bg-pink-50 text-pink-600"
-                  : item.kind === "vote"
-                    ? "bg-pink-50 text-pink-600"
-                    : "bg-rose-50 text-rose-600"
-              }`}>
-                {item.kind === "follow" ? "Follow" : item.kind === "vote" ? "Vote" : "Removed"}
-              </span>
+            <div>
+              <p className="font-semibold text-slate-900">{item.title}</p>
+              {item.subtitle ? <p className="mt-1 text-sm leading-6 text-slate-500">{item.subtitle}</p> : null}
             </div>
           </>
         );
