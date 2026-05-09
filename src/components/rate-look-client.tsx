@@ -242,8 +242,9 @@ export function RateLookClient({ initialRatingsCompleted }: RateLookClientProps)
       />
 
       <div className="rounded-[1.4rem] border border-pink-100 bg-white px-4 py-3 text-sm text-slate-600 shadow-sm">
-        <div className="flex items-center justify-between gap-3">
-          <p className="font-semibold text-slate-900">
+        <p className="font-semibold text-slate-900">Rate 5 posts to unlock the app.</p>
+        <div className="mt-2 flex items-center justify-between gap-3">
+          <p className="text-sm text-slate-600">
             {ratingsCompleted} of {appConfig.unlockVoteCount} ratings completed
           </p>
           <span className="rounded-full bg-pink-50 px-3 py-1 text-xs font-semibold text-pink-700">
