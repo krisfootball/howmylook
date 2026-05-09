@@ -40,6 +40,7 @@ export default async function AdminPostsPage() {
     .select(
       "id,user_id,image_url,caption,yes_count,no_count,created_at,is_active,moderation_status,moderation_reason,profiles!posts_user_id_fkey(username,display_name),post_images(id,image_url,sort_order)",
     )
+    .eq("moderation_status", "pending")
     .order("created_at", { ascending: false })
     .limit(100);
 
@@ -58,7 +59,7 @@ export default async function AdminPostsPage() {
           </section>
         ) : null}
 
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-3 gap-2">
           {(posts ?? []).map((post, index) => {
             const orderedImages = post.post_images?.length
               ? [...post.post_images].sort((a, b) => a.sort_order - b.sort_order).map((image) => image.image_url)
@@ -84,24 +85,11 @@ export default async function AdminPostsPage() {
                         }`}
                       />
                     )}
-                    <div className="pointer-events-none absolute inset-x-0 top-0 flex justify-between p-2">
-                      <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold backdrop-blur-sm ${
-                        post.moderation_status === "approved"
-                          ? "bg-emerald-500/90 text-white"
-                          : post.moderation_status === "hidden"
-                            ? "bg-amber-400/90 text-slate-900"
-                            : post.moderation_status === "deleted"
-                              ? "bg-rose-500/90 text-white"
-                              : "bg-slate-900/70 text-white"
-                      }`}>
-                        {post.moderation_status}
-                      </span>
-                      {orderedImages.length > 1 ? (
-                        <span className="rounded-full bg-black/55 px-2 py-0.5 text-[10px] font-semibold text-white backdrop-blur-sm">
-                          {orderedImages.length}
-                        </span>
-                      ) : null}
-                    </div>
+                    {orderedImages.length > 1 ? (
+                      <div className="pointer-events-none absolute right-2 top-2 rounded-full bg-black/55 px-2 py-0.5 text-[10px] font-semibold text-white backdrop-blur-sm">
+                        {orderedImages.length}
+                      </div>
+                    ) : null}
                   </div>
                 </Link>
 

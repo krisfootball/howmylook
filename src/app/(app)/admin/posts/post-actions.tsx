@@ -76,22 +76,30 @@ export function AdminPostActions({
   }
 
   if (compact) {
-    if (status === "deleted") {
-      return message ? <p className="text-xs leading-5 text-slate-600">{message}</p> : null;
+    if (status === "approved" || status === "deleted") {
+      return null;
     }
 
     return (
-      <div className="space-y-2">
+      <div className="flex gap-1.5">
+        <button
+          type="button"
+          onClick={() => void updateStatus("approved", null)}
+          disabled={saving}
+          className="flex-1 rounded-full bg-emerald-500 px-0 py-1.5 text-xs font-semibold text-white disabled:opacity-50"
+          aria-label="Approve post"
+        >
+          {saving ? "..." : "A"}
+        </button>
         <button
           type="button"
           onClick={() => void updateStatus("deleted", "Deleted by admin review")}
           disabled={saving}
-          className="w-full rounded-full bg-rose-500 px-3 py-2 text-xs font-semibold text-white disabled:opacity-50"
+          className="flex-1 rounded-full bg-rose-500 px-0 py-1.5 text-xs font-semibold text-white disabled:opacity-50"
+          aria-label="Delete post"
         >
-          {saving ? "Deleting..." : "Delete"}
+          {saving ? "..." : "D"}
         </button>
-
-        {message ? <p className="text-xs leading-5 text-slate-600">{message}</p> : null}
       </div>
     );
   }
