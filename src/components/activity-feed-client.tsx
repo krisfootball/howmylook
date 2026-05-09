@@ -56,14 +56,8 @@ function formatActivityTimestamp(value: string) {
   }).format(date);
 }
 
-function appendTimestamp(text: string, createdAt: string) {
-  const timestamp = formatActivityTimestamp(createdAt);
-
-  if (!timestamp) {
-    return text;
-  }
-
-  return `${text}. ${timestamp}`;
+function ensureTrailingPeriod(text: string) {
+  return text.endsWith(".") ? text : `${text}.`;
 }
 
 function getJoinedProfile(profile: JoinedProfile[] | JoinedProfile | null | undefined): JoinedProfile | null {
@@ -157,7 +151,7 @@ export function ActivityFeedClient() {
           return {
             id: `follow-${row.follower_id}-${index}`,
             createdAt: row.created_at,
-            title: appendTimestamp(`${profile?.display_name || profile?.username || "Someone"} followed you`, row.created_at),
+            title: ensureTrailingPeriod(`${profile?.display_name || profile?.username || "Someone"} followed you`),
             subtitle: profile?.username ? `@${profile.username}` : "New follower",
             href: `/people/${row.follower_id}`,
           };
@@ -169,7 +163,7 @@ export function ActivityFeedClient() {
           return {
             id: `vote-${row.post_id}-${row.created_at}-${index}`,
             createdAt: row.created_at,
-            title: appendTimestamp(`${profile?.display_name || profile?.username || "Someone"} voted ${row.value} on your post`, row.created_at),
+            title: ensureTrailingPeriod(`${profile?.display_name || profile?.username || "Someone"} voted ${row.value} on your post`),
             subtitle: "",
             href: `/post/${row.post_id}?from=activity`, 
           };
@@ -180,7 +174,7 @@ export function ActivityFeedClient() {
           .map((notification) => ({
             id: `moderation-${notification.id}`,
             createdAt: notification.created_at,
-            title: appendTimestamp(notification.title, notification.created_at),
+            title: ensureTrailingPeriod(notification.title),
             subtitle: notification.body?.trim() || "One of your looks",
           }));
 
@@ -235,7 +229,10 @@ export function ActivityFeedClient() {
         const content = (
           <>
             <div>
-              <p className="font-semibold text-slate-900">{item.title}</p>
+              <p className="font-semibold text-slate-900">
+                {item.title}{" "}
+                <span className="text-xs font-medium text-slate-400">{formatActivityTimestamp(item.createdAt)}</span>
+              </p>
               {item.subtitle ? <p className="mt-1 text-sm leading-6 text-slate-500">{item.subtitle}</p> : null}
             </div>
           </>
