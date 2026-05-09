@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { MobileShell } from "@/components/mobile-shell";
 import { getAdminAccessDebug, requireAdminUser } from "@/lib/admin";
 import { supabase } from "@/lib/supabase";
 import { AdminPostActions } from "./post-actions";
@@ -10,33 +11,27 @@ export default async function AdminPostsPage() {
     const debug = await getAdminAccessDebug();
 
     return (
-      <main className="min-h-screen bg-[radial-gradient(circle_at_top,_#fff_0%,_#fff6fb_40%,_#f5edf8_100%)] px-4 py-6 text-slate-900">
-        <div className="mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-xl flex-col gap-4 rounded-[2rem] border border-white/70 bg-white/90 p-6 shadow-[0_25px_80px_rgba(76,29,149,0.18)] backdrop-blur">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-pink-500">Admin</p>
-            <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">Access needed</h1>
-            <p className="mt-3 text-sm leading-6 text-slate-600">
-              This account is not currently allowed to open the admin queue.
-            </p>
-          </div>
+      <MobileShell title="Admin" subtitle="Access needed.">
+        <div className="space-y-4">
+          <section className="rounded-[1.6rem] border border-rose-100 bg-rose-50 p-5 text-sm leading-6 text-rose-700 shadow-sm">
+            This account is not currently allowed to open the admin queue.
+          </section>
 
-          <section className="rounded-[1.4rem] border border-amber-100 bg-amber-50 px-4 py-4 text-sm leading-6 text-amber-900">
+          <section className="rounded-[1.4rem] border border-amber-100 bg-amber-50 px-4 py-4 text-sm leading-6 text-amber-900 shadow-sm">
             Add your signed-in email address to the <span className="font-semibold">ADMIN_EMAILS</span> environment variable in Vercel,
             then redeploy.
           </section>
 
-          <section className="rounded-[1.4rem] border border-slate-200 bg-slate-50 px-4 py-4 text-sm leading-6 text-slate-700">
+          <section className="rounded-[1.4rem] border border-slate-200 bg-slate-50 px-4 py-4 text-sm leading-6 text-slate-700 shadow-sm">
             <p><span className="font-semibold text-slate-900">Signed-in email:</span> {debug.signedInEmail ?? "not signed in"}</p>
             <p className="mt-2"><span className="font-semibold text-slate-900">Allowed admin emails:</span> {debug.allowedEmails.length > 0 ? debug.allowedEmails.join(", ") : "none configured"}</p>
           </section>
 
-          <div className="flex flex-wrap gap-2">
-            <Link href="/home" className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm">
-              Back to Home
-            </Link>
-          </div>
+          <Link href="/home" className="inline-flex rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm">
+            Back to Home
+          </Link>
         </div>
-      </main>
+      </MobileShell>
     );
   }
 
@@ -49,16 +44,15 @@ export default async function AdminPostsPage() {
     .limit(100);
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top,_#fff_0%,_#fff6fb_40%,_#f5edf8_100%)] px-4 py-6 text-slate-900">
-      <div className="mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-6xl flex-col gap-4 rounded-[2rem] border border-white/70 bg-white/90 p-4 shadow-[0_25px_80px_rgba(76,29,149,0.18)] backdrop-blur">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-pink-100 px-1 pb-4 pt-1">
+    <MobileShell title="Admin" subtitle="Post moderation queue.">
+      <div className="space-y-4">
+        <div className="flex items-center justify-between gap-3 rounded-[1.6rem] border border-pink-100 bg-white px-4 py-4 shadow-sm">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-pink-500">Admin</p>
-            <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">Post moderation</h1>
-            <p className="mt-2 text-sm text-slate-600">Fast moderation grid with quick keep or delete actions.</p>
+            <p className="text-sm font-semibold text-slate-900">Post moderation</p>
+            <p className="mt-1 text-sm text-slate-500">Quick keep or delete actions.</p>
           </div>
-          <Link href="/home" className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-pink-100">
-            Back to Home
+          <Link href="/home" className="rounded-full bg-pink-50 px-3 py-1.5 text-xs font-semibold text-pink-700 ring-1 ring-pink-100">
+            Home
           </Link>
         </div>
 
@@ -74,7 +68,7 @@ export default async function AdminPostsPage() {
           </section>
         ) : null}
 
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="grid grid-cols-2 gap-3">
           {(posts ?? []).map((post, index) => {
             const orderedImages = post.post_images?.length
               ? [...post.post_images].sort((a, b) => a.sort_order - b.sort_order).map((image) => image.image_url)
@@ -129,6 +123,6 @@ export default async function AdminPostsPage() {
           })}
         </div>
       </div>
-    </main>
+    </MobileShell>
   );
 }
