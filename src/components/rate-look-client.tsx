@@ -98,7 +98,7 @@ export function RateLookClient({ initialRatingsCompleted }: RateLookClientProps)
           (post) => !ratedPostIds.has(post.id) && (!user || post.user_id !== user.id),
         );
 
-      const priorityPosts = filteredPosts.filter((post) => post.yes_count + post.no_count < 5);
+        const priorityPosts = filteredPosts.filter((post) => post.yes_count + post.no_count < 5);
         const fallbackPosts = filteredPosts.filter((post) => post.yes_count + post.no_count >= 5);
         const orderedPosts = [...priorityPosts, ...fallbackPosts];
 
@@ -210,4 +210,51 @@ export function RateLookClient({ initialRatingsCompleted }: RateLookClientProps)
                 : "Nice — you finished the required ratings. You can keep exploring the unlocked parts of the app now."
               : "Checking Supabase for the latest unrated posts, prioritizing looks that still need their first 5 ratings."}
           </p>
-              : "Checking Supabase for the latest unrated posts, prioritizing looks that still need their first 5 ratings."}
+        </section>
+
+        {message ? (
+          <div className="rounded-[1.2rem] bg-white px-4 py-3 text-sm leading-6 text-slate-600 shadow-sm">
+            {message}
+          </div>
+        ) : null}
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative space-y-4">
+      {showUnlockHint ? (
+        <div className="pointer-events-none absolute inset-x-4 top-4 z-20 flex justify-center">
+          <div className="rounded-full border border-white/25 bg-black/55 px-4 py-2 text-sm font-semibold text-white shadow-lg backdrop-blur-md">
+            Rate 5 photos to access account
+          </div>
+        </div>
+      ) : null}
+
+      <PostSurface
+        images={currentPost.imageCount > 0 && currentPost.imageUrl.startsWith("http") ? [currentPost.imageUrl] : []}
+        caption={currentPost.caption}
+        yesCount={currentPost.yesCount}
+        noCount={currentPost.noCount}
+        authorName={currentPost.authorName}
+        onYes={() => void handleVote("yes")}
+        onNo={() => void handleVote("no")}
+        votingDisabled={loading}
+        yesLabel={loading ? "Saving..." : appConfig.yesLabel}
+        noLabel={loading ? "Saving..." : appConfig.noLabel}
+      />
+
+      {currentPostNeedsMoreRatings ? (
+        <div className="px-4 text-center text-xs text-slate-500">
+          This look still needs {currentPost.ratingsRemainingToUnlock} more rating{currentPost.ratingsRemainingToUnlock === 1 ? "" : "s"}.
+        </div>
+      ) : null}
+
+      {message ? (
+        <div className="mx-4 rounded-[1.2rem] bg-white px-4 py-3 text-sm leading-6 text-slate-600 shadow-sm">
+          {message}
+        </div>
+      ) : null}
+    </div>
+  );
+}
