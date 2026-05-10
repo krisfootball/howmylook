@@ -207,4 +207,3 @@ if (!currentPost) {
             {queueLoaded
               ? remaining > 0
                 ? "You’ve gone through the available queue. New posts that still need their first 5 ratings will appear here first."
-...(truncated)...
