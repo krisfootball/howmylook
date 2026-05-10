@@ -1,19 +1,6 @@
 import { appConfig } from "@/lib/app-config";
 
-type QueryLike = {
-  eq: (column: string, value: string | boolean) => QueryLike;
-  neq: (column: string, value: string) => QueryLike;
-  or: (filters: string) => Promise<{ data: { post_id: string }[] | null; count?: number | null; error: Error | null }>;
-  then?: never;
-};
-
-type SupabaseLike = {
-  from: (table: string) => {
-    select: (query: string, options?: { count?: "exact"; head?: boolean }) => QueryLike | Promise<{ data: { post_id: string }[] | null; error: Error | null }>;
-  };
-};
-
-export async function getAvailableRatingPostCount(supabase: SupabaseLike, userId: string) {
+export async function getAvailableRatingPostCount(supabase: any, userId: string) {
   const nowIso = new Date().toISOString();
 
   const [{ data: voteRows, error: votesError }, { count: totalPostCount, error: postsError }] = await Promise.all([
