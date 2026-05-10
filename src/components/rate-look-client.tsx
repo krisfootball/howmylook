@@ -25,7 +25,7 @@ type QueuePost = {
   imageStyle: string;
   tags: string[];
   imageCount: number;
-  };
+};
 
 const fallbackQueue: QueuePost[] = ratingQueue.map((post) => ({
   ...post,
@@ -48,7 +48,7 @@ export function RateLookClient({ initialRatingsCompleted }: RateLookClientProps)
   const [queueLoaded, setQueueLoaded] = useState(false);
   const [showUnlockHint, setShowUnlockHint] = useState(true);
 
-useEffect(() => {
+  useEffect(() => {
     const timeout = window.setTimeout(() => {
       setShowUnlockHint(false);
     }, 3000);
@@ -56,14 +56,14 @@ useEffect(() => {
     return () => window.clearTimeout(timeout);
   }, []);
 
-useEffect(() => {
+  useEffect(() => {
     async function loadPosts() {
       try {
         const {
           data: { user },
         } = await supabase.auth.getUser();
 
-      const { data, error } = await supabase
+        const { data, error } = await supabase
           .from("posts")
           .select("id,user_id,image_url,caption,yes_count,no_count,is_active,moderation_status,created_at,expires_at,keep_forever")
           .eq("is_active", true)
@@ -76,7 +76,7 @@ useEffect(() => {
           throw error;
         }
 
-      if (!data || data.length === 0) {
+        if (!data || data.length === 0) {
           setQueue([]);
           return;
         }
@@ -89,7 +89,7 @@ useEffect(() => {
             .select("post_id")
             .eq("user_id", user.id);
 
-        if (!votesError && existingVotes) {
+          if (!votesError && existingVotes) {
             ratedPostIds = new Set(existingVotes.map((vote) => vote.post_id));
           }
         }
@@ -98,11 +98,11 @@ useEffect(() => {
           (post) => !ratedPostIds.has(post.id) && (!user || post.user_id !== user.id),
         );
 
-        const priorityPosts = filteredPosts.filter((post) => post.yes_count + post.no_count < 5);
+      const priorityPosts = filteredPosts.filter((post) => post.yes_count + post.no_count < 5);
         const fallbackPosts = filteredPosts.filter((post) => post.yes_count + post.no_count >= 5);
         const orderedPosts = [...priorityPosts, ...fallbackPosts];
 
-      const mapped = orderedPosts.map((post, index) => ({
+        const mapped = orderedPosts.map((post, index) => ({
           id: post.id,
           authorId: post.user_id,
           authorName: `Look ${index + 1}`,
@@ -119,7 +119,7 @@ useEffect(() => {
           tags: fallbackQueue[index % fallbackQueue.length]?.tags ?? ["style", "fit"],
         }));
 
-      setQueue(mapped);
+        setQueue(mapped);
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Unable to load rating queue.";
         setMessage(errorMessage);
@@ -131,7 +131,7 @@ useEffect(() => {
     loadPosts();
   }, [supabase]);
 
-const currentPost = queue[0] ?? null;
+  const currentPost = queue[0] ?? null;
   const remaining = Math.max(appConfig.unlockVoteCount - ratingsCompleted, 0);
   const currentPostNeedsMoreRatings = (currentPost?.yesCount ?? 0) + (currentPost?.noCount ?? 0) < 5;
 
@@ -144,7 +144,7 @@ const currentPost = queue[0] ?? null;
     setLoading(true);
     setMessage("");
 
-  try {
+    try {
       const {
         data: { user },
         error: userError,
@@ -158,7 +158,7 @@ const currentPost = queue[0] ?? null;
         throw new Error("Sign in first before rating looks.");
       }
 
-    const { data: rpcResult, error: rpcError } = await supabase.rpc("cast_vote", {
+      const { data: rpcResult, error: rpcError } = await supabase.rpc("cast_vote", {
         target_post_id: currentPost.id,
         vote_value: value,
       });
@@ -171,7 +171,7 @@ const currentPost = queue[0] ?? null;
         rpcResult?.loginRatingVotesCompleted ?? rpcResult?.unlockVotesCompleted ?? ratingsCompleted + 1,
       );
 
-    setQueue((current) => current.filter((post) => post.id !== currentPost.id));
+      setQueue((current) => current.filter((post) => post.id !== currentPost.id));
       setRatingsCompleted(nextUnlockVotes);
       setMessage(
         nextUnlockVotes >= appConfig.unlockVoteCount
@@ -179,7 +179,7 @@ const currentPost = queue[0] ?? null;
           : `${value === "yes" ? "Yes" : "No"} saved. ${Math.max(appConfig.unlockVoteCount - nextUnlockVotes, 0)} ratings left.`,
       );
 
-    if (nextUnlockVotes >= appConfig.unlockVoteCount) {
+      if (nextUnlockVotes >= appConfig.unlockVoteCount) {
         router.replace("/home");
         router.refresh();
       }
@@ -196,7 +196,7 @@ const currentPost = queue[0] ?? null;
     }
   }
 
-if (!currentPost) {
+  if (!currentPost) {
     return (
       <div className="space-y-4">
         <section className="rounded-[1.7rem] border border-pink-100 bg-white p-5 text-sm leading-6 text-slate-600 shadow-sm">
@@ -207,3 +207,5 @@ if (!currentPost) {
             {queueLoaded
               ? remaining > 0
                 ? "You’ve gone through the available queue. New posts that still need their first 5 ratings will appear here first."
+                : "Nice — you finished the required ratings. You can keep exploring the unlocked parts of the app now."
+              : "Checking Supabase for the latest unr
