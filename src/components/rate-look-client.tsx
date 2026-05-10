@@ -25,7 +25,7 @@ type QueuePost = {
   imageStyle: string;
   tags: string[];
   imageCount: number;
-};
+  };
 
 const fallbackQueue: QueuePost[] = ratingQueue.map((post) => ({
   ...post,
@@ -46,15 +46,24 @@ export function RateLookClient({ initialRatingsCompleted }: RateLookClientProps)
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [queueLoaded, setQueueLoaded] = useState(false);
+  const [showUnlockHint, setShowUnlockHint] = useState(true);
 
-  useEffect(() => {
+useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      setShowUnlockHint(false);
+    }, 3000);
+
+    return () => window.clearTimeout(timeout);
+  }, []);
+
+useEffect(() => {
     async function loadPosts() {
       try {
         const {
           data: { user },
         } = await supabase.auth.getUser();
 
-        const { data, error } = await supabase
+      const { data, error } = await supabase
           .from("posts")
           .select("id,user_id,image_url,caption,yes_count,no_count,is_active,moderation_status,created_at,expires_at,keep_forever")
           .eq("is_active", true)
@@ -67,7 +76,7 @@ export function RateLookClient({ initialRatingsCompleted }: RateLookClientProps)
           throw error;
         }
 
-        if (!data || data.length === 0) {
+      if (!data || data.length === 0) {
           setQueue([]);
           return;
         }
@@ -80,7 +89,7 @@ export function RateLookClient({ initialRatingsCompleted }: RateLookClientProps)
             .select("post_id")
             .eq("user_id", user.id);
 
-          if (!votesError && existingVotes) {
+        if (!votesError && existingVotes) {
             ratedPostIds = new Set(existingVotes.map((vote) => vote.post_id));
           }
         }
@@ -93,7 +102,7 @@ export function RateLookClient({ initialRatingsCompleted }: RateLookClientProps)
         const fallbackPosts = filteredPosts.filter((post) => post.yes_count + post.no_count >= 5);
         const orderedPosts = [...priorityPosts, ...fallbackPosts];
 
-        const mapped = orderedPosts.map((post, index) => ({
+      const mapped = orderedPosts.map((post, index) => ({
           id: post.id,
           authorId: post.user_id,
           authorName: `Look ${index + 1}`,
@@ -110,7 +119,7 @@ export function RateLookClient({ initialRatingsCompleted }: RateLookClientProps)
           tags: fallbackQueue[index % fallbackQueue.length]?.tags ?? ["style", "fit"],
         }));
 
-        setQueue(mapped);
+      setQueue(mapped);
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Unable to load rating queue.";
         setMessage(errorMessage);
@@ -122,7 +131,7 @@ export function RateLookClient({ initialRatingsCompleted }: RateLookClientProps)
     loadPosts();
   }, [supabase]);
 
-  const currentPost = queue[0] ?? null;
+const currentPost = queue[0] ?? null;
   const remaining = Math.max(appConfig.unlockVoteCount - ratingsCompleted, 0);
   const currentPostNeedsMoreRatings = (currentPost?.yesCount ?? 0) + (currentPost?.noCount ?? 0) < 5;
 
@@ -135,7 +144,7 @@ export function RateLookClient({ initialRatingsCompleted }: RateLookClientProps)
     setLoading(true);
     setMessage("");
 
-    try {
+  try {
       const {
         data: { user },
         error: userError,
@@ -149,7 +158,7 @@ export function RateLookClient({ initialRatingsCompleted }: RateLookClientProps)
         throw new Error("Sign in first before rating looks.");
       }
 
-      const { data: rpcResult, error: rpcError } = await supabase.rpc("cast_vote", {
+    const { data: rpcResult, error: rpcError } = await supabase.rpc("cast_vote", {
         target_post_id: currentPost.id,
         vote_value: value,
       });
@@ -162,7 +171,7 @@ export function RateLookClient({ initialRatingsCompleted }: RateLookClientProps)
         rpcResult?.loginRatingVotesCompleted ?? rpcResult?.unlockVotesCompleted ?? ratingsCompleted + 1,
       );
 
-      setQueue((current) => current.filter((post) => post.id !== currentPost.id));
+    setQueue((current) => current.filter((post) => post.id !== currentPost.id));
       setRatingsCompleted(nextUnlockVotes);
       setMessage(
         nextUnlockVotes >= appConfig.unlockVoteCount
@@ -170,7 +179,7 @@ export function RateLookClient({ initialRatingsCompleted }: RateLookClientProps)
           : `${value === "yes" ? "Yes" : "No"} saved. ${Math.max(appConfig.unlockVoteCount - nextUnlockVotes, 0)} ratings left.`,
       );
 
-      if (nextUnlockVotes >= appConfig.unlockVoteCount) {
+    if (nextUnlockVotes >= appConfig.unlockVoteCount) {
         router.replace("/home");
         router.refresh();
       }
@@ -187,23 +196,9 @@ export function RateLookClient({ initialRatingsCompleted }: RateLookClientProps)
     }
   }
 
-  if (!currentPost) {
+if (!currentPost) {
     return (
       <div className="space-y-4">
-        <div className="rounded-[1.6rem] border border-pink-100 bg-pink-50/80 p-4 text-sm text-slate-700">
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <p className="font-semibold text-slate-900">{appConfig.onboardingHeadline}</p>
-              <p className="mt-1 leading-6">
-                {ratingsCompleted} of {appConfig.unlockVoteCount} ratings completed.
-              </p>
-            </div>
-            <div className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-pink-600 shadow-sm">
-              {remaining} left
-            </div>
-          </div>
-        </div>
-
         <section className="rounded-[1.7rem] border border-pink-100 bg-white p-5 text-sm leading-6 text-slate-600 shadow-sm">
           <p className="font-semibold text-slate-900">
             {queueLoaded ? "No more looks are ready to rate right now." : "Loading rating queue..."}
@@ -212,57 +207,4 @@ export function RateLookClient({ initialRatingsCompleted }: RateLookClientProps)
             {queueLoaded
               ? remaining > 0
                 ? "You’ve gone through the available queue. New posts that still need their first 5 ratings will appear here first."
-                : "Nice — you finished the required ratings. You can keep exploring the unlocked parts of the app now."
-              : "Checking Supabase for the latest unrated posts, prioritizing looks that still need their first 5 ratings."}
-          </p>
-        </section>
-
-        {message ? (
-          <div className="rounded-[1.2rem] bg-white px-4 py-3 text-sm leading-6 text-slate-600 shadow-sm">
-            {message}
-          </div>
-        ) : null}
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-4">
-      <PostSurface
-        images={currentPost.imageCount > 0 && currentPost.imageUrl.startsWith("http") ? [currentPost.imageUrl] : []}
-        caption={currentPost.caption}
-        yesCount={currentPost.yesCount}
-        noCount={currentPost.noCount}
-        authorName={currentPost.authorName}
-        onYes={() => void handleVote("yes")}
-        onNo={() => void handleVote("no")}
-        votingDisabled={loading}
-        yesLabel={loading ? "Saving..." : appConfig.yesLabel}
-        noLabel={loading ? "Saving..." : appConfig.noLabel}
-      />
-
-      <div className="rounded-[1.4rem] border border-pink-100 bg-white px-4 py-3 text-sm text-slate-600 shadow-sm">
-        <p className="font-semibold text-slate-900">Rate 5 posts to unlock the app.</p>
-        <div className="mt-2 flex items-center justify-between gap-3">
-          <p className="text-sm text-slate-600">
-            {ratingsCompleted} of {appConfig.unlockVoteCount} ratings completed
-          </p>
-          <span className="rounded-full bg-pink-50 px-3 py-1 text-xs font-semibold text-pink-700">
-            {remaining} left
-          </span>
-        </div>
-        {currentPostNeedsMoreRatings ? (
-          <p className="mt-2 text-xs text-slate-500">
-            This look still needs {currentPost.ratingsRemainingToUnlock} more rating{currentPost.ratingsRemainingToUnlock === 1 ? "" : "s"}.
-          </p>
-        ) : null}
-      </div>
-
-      {message ? (
-        <div className="rounded-[1.2rem] bg-white px-4 py-3 text-sm leading-6 text-slate-600 shadow-sm">
-          {message}
-        </div>
-      ) : null}
-    </div>
-  );
-}
+...(truncated)...
