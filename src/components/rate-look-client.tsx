@@ -208,4 +208,6 @@ export function RateLookClient({ initialRatingsCompleted }: RateLookClientProps)
               ? remaining > 0
                 ? "You’ve gone through the available queue. New posts that still need their first 5 ratings will appear here first."
                 : "Nice — you finished the required ratings. You can keep exploring the unlocked parts of the app now."
-              : "Checking Supabase for the latest unr
+              : "Checking Supabase for the latest unrated posts, prioritizing looks that still need their first 5 ratings."}
+          </p>
+              : "Checking Supabase for the latest unrated posts, prioritizing looks that still need their first 5 ratings."}
