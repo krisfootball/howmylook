@@ -1,6 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import webpush from "web-push";
+import { getFirebaseMessaging } from "@/lib/firebase-admin";
 import { createSupabaseAdminClient } from "@/lib/supabase-admin";
+
+type BrowserSubscriptionRow = {
+  endpoint: string;
+  p256dh: string;
+  auth: string;
+  user_id: string;
+};
+
+type AndroidDeviceRow = {
+  token: string;
+  user_id: string;
+};
 
 export async function POST(request: NextRequest) {
   try {
@@ -63,6 +76,15 @@ export async function POST(request: NextRequest) {
       throw subscriptionsError;
     }
 
+    const { data: androidDevices, error: androidDevicesError } = await supabaseAdmin
+      .from("android_push_devices")
+      .select("token,user_id")
+      .in("user_id", followerIds);
+
+    if (androidDevicesError) {
+      throw androidDevicesError;
+    }
+
     const authorName = author?.display_name || author?.username || "Someone you follow";
     const trimmedCaption = caption?.trim();
     const shortCaption = trimmedCaption
@@ -71,16 +93,25 @@ export async function POST(request: NextRequest) {
         : trimmedCaption
       : null;
 
-    const payload = JSON.stringify({
+    const webPayload = JSON.stringify({
       title: `${authorName} posted a new look ✨`,
       body: shortCaption ? shortCaption : "Tap to see the fit.",
-      url: `/post/${postId}?from=home`, 
+      url: `/post/${postId}?from=home`,
     });
+
+    const androidPayload = {
+      title: `${authorName} posted a new look ✨`,
+      body: shortCaption ? shortCaption : "Tap to see the fit.",
+      postId,
+      profileId: userId,
+    };
 
     let delivered = 0;
     let removed = 0;
+    let androidDelivered = 0;
+    let androidRemoved = 0;
 
-    for (const subscription of subscriptions ?? []) {
+    for (const subscription of (subscriptions ?? []) as BrowserSubscriptionRow[]) {
       try {
         await webpush.sendNotification(
           {
@@ -90,7 +121,7 @@ export async function POST(request: NextRequest) {
               auth: subscription.auth,
             },
           },
-          payload,
+          webPayload,
         );
         delivered += 1;
       } catch (error) {
@@ -109,7 +140,42 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({ ok: true, delivered, removed });
+    const androidTokens = Array.from(new Set(((androidDevices ?? []) as AndroidDeviceRow[]).map((row) => row.token).filter(Boolean)));
+
+    if (androidTokens.length > 0) {
+      const messaging = getFirebaseMessaging();
+      const response = await messaging.sendEachForMulticast({
+        tokens: androidTokens,
+        data: androidPayload,
+        android: {
+          priority: "high",
+        },
+      });
+
+      androidDelivered = response.successCount;
+
+      const invalidTokens = response.responses
+        .map((item, index) => ({ item, token: androidTokens[index] }))
+        .filter(({ item }) => !item.success)
+        .filter(({ item }) => {
+          const code = item.error?.code ?? "";
+          return code.includes("registration-token-not-registered") || code.includes("invalid-registration-token");
+        })
+        .map(({ token }) => token);
+
+      if (invalidTokens.length > 0) {
+        const { error: deleteAndroidTokensError } = await supabaseAdmin
+          .from("android_push_devices")
+          .delete()
+          .in("token", invalidTokens);
+
+        if (!deleteAndroidTokensError) {
+          androidRemoved = invalidTokens.length;
+        }
+      }
+    }
+
+    return NextResponse.json({ ok: true, delivered, removed, androidDelivered, androidRemoved });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown notification error";
     return NextResponse.json({ error: message }, { status: 500 });

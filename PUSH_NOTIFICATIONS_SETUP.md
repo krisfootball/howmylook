@@ -22,23 +22,30 @@ Production path in use:
    - `VAPID_PRIVATE_KEY`
    - `VAPID_SUBJECT`
    - `SUPABASE_SERVICE_ROLE_KEY`
+   - `FIREBASE_PROJECT_ID`
+   - `FIREBASE_CLIENT_EMAIL`
+   - `FIREBASE_PRIVATE_KEY`
 4. After a successful post create, the app calls `/api/notify-post`
 5. The server route:
    - finds `follows` where `following_id = new post user_id` and `notifications_enabled = true`
-   - loads each follower's `push_subscriptions`
-   - sends a Web Push payload
-   - removes expired subscriptions when the push service returns 404/410
+   - loads browser `push_subscriptions`
+   - loads Android `android_push_devices`
+   - sends Web Push to browser subscribers
+   - sends Firebase Cloud Messaging notifications to Android devices
+   - removes expired browser subscriptions and invalid Android tokens
 
-If these env vars are missing, follower notification delivery will fail even though posting still succeeds.
+If these env vars are missing, some follower notification delivery paths will fail even though posting still succeeds.
 
 ## SQL to run
 
 Run this in Supabase:
 
 - `SUPABASE_MIGRATION_PUSH_NOTIFICATIONS.sql`
+- `SUPABASE_MIGRATION_ANDROID_PUSH.sql`
 
 ## Notes
 
 - iPhone support depends on PWA/browser support and user permission.
-- This implementation stores subscriptions and preferences, but does not yet send pushes by itself.
-- If you want, next step I can add the actual send pipeline too (best via Supabase Edge Function).
+- Browser push delivery is handled in `/api/notify-post`.
+- Android push delivery is also handled in `/api/notify-post` via Firebase Admin.
+- If you want later, this can still move into a dedicated worker or Supabase Edge Function.

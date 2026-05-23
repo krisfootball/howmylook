@@ -9,6 +9,9 @@ Add these environment variables in Vercel:
 - `VAPID_PRIVATE_KEY` = your VAPID private key
 - `VAPID_SUBJECT` = for example `mailto:hello@howmylook.app`
 - `SUPABASE_SERVICE_ROLE_KEY` = from Supabase project settings
+- `FIREBASE_PROJECT_ID` = Firebase project id for Android push
+- `FIREBASE_CLIENT_EMAIL` = Firebase service account client email
+- `FIREBASE_PRIVATE_KEY` = Firebase service account private key
 - `ADMIN_EMAILS` = comma-separated admin login emails allowed to open `/admin/posts`
 - `TELEGRAM_BOT_TOKEN` = Telegram bot token for admin alerts later
 - `TELEGRAM_ADMIN_CHAT_ID` = your Telegram chat id for admin alerts later (current discovered id: `8011654004`)
@@ -16,7 +19,10 @@ Add these environment variables in Vercel:
 ## Notes
 - The app asks for notification permission only when a user taps **Notify me** on a followed profile.
 - The server route sends pushes only to followers where `notifications_enabled = true` for that specific account.
+- Browser push still uses `push_subscriptions`.
+- Android push now also uses `android_push_devices` and Firebase Cloud Messaging.
 - If a browser subscription is expired, the route removes it from `push_subscriptions` automatically.
+- If an Android token is invalid, the route removes it from `android_push_devices` automatically.
 - Admin moderation now uses `/admin/posts` and `/admin/posts/[postId]`.
 - New post uploads call a real admin alert route.
 - `admin_alert_sent_at` is only written after successful Telegram delivery.
