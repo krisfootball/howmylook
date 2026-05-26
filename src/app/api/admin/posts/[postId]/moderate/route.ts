@@ -4,6 +4,34 @@ import { createSupabaseAdminClient } from "@/lib/supabase-admin";
 
 type ModerationStatus = "approved" | "hidden" | "deleted" | "pending";
 
+
+async function notifyFollowersOfApprovedPost({
+  request,
+  postId,
+  userId,
+  caption,
+}: {
+  request: NextRequest;
+  postId: string;
+  userId: string;
+  caption: string;
+}) {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") || request.nextUrl.origin;
+
+  try {
+    await fetch(`${baseUrl}/api/notify-post`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ postId, userId, caption }),
+      cache: "no-store",
+    });
+  } catch (error) {
+    console.error("Failed to notify followers of approved post", error);
+  }
+}
+
 function getReason(status: ModerationStatus) {
   if (status === "hidden") {
     return "Hidden by admin review";
@@ -67,6 +95,15 @@ export async function POST(
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    if (status === "approved") {
+      await notifyFollowersOfApprovedPost({
+        request,
+        postId: post.id,
+        userId: post.user_id,
+        caption: post.caption?.trim() || "",
+      });
     }
 
     if (status === "deleted") {

@@ -1,6 +1,7 @@
 import { appConfig } from "@/lib/app-config";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
-export async function getAvailableRatingPostCount(supabase: any, userId: string) {
+export async function getAvailableRatingPostCount(supabase: SupabaseClient, userId: string) {
   const nowIso = new Date().toISOString();
 
   const [{ data: voteRows, error: votesError }, { count: totalPostCount, error: postsError }] = await Promise.all([
